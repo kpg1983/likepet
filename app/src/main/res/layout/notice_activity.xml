@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="#ffffff"
+    >
+
+    <RelativeLayout
+        android:id="@+id/notice_menu_bar"
+        android:layout_width="match_parent"
+        android:layout_height="51dp"
+        android:background="#ffffff">
+
+        <RelativeLayout
+            android:id="@+id/notice_cancel_container"
+            android:layout_width="51dp"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:clickable="true">
+
+            <ImageButton
+                android:id="@+id/notice_btn_cancel"
+                android:layout_width="12dp"
+                android:layout_height="12.33dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="16.33dp"
+                android:src="@drawable/upload_btn_back"
+                android:scaleType="fitXY"
+                android:background="@null"
+                />
+
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="@string/notice_title"
+            android:textSize="17dp"
+            android:layout_toRightOf="@id/notice_cancel_container"
+            android:textStyle="bold"
+            />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0.33dp"
+            android:background="#000000"
+            android:layout_alignParentBottom="true"
+            >
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <ListView
+        android:id="@+id/notice_list_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/notice_menu_bar"
+        >
+
+    </ListView>
+</RelativeLayout>

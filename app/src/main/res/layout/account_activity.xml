@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="#ececec"
+    >
+
+    <RelativeLayout
+        android:id="@+id/account_menu_bar"
+        android:layout_width="match_parent"
+        android:layout_height="51dp"
+        android:background="#ffffff">
+
+        <RelativeLayout
+            android:id="@+id/account_cancel_container"
+            android:layout_width="51dp"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:clickable="true">
+
+            <ImageButton
+                android:id="@+id/account_btn_cancel"
+                android:layout_width="6.67dp"
+                android:layout_height="12.33dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="16.33dp"
+                android:src="@drawable/upload_btn_back"
+                android:scaleType="fitXY"
+                android:background="@null"
+                />
+
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="@string/account_title"
+            android:textSize="17dp"
+            android:layout_toRightOf="@id/account_cancel_container"
+            android:textStyle="bold"
+            />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0.33dp"
+            android:background="#000000"
+            android:layout_alignParentBottom="true"
+            >
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/account_menu_bar"
+        android:background="#ffffff"
+        >
+
+        <RelativeLayout
+            android:id="@+id/account_my_account_container"
+            android:layout_width="match_parent"
+            android:layout_height="72.33dp"
+
+            >
+
+            <ImageView
+                android:id="@+id/account_img_my_account"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:src="@drawable/more_img_profile_human"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="16.33dp"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/account_container_my_account"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@id/account_img_my_account"
+                android:layout_marginLeft="16.33dp"
+                android:textSize="17dp"
+                />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="0.33dp"
+                android:layout_alignParentBottom="true"
+                android:background="#e5e5e5"
+                >
+
+            </RelativeLayout>
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/account_invite_friend_container"
+            android:layout_width="match_parent"
+            android:layout_height="72.33dp"
+            android:layout_below="@id/account_my_account_container"
+
+            >
+
+            <ImageView
+                android:id="@+id/account_invite_friend"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:src="@drawable/more_img_06_02"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="16.33dp"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/account_container_invite_friend"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@id/account_invite_friend"
+                android:layout_marginLeft="16.33dp"
+                android:textSize="17dp"
+                />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="0.33dp"
+                android:layout_alignParentBottom="true"
+                android:background="#e5e5e5"
+                >
+
+            </RelativeLayout>
+
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</RelativeLayout>

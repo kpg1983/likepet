@@ -1,0 +1,443 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:descendantFocusability="blocksDescendants"
+    >
+
+    <RelativeLayout
+        android:id="@+id/feed_contents_date_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/activity_horizontal_padding"
+        android:paddingRight="@dimen/activity_horizontal_padding"
+        android:layout_marginTop="10.67dp"
+        android:layout_marginBottom="5.33dp"
+        android:clickable="true"
+        >
+
+        <ImageView
+            android:id="@+id/feed_img_profile"
+            android:layout_width="55.33dp"
+            android:layout_height="55.33dp"
+            android:layout_marginRight="6.33dp"
+
+            />
+
+        <RelativeLayout
+            android:id="@+id/feed_txt_profile_name_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/feed_img_profile"
+            android:layout_centerVertical="true"
+            >
+
+            <TextView
+                android:id="@+id/feed_txt_profile_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14dp"
+                android:textStyle="bold"
+                android:textColor="#000000"
+                />
+
+            <TextView
+                android:id="@+id/feed_contents_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/feed_txt_profile_name"
+                android:textSize="10.33dp"
+                android:textColor="#a0a0a0"
+                />
+
+        </RelativeLayout>
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/feed_contents_main_image_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/feed_contents_date_container"
+        android:paddingLeft="@dimen/activity_horizontal_padding"
+        android:paddingRight="@dimen/activity_horizontal_padding"
+        >
+
+        <ImageView
+            android:id="@+id/feed_img_main_contents"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:adjustViewBounds="true"
+            android:layout_marginBottom="@dimen/comment_box_margin"
+            />
+
+        <ImageView
+            android:id="@+id/feed_img_play"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_centerInParent="true"
+            android:visibility="invisible"
+
+            />
+
+        <ImageView
+            android:id="@+id/feed_img_gif_icon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="20dp"
+            android:src="@drawable/img_gif"
+            android:background="@null"
+            android:visibility="invisible"
+            />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/feed_caption_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/feed_contents_main_image_container"
+        android:paddingLeft="@dimen/activity_horizontal_padding"
+        android:paddingRight="@dimen/activity_horizontal_padding"
+        >
+
+        <TextView
+            android:id="@+id/feed_txt_caption"
+            android:layout_width="wrap_content"
+            android:layout_height="28dp"
+            android:text="나도 태워주면 안돼?"
+            android:background="@drawable/img_speech_bubble"
+            android:textColor="#ffffff"
+            android:textSize="12dp"
+            android:includeFontPadding="false"
+            android:layout_marginBottom="5dp"
+            android:lineSpacingExtra="20dp"
+            />
+
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/feed_comment_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/feed_caption_container"
+        android:paddingLeft="@dimen/activity_horizontal_padding"
+        android:paddingRight="@dimen/activity_horizontal_padding"
+        android:layout_marginBottom="@dimen/comment_box_margin"
+        >
+
+        <RelativeLayout
+            android:id="@+id/feed_comment_box_1"
+            android:layout_width="104dp"
+            android:layout_height="104dp"
+            >
+
+            <ImageView
+                android:id="@+id/img_box_line_1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                />
+
+            <TextView
+                android:id="@+id/feed_text_comment_1"
+                android:layout_width="match_parent"
+                android:layout_height="74dp"
+                android:layout_marginTop="30dp"
+                android:textSize="12dp"
+                android:layout_marginLeft="7dp"
+                android:layout_marginRight="7dp"
+                android:textColor="#444444"
+                />
+
+            <ImageView
+                android:id="@+id/feed_image_comment_1"
+                android:layout_width="@dimen/comment_box_size"
+                android:layout_height="@dimen/comment_box_size"
+                android:layout_centerHorizontal="true"
+                android:scaleType="centerCrop"
+                android:visibility="invisible"
+
+                />
+
+
+            <ImageView
+                android:id="@+id/feed_comment_image_01_n"
+                android:layout_width="@dimen/comment_image_size"
+                android:layout_height="@dimen/comment_image_size"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:src="@drawable/mypage_comment_img_01_n"
+                android:visibility="invisible"
+                android:scaleType="fitXY"
+
+                />
+
+            <RelativeLayout
+                android:id="@+id/feed_comment_no_comment_container_1"
+                android:layout_width="104dp"
+                android:layout_height="104dp"
+                android:visibility="invisible">
+
+                <ImageView
+                    android:id="@+id/feed_img_no_comment_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="fitXY"
+                    android:background="@null"
+
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:text="@string/mypage_no_best_comment"
+                    android:textSize="10dp" />
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/feed_comment_box_2"
+            android:layout_width="@dimen/comment_box_size"
+            android:layout_height="@dimen/comment_box_size"
+            android:layout_marginLeft="@dimen/comment_box_margin"
+            android:layout_marginRight="@dimen/comment_box_margin"
+            android:layout_toRightOf="@id/feed_comment_box_1"
+            >
+
+
+            <ImageView
+                android:id="@+id/img_box_line_2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                />
+
+            <TextView
+                android:id="@+id/feed_text_comment_2"
+                android:layout_width="match_parent"
+                android:layout_height="74dp"
+                android:layout_marginTop="30dp"
+                android:textSize="12dp"
+                android:layout_marginLeft="7dp"
+                android:layout_marginRight="7dp"
+                android:textColor="#444444"
+                />
+
+            <ImageView
+                android:id="@+id/feed_image_comment_2"
+                android:layout_width="@dimen/comment_box_size"
+                android:layout_height="@dimen/comment_box_size"
+                android:layout_centerInParent="true"
+                android:scaleType="centerCrop"
+                android:visibility="invisible"
+
+                />
+
+            <ImageView
+                android:id="@+id/feed_comment_image_02_n"
+                android:layout_width="@dimen/comment_image_size"
+                android:layout_height="@dimen/comment_image_size"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:src="@drawable/mypage_comment_img_02_n"
+                android:visibility="invisible"
+                android:scaleType="fitXY"
+
+                />
+
+            <RelativeLayout
+                android:id="@+id/feed_comment_no_comment_container_2"
+                android:layout_width="104dp"
+                android:layout_height="104dp"
+                android:visibility="invisible">
+
+                <ImageView
+                    android:id="@+id/feed_img_no_comment_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="fitXY"
+
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:text="@string/mypage_no_best_comment"
+                    android:textSize="10dp" />
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/feed_comment_box_3"
+            android:layout_width="@dimen/comment_box_size"
+            android:layout_height="@dimen/comment_box_size"
+            android:layout_toRightOf="@id/feed_comment_box_2"
+            >
+
+            <ImageView
+                android:id="@+id/img_box_line_3"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                />
+
+            <TextView
+                android:id="@+id/feed_text_comment_3"
+                android:layout_width="match_parent"
+                android:layout_height="74dp"
+                android:layout_marginTop="30dp"
+                android:textSize="12dp"
+                android:layout_marginLeft="7dp"
+                android:layout_marginRight="7dp"
+                android:textColor="#444444"
+                />
+
+            <ImageView
+                android:id="@+id/feed_image_comment_3"
+                android:layout_width="@dimen/comment_box_size"
+                android:layout_height="@dimen/comment_box_size"
+                android:layout_centerHorizontal="true"
+                android:scaleType="centerCrop"
+                android:visibility="invisible"
+                />
+
+
+            <ImageView
+                android:id="@+id/feed_comment_image_03_n"
+                android:layout_width="@dimen/comment_image_size"
+                android:layout_height="@dimen/comment_image_size"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:src="@drawable/mypage_comment_img_03_n"
+                android:visibility="invisible"
+                android:scaleType="fitXY"
+
+                />
+
+
+            <RelativeLayout
+                android:id="@+id/feed_comment_no_comment_container_3"
+                android:layout_width="104dp"
+                android:layout_height="104dp"
+                android:visibility="invisible">
+
+                <ImageView
+                    android:id="@+id/feed_img_no_comment_3"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="fitXY"
+                    android:background="@null"
+
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:text="@string/mypage_no_best_comment"
+                    android:textSize="10dp" />
+
+            </RelativeLayout>
+
+
+        </RelativeLayout>
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/feed_contents_info_container"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/like_and_share_button_container_height"
+        android:layout_below="@id/feed_comment_container"
+        android:background="#ffffff"
+        >
+
+        <RelativeLayout
+            android:id="@+id/feed_like_button_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:paddingLeft="@dimen/like_and_share_button_padding"
+            android:layout_marginRight="@dimen/like_and_share_button_margin"
+            >
+
+            <ImageButton
+                android:id="@+id/feed_button_like"
+                android:layout_width="@dimen/like_and_share_button_size"
+                android:layout_height="@dimen/like_and_share_button_size"
+                android:background="@null"
+                android:layout_marginRight="@dimen/like_and_share_button_margin"
+                android:scaleType="fitXY"
+                />
+
+            <TextView
+                android:id="@+id/feed_number_of_like"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/feed_button_like"
+                android:layout_centerVertical="true"
+                android:text="like_and_share_text_size"
+                android:textSize="@dimen/mypage_info_text_size_1"
+                />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/feed_comment_button_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/feed_like_button_container"
+            android:layout_centerVertical="true"
+            >
+
+            <ImageView
+                android:id="@+id/feed_button_comment"
+                android:layout_width="@dimen/like_and_share_button_size"
+                android:layout_height="@dimen/like_and_share_button_size"
+                android:background="@null"
+                android:src="@drawable/mypage_btn_bottom_comment"
+                android:layout_marginRight="@dimen/like_and_share_button_margin"
+                android:scaleType="fitXY"
+                />
+
+            <TextView
+                android:id="@+id/feed_number_of_comment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/feed_button_comment"
+                android:layout_centerVertical="true"
+                android:text="like_and_share_text_size"
+                android:textSize="@dimen/mypage_info_text_size_1"
+                />
+
+        </RelativeLayout>
+
+
+        <ImageButton
+            android:id="@+id/feed_button_share"
+            android:layout_width="@dimen/like_and_share_button_size"
+            android:layout_height="@dimen/like_and_share_button_size"
+            android:layout_marginRight="@dimen/like_and_share_button_padding"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/mypage_btn_bottom_public"
+            android:background="@null"
+            android:layout_centerVertical="true"
+            android:scaleType="fitXY"
+            />
+
+    </RelativeLayout>
+
+</RelativeLayout>

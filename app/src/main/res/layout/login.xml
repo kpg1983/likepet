@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="#ffffff"
+    android:id="@+id/login_layout"
+    >
+
+    <RelativeLayout
+        android:id="@+id/login_menu_bar"
+        android:layout_width="match_parent"
+        android:layout_height="51dp">
+
+        <RelativeLayout
+            android:id="@+id/login_cancel_container"
+            android:layout_width="51dp"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:clickable="true">
+
+            <ImageButton
+                android:id="@+id/login_btn_cancel"
+                android:layout_width="6.33dp"
+                android:layout_height="12.33dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="16.33dp"
+                android:src="@drawable/upload_btn_back"
+                android:scaleType="fitXY"
+                android:background="@null"
+
+                />
+
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="@string/login_title"
+            android:textSize="14dp"
+            android:layout_toRightOf="@id/login_cancel_container"
+            android:textStyle="bold"
+            />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0.33dp"
+            android:background="#cacaca"
+            android:layout_alignParentBottom="true"
+            >
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/login_insert_email_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="27.66dp"
+        android:layout_marginLeft="19.66dp"
+        android:layout_marginRight="19.66dp"
+        android:layout_below="@id/login_menu_bar"
+        >
+
+        <TextView
+            android:id="@+id/login_txt_insert_email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/login_txt_email"
+            android:textSize="13dp"
+            android:textColor="#494949"
+            android:layout_marginBottom="17.66dp"
+
+            />
+
+        <RelativeLayout
+            android:id="@+id/login_insert_email_editText_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/login_txt_insert_email"
+            >
+
+            <EditText
+                android:id="@+id/login_edit_insert_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:textSize="16dp"
+                android:textColorHint="#b8b8b8"
+                android:layout_centerVertical="true"
+                android:inputType="textEmailAddress"
+                android:singleLine="true"
+                android:maxLength="30"
+                />
+
+            <ImageButton
+                android:id="@+id/login_insert_email_btn_delete"
+                android:layout_width="29.33dp"
+                android:layout_height="29.66dp"
+                android:src="@drawable/member_btn_06_cancel"
+                android:scaleType="fitXY"
+                android:background="@null"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:visibility="invisible"
+                />
+
+
+        </RelativeLayout>
+
+
+
+        <RelativeLayout
+            android:id="@+id/login_divider_line"
+            android:layout_width="match_parent"
+            android:layout_height="0.33dp"
+            android:background="#f7c243"
+            android:layout_marginTop="4.33dp"
+            android:layout_below="@id/login_insert_email_editText_container"
+            />
+
+        <TextView
+            android:id="@+id/login_txt_lost_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/login_divider_line"
+            android:text="@string/login_txt_wrong_email_address"
+            android:textColor="#f7c243"
+            android:textSize="13dp"
+            android:layout_marginTop="4dp"
+            android:visibility="invisible"
+            />
+
+
+        <TextView
+            android:id="@+id/login_txt_insert_password"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/login_txt_password"
+            android:textSize="13dp"
+            android:textColor="#494949"
+            android:layout_below="@id/login_divider_line"
+            android:layout_marginTop="38.33dp"
+            android:layout_marginBottom="17.66dp"
+
+            />
+
+        <RelativeLayout
+            android:id="@+id/login_insert_password_editText_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/login_txt_insert_password"
+            >
+
+            <EditText
+                android:id="@+id/login_edit_insert_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:hint="@string/login_edit_password"
+                android:textSize="16dp"
+                android:textColorHint="#b8b8b8"
+                android:layout_centerVertical="true"
+                android:singleLine="true"
+                android:inputType="textVisiblePassword"
+                android:maxLength="20"
+                />
+
+            <ImageButton
+                android:id="@+id/login_insert_password_btn_delete"
+                android:layout_width="29.33dp"
+                android:layout_height="29.66dp"
+                android:src="@drawable/member_btn_06_cancel"
+                android:scaleType="fitXY"
+                android:background="@null"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:visibility="invisible"
+                />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/login_divider_line_2"
+            android:layout_width="match_parent"
+            android:layout_height="0.33dp"
+            android:background="#f7c243"
+            android:layout_marginTop="4.33dp"
+            android:layout_below="@id/login_insert_password_editText_container"
+            />
+
+        <TextView
+            android:id="@+id/login_txt_lost_password"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/login_divider_line_2"
+            android:text="@string/login_txt_wrong_password"
+            android:textColor="#f7c243"
+            android:textSize="13dp"
+            android:layout_marginTop="4dp"
+            android:visibility="invisible"
+            />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="69dp"
+        android:layout_marginRight="19.66dp"
+        android:layout_marginLeft="19.66dp"
+        android:visibility="invisible"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="혹시 비밀번호를 까먹었냥? 에휴~ 여기서 찾아봐라옹"
+            android:textSize="11dp"
+            android:textColor="#7c7c7c"
+            android:layout_centerVertical="true"
+            />
+
+        <Button
+            android:id="@+id/join_member_begin_btn_lost_password"
+            android:layout_width="85.66dp"
+            android:layout_height="22dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:text="비밀번호 찾기"
+            android:background="@drawable/member_btn_05"
+            android:textSize="12dp"
+            android:textColor="#374246"
+            android:textStyle="bold"
+            />
+
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/login_btn_next"
+        android:layout_width="match_parent"
+        android:layout_height="50.66dp"
+        android:layout_centerHorizontal="true"
+        android:text="@string/login_btn_confirm"
+        android:textSize="14.33dp"
+        android:textStyle="bold"
+        android:background="#f7c243"
+        android:layout_alignParentBottom="true"
+        />
+
+    <RelativeLayout
+        android:id="@+id/login_black_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#90000000"
+        android:visibility="invisible"
+        >
+
+
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff">
+
+
+    <RelativeLayout
+        android:id="@+id/comment_divider"
+        android:layout_width="match_parent"
+        android:layout_height="0.33dp"
+        android:background="#cacaca"
+        android:layout_marginLeft="19.66dp"
+        android:layout_marginRight="19.66dp"
+        >
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/comment_list_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/comment_divider"
+        >
+
+        <RelativeLayout
+            android:id="@+id/comment_userProfile_container"
+            android:layout_width="wrap_content"
+            android:layout_height="57dp"
+            android:layout_marginLeft="19.66dp"
+            >
+
+            <ImageView
+                android:id="@+id/comment_img_userProfile"
+                android:layout_width="46dp"
+                android:layout_height="46dp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginRight="7.67dp"
+                />
+
+
+            <ImageView
+                android:id="@+id/comment_img_best_gold"
+                android:layout_width="21.66dp"
+                android:layout_height="21.66dp"
+                android:layout_alignLeft="@id/comment_img_userProfile"
+                android:layout_marginTop="5dp"
+                android:visibility="invisible"
+                />
+
+            <ImageView
+                android:id="@+id/comment_img_best_silver"
+                android:layout_width="21.66dp"
+                android:layout_height="21.66dp"
+                android:layout_alignLeft="@id/comment_img_userProfile"
+                android:layout_marginTop="5dp"
+                android:visibility="invisible"
+                />
+
+            <ImageView
+                android:id="@+id/comment_img_best_bronze"
+                android:layout_width="21.66dp"
+                android:layout_height="21.66dp"
+                android:layout_alignLeft="@id/comment_img_userProfile"
+                android:layout_marginTop="5dp"
+                android:visibility="invisible"
+                />
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/comment_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/comment_userProfile_container"
+            android:layout_marginRight="19.66dp"
+            >
+
+            <TextView
+                android:id="@+id/comment_userName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:layout_marginTop="12dp"
+                android:text="유지현"
+                android:textColor="#000000"
+                android:textSize="14dp"
+                android:textStyle="bold" />
+
+            <RelativeLayout
+                android:id="@+id/comment_img_txt_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/comment_userName"
+                android:layout_marginBottom="11.67dp">
+
+                <com.android.volley.toolbox.NetworkImageView
+                    android:id="@+id/comment_img_comment"
+                    android:layout_width="103.32dp"
+                    android:layout_height="103.32dp"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/comment_txt_comment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/comment_img_comment"
+                    android:layout_marginTop="3dp"
+                    android:textColor="#494949"
+                    android:textSize="12.33dp" />
+
+
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:id="@+id/comment_info_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/comment_img_txt_container"
+                android:layout_marginBottom="5dp"
+
+                >
+
+                <ImageView
+                    android:id="@+id/comment_point_1"
+                    android:layout_width="2.33dp"
+                    android:layout_height="2.33dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="2dp"
+                    android:src="@drawable/view_img_04" />
+
+                <TextView
+                    android:id="@+id/comment_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="20dp"
+                    android:layout_toRightOf="@id/comment_point_1"
+                    android:text="5분전"
+                    android:textColor="#a0a0a0"
+                    android:textSize="10.33dp" />
+
+                <RelativeLayout
+                    android:id="@+id/comment_like_container"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/comment_date"
+                    android:clickable="true">
+
+                    <ImageView
+                        android:id="@+id/comment_img_like"
+                        android:layout_width="9.67dp"
+                        android:layout_height="8dp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="2dp" />
+
+                    <TextView
+                        android:id="@+id/comment_numberOfLike"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="2dp"
+                        android:layout_toRightOf="@id/comment_img_like"
+                        android:text="10"
+                        android:textColor="#000000"
+                        android:textSize="10.33dp" />
+
+
+                    <ImageView
+                        android:id="@+id/comment_point_2"
+                        android:layout_width="2.33dp"
+                        android:layout_height="2.33dp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="2dp"
+                        android:layout_toRightOf="@id/comment_numberOfLike"
+                        android:src="@drawable/view_img_04" />
+
+                    <TextView
+                        android:id="@+id/comment_txt_like"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@id/comment_point_2"
+                        android:text="@string/view_comment_like"
+                        android:textColor="#a0a0a0"
+                        android:textSize="10.33dp" />
+
+                </RelativeLayout>
+
+
+            </RelativeLayout>
+
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+
+
+</RelativeLayout>

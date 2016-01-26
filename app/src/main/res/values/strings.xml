@@ -1,0 +1,269 @@
+<resources>
+
+    <string name="pull_to_refresh_pull_label">Pull to refresh...</string>
+    <string name="pull_to_refresh_release_label">Release to refresh...</string>
+    <string name="pull_to_refresh_refreshing_label">Loading...</string>
+    <string name="pull_to_refresh_tap_label">Tap to refresh...</string>
+
+    <string name="app_name">LikePet</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="facebook_app_id" translatable="false">415621798623683</string>
+
+    <string name="mypage_following">Following</string>
+    <string name="mypage_follower">Follower</string>
+    <string name="mypage_moment">Moments</string>
+
+    <string name="mypage_name_likepet">LikePet</string>
+    <string name="mypage_no_member">You may\naccess after\nsign up.</string>
+    <string name="mypage_no_best_comment">Try for a best comment!</string>
+    <string name="mypage_toast_registry_contents">Upload completed</string>
+    <string name="mypage_btn_sign_up">sign up</string>
+
+    <string name="now">Just now</string>
+    <string name="minute_ago">mins ago</string>
+    <string name="hour_ago">hours ago</string>
+    <string name="day_ago">days ago</string>
+    <string name="month_ago">months ago</string>
+    <string name="year_ago">years ago</string>
+
+    <string name="view_more_delete">Delete</string>
+    <string name="view_more_modify">Edit</string>
+    <string name="view_more_bookmark">Favorites</string>
+    <string name="view_more_share">Share</string>
+    <string name="view_more_report">Report</string>
+    <string name="view_popup_delete_content_yse">Please delete</string>
+    <string name="view_popup_delete_content_no">My mistake</string>
+    <string name="view_toast_delete_finish">deleted</string>
+    <string name="view_toast_registry_comment">completed</string>
+    <string name="view_edit_comment">Comment on the post</string>
+    <string name="view_edit_send">Send</string>
+
+    <string name="view_comment_no_best">No comment yet.\nNow is your chance\nto write a best \ncomment.</string>
+    <string name="view_comment_like">Like</string>
+
+    <string name="view_delete_comment_question">Really? You really going to delete?</string>
+    <string name="view_delete_comment_yes">Please delete</string>
+    <string name="view_delete_comment_no">My mistake</string>
+
+    <string name="view_report_comment_question">Are you really going to report?</string>
+    <string name="view_report_comment_yes">Yes, report</string>
+    <string name="view_report_comment_no">My mistake</string>
+
+    <string name="view_toast_add_bookmark">Added to favorites</string>
+    <string name="view_toast_add_bookmark_already">Already added to favorites</string>
+    <string name="view_toast_report_content">Reported</string>
+    <string name="view_toast_report_content_already">Already reported</string>
+
+    <string name="upload_title_select_picture">Gallery</string>
+    <string name="upload_title_take_picture">Take a photo</string>
+    <string name="upload_title_take_gif">Film a GIF</string>
+
+    <string name="upload_tab_bar_gallery">Gallery</string>
+    <string name="upload_tab_bar_picture">Photo</string>
+    <string name="upload_tab_bar_gif">GIF</string>
+
+    <string name="filter_title_select_filter">Apply filter</string>
+    <string name="filter_container_original">Normal</string>
+    <string name="filter_container_IFAmaro">Sentimental</string>
+    <string name="filter_container_IFBanana">FaintLight</string>
+    <string name="filter_container_IFEarlyBird">FirstLove</string>
+    <string name="filter_container_IFHefe">Stunning</string>
+    <string name="filter_container_IFHudson">IceCold</string>
+    <string name="filter_container_IFInkwell">OldMovie</string>
+    <string name="filter_container_IFLomo">Springy</string>
+    <string name="filter_container_IFLordKelvin">Cafe</string>
+
+    <string name="input_contents_btn_finish">Done</string>
+    <string name="input_contents_edit_no_comment">Write your story</string>
+    <string name="input_contents_toast_no_comment">Please write your story</string>
+    <string name="input_contents_toast_too_long">It is too long!</string>
+
+    <string name="notification_title">Notification</string>
+    <string name="notification_who">님이</string>
+    <string name="notification_like_moment">%1$s liked %2$s\'s story.</string>
+    <string name="notification_tell_moment">%1$s commented on %2$s\'s moment. </string>
+    <string name="notification_like_comment">%1$s liked %2$s\'s comment.</string>
+    <string name="notification_no_contents">There are no notices</string>
+
+    <string name="more_title">More</string>
+    <string name="more_container_profile">Profile</string>
+    <string name="more_container_setting">Setting</string>
+    <string name="more_container_notice">Notice</string>
+    <string name="more_container_account">Account</string>
+
+    <string name="profile_title">Profile</string>
+    <string name="profile_btn_modify">Edit</string>
+    <string name="profile_btn_save">Confirm</string>
+    <string name="profile_banner_modify_profile">Fill out your profile info</string>
+    <string name="profile_txt_gender">Gender</string>
+    <string name="profile_edit_gender">*What\'s your gender?</string>
+    <string name="profile_edit_gender_man">Male</string>
+    <string name="profile_edit_gender_woman">Female</string>
+    <string name="profile_edit_gender_uni">Neutral</string>
+    <string name="profile_txt_birthday">Date of birth</string>
+    <string name="profile_edit_birthday">What\'s your date of birth?</string>
+    <string name="profile_txt_status_message">Your now is ...</string>
+    <string name="profile_edit_status_date">Looking for a date </string>
+    <string name="profile_edit_status_single">I\'m single</string>
+    <string name="profile_edit_status_marry">I\'m married</string>
+    <string name="profile_edit_status_work">Let\'s go for a walk</string>
+    <string name="profile_edit_status_parent">Looking for new mommy and daddy</string>
+    <string name="profile_toast_finish">It has been changed</string>
+
+    <string name="setting_title">Setting</string>
+    <string name="setting_app_version">App version</string>
+    <string name="update_title">Update</string>
+    <string name="update_current_version">Current version</string>
+    <string name="update_newest_version">Newest version</string>
+    <string name="update_btn_update">App update</string>
+
+    <string name="notice_title">Notice</string>
+
+    <string name="account_title">Account</string>
+    <string name="account_container_my_account">My account</string>
+    <string name="account_container_invite_friend">Invite friends</string>
+    <string name="account_txt_registry_email">Registered email address</string>
+    <string name="account_txt_modify_password">Change password</string>
+    <string name="account_txt_linkage">Connected account</string>
+    <string name="account_btn_logout">Log out</string>
+
+    <string name="join_popup_recommend_title">You can access after sign up. Sign up now?</string>
+    <string name="join_popup_recommend_join">Sign up now</string>
+    <string name="join_popup_recommend_later">Later</string>
+
+    <string name="join_title">Sign up</string>
+    <string name="join_txt_begin">Start sign up\nnow.</string>
+    <string name="join_btn_twitter">Continue with twitter</string>
+    <string name="join_btn_facebook">Continue with facebook</string>
+    <string name="join_btn_email">Sign up with Email</string>
+    <string name="join_txt_existing_member">Login with Email</string>
+    <string name="join_btn_login">Log in</string>
+
+    <string name="join_choose_character_title">Sign up</string>
+    <string name="join_choose_character_txt">Choose your character</string>
+    <string name="join_choose_character_btn_next">Next</string>
+
+    <string name="join_insert_userName_title">Sign up</string>
+    <string name="join_insert_userName_txt_name">What\'s your name?</string>
+    <string name="join_insert_userName_edit_name">Write your name</string>
+    <string name="join_insert_userName_txt_term">Creating an account means you\'re okay with LikePet\'s Privacy Policy, Terms of Service.</string>
+    <string name="join_insert_userName_btn_next">Next</string>
+    <string name="join_insert_userName_txt_more_than_two_word">2 words at least</string>
+    <string name="join_insert_userName_txt_less_than_two_word">Maximum 15 letters</string>
+    <string name="join_incorrect_facebook_email">You should agree the email policy on settings.</string>
+    <string name="join_incorrect_twitter_email">You should agree the email policy on settings.</string>
+
+    <string name="join_insert_email_password_title">Sign up</string>
+    <string name="join_insert_email_password_txt_email">What\'s your email?</string>
+    <string name="join_insert_email_password_edit_email">Be careful not to forget your password.</string>
+    <string name="join_insert_email_password_txt_password">Enter password</string>
+    <string name="join_insert_email_password_edit_password">Combination of 6 to 20 English alphabets, numbers, and special  letters.</string>
+    <string name="join_insert_email_password_txt_incorrect_email">Check you email address.</string>
+    <string name="join_insert_email_password_txt_incorrect_password">Minimum 6 letters</string>
+    <string name="join_insert_email_password_txt_mix_password">The password must contain both number and special  letters.</string>
+    <string name="join_insert_email_password_toast_duplicate_email">This email address has been registered.</string>
+    <string name="join_insert_email_password_toast_finish">Sign Up Complete</string>
+    <string name="join_insert_email_password_txt_login_complete">Signing Success.</string>
+    <string name="join_insert_email_password_btn_finish">Next</string>
+    <string name="view_toast_delete_comment">deleted</string>
+
+    <string name="join_service_term_first_line">Creating an account means you\'re okay with</string>
+    <string name="join_service_term_second_line">LikePet\'s Privacy Policy and Terms of Service.</string>
+    <string name="join_service_term_service">Terms of Service</string>
+    <string name="join_service_personal_info">Privacy Policy</string>
+
+    <string name="bookmark_title">Favorites</string>
+    <string name="bookmark_txt_no_contents">Add to your favorite Come to see us whenever you feel down, whenever you need laugh.</string>
+    <string name="bookmark_delete_popup_title">Really? You really going to delete?</string>
+    <string name="bookmark_delete_popup_confirm">Please delete</string>
+    <string name="bookmark_delete_popup_cancel">My mistake</string>
+    <string name="bookmark_toast_delete">Deleted</string>
+
+    <string name="login_title">Log in</string>
+    <string name="login_txt_email">What\'s your email?</string>
+    <string name="login_txt_password">Enter password</string>
+    <string name="login_edit_password">Enter 6 to 20 latin characters, numbers, special characters.</string>
+    <string name="login_btn_confirm">Confirm</string>
+    <string name="login_txt_wrong_email_address">Not a valid email address. Check you email address.</string>
+    <string name="login_txt_wrong_password">Incorrect password. Please re-enter .</string>
+
+    <string name="service_term">http://www.likepet.me/termsandservices_en.html</string>
+    <string name="personal_info">http://www.likepet.me/privacy_en.html</string>
+
+    <string name="like_user_people">people</string>
+
+    <string name="modify_email_title">Change email address</string>
+    <string name="modify_email_txt_current">Current password</string>
+    <string name="modify_email_txt_new">New email address</string>
+    <string name="modify_email_edit_new">Enter new email address</string>
+    <string name="modify_email_toast_complited">It has been changed</string>
+    <string name="modify_email_toast_wrong">Wrong email address</string>
+
+    <string name="modify_password_title">Change password</string>
+    <string name="modify_password_txt_current">Current password</string>
+    <string name="modify_password_edit_current">Enter current password</string>
+    <string name="modify_password_txt_new">New password </string>
+    <string name="modify_password_edit_new">Enter new password</string>
+    <string name="modify_password_toast_complited">It has been changed</string>
+    <string name="modify_password_toast_wrong">Wrong password!</string>
+    <string name="modify_password_toast_current">Please enter password</string>
+    <string name="modify_password_toast_new">Please enter new password</string>
+
+
+    <string name="common_toast_finish_app">Press back button again to exit</string>
+
+
+    <string name="title_activity_activity_main">GPUImage Sample</string>
+
+    <string name="twitter_consumer_key">ut8cpopG1YmwZgW8Ozf95eHh8</string>
+    <string name="twitter_consumer_secret">qcPyCYIlmsddr7YQkSVq8utT4pFybpqryhdrD54FUSLTo6M4vA</string>
+
+    <string name="join_service_term_frist_line">Creating an account means you\'re okay with</string>
+    <string name="view_popup_delete_content_title">Really? You really going to delete?</string>
+    <string name="title_text">Google Sign-In\nQuickstart</string>
+
+    <!-- Sign-in status messages -->
+    <string name="signed_in_fmt">Signed in as: %s</string>
+    <string name="signed_in">Signed in</string>
+    <string name="signing_in">Signing in…</string>
+    <string name="signed_out">Signed out</string>
+    <string name="signed_in_err">"Error: please check logs."</string>
+    <string name="error_null_person">
+        Error: Plus.PeopleApi.getCurrentPerson returned null. Ensure that the Google+ API is
+        enabled for your project, you have a properly configured google-services.json file
+        and that your device has an internet connection.
+    </string>
+    <string name="loading">Loading…</string>
+    <string name="auth_code_fmt">Auth Code: %s</string>
+    <string name="id_token_fmt">ID Token: %s</string>
+
+    <!-- Google Play Services error for Toast -->
+    <string name="play_services_error_fmt">Google Play Services Error: %i</string>
+
+    <!-- Button labels -->
+    <string name="sign_out">Sign Out</string>
+    <string name="disconnect">Disconnect</string>
+
+    <!-- Content Description for images -->
+    <string name="desc_google_icon">Google Logo</string>
+
+    <!-- Rationale for asking for Contacts -->
+    <string name="contacts_permission_rationale">Contacts access is needed in order to retrieve your email address.</string>
+
+    <!-- Activity Names and Descriptions -->
+    <string name="name_sign_in_activity">SignInActivity</string>
+    <string name="desc_sign_in_activity">Signing in, signing out, and revoking access.</string>
+    <string name="name_id_token_activity">IdTokenActivity</string>
+    <string name="desc_id_token_activity">Retrieving an ID Token for the user.</string>
+    <string name="desc_auth_code_activity">Demonstrate retrieving an auth code for authorizing your server.</string>
+    <string name="name_auth_code_activity">ServerAuthCodeActivity</string>
+
+    <!-- TODO(user): replace with your real server client ID -->
+    <!-- Server Client ID.  This should be a valid Web OAuth 2.0 Client ID obtained
+         from https://console.developers.google.com/ -->
+    <string name="server_client_id">766928524075-amrmdkq0unblpcv78ddb4uat09vnpob8.apps.googleusercontent.com</string>
+
+</resources>

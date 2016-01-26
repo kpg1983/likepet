@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/bookmark_menu_bar"
+        android:layout_width="match_parent"
+        android:layout_height="51dp"
+        android:background="#f7c243">
+
+        <RelativeLayout
+            android:id="@+id/bookmark_cancel_container"
+            android:layout_width="51dp"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:clickable="true">
+
+            <ImageView
+                android:id="@+id/bookmark_btn_cancel"
+                android:layout_width="6.73dp"
+                android:layout_height="12.33dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="16.33dp"
+                android:src="@drawable/upload_btn_back"
+                android:scaleType="fitXY"
+                android:background="@null"
+
+                />
+
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="@string/bookmark_title"
+            android:textSize="15dp"
+            android:layout_toRightOf="@id/bookmark_cancel_container"
+            android:textStyle="bold"
+            />
+
+    </RelativeLayout>
+
+    <GridView
+        android:id="@+id/bookmark_grid_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:horizontalSpacing="0dp"
+        android:verticalSpacing="0dp"
+        android:numColumns="3"
+        android:gravity="center"
+        android:layout_below="@id/bookmark_menu_bar"
+        >
+
+    </GridView>
+
+    <RelativeLayout
+        android:id="@+id/bookmark_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#70000000"
+        android:visibility="invisible"
+        >
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/bookmark_no_item_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="126.65dp"
+        android:layout_centerHorizontal="true"
+        android:visibility="invisible"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        >
+
+        <ImageView
+            android:id="@+id/bookmark_img_no_item"
+            android:layout_width="180dp"
+            android:layout_height="180dp"
+            android:src="@drawable/img_android_00"
+            android:layout_centerHorizontal="true"
+
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/bookmark_txt_no_contents"
+            android:layout_below="@id/bookmark_img_no_item"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="15dp"
+
+            />
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff">
+
+    <RelativeLayout
+        android:id="@+id/update_menu_bar"
+        android:layout_width="match_parent"
+        android:layout_height="51dp">
+
+        <RelativeLayout
+            android:id="@+id/update_cancel_container"
+            android:layout_width="51dp"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:clickable="true">
+
+            <ImageButton
+                android:id="@+id/lupdate_btn_cancel"
+                android:layout_width="6.33dp"
+                android:layout_height="12.33dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="16.33dp"
+                android:background="@null"
+                android:scaleType="fitXY"
+                android:src="@drawable/upload_btn_back" />
+
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/update_cancel_container"
+            android:text="@string/update_title"
+            android:textSize="14dp"
+            android:textStyle="bold" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0.33dp"
+            android:layout_alignParentBottom="true"
+            android:background="#cacaca">
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/update_menu_bar"
+        >
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+
+            <RelativeLayout
+                android:id="@+id/update_version_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+               >
+
+                <ImageView
+                    android:id="@+id/update_img_contents"
+                    android:layout_width="match_parent"
+                    android:layout_height="383.96dp"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/setup_img_update"
+                    />
+
+                <RelativeLayout
+                    android:id="@+id/update_current_version_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="65.66dp"
+                    android:layout_below="@id/update_img_contents"
+                    android:layout_marginLeft="19.66dp"
+                    android:layout_marginRight="19.66dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:text="@string/update_current_version"
+                        android:textSize="15.67dp" />
+
+                    <TextView
+                        android:id="@+id/update_txt_current_version"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:text="10.1.3"
+                        android:textColor="#b8b8b8"
+                        android:textSize="18.99dp"
+
+                        />
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0.33dp"
+                        android:layout_alignParentBottom="true"
+                        android:background="#bebebe" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/update_current_latest_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="65.66dp"
+                    android:layout_below="@id/update_current_version_container"
+                    android:layout_marginLeft="19.66dp"
+                    android:layout_marginRight="19.66dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:text="@string/update_newest_version"
+                        android:textSize="15.67dp" />
+
+                    <TextView
+                        android:id="@+id/update_txt_latest_version"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:text="10.1.4"
+                        android:textColor="#f7c243"
+                        android:textSize="18.99dp"
+
+                        />
+
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+            <Button
+                android:id="@+id/update_btn_update"
+                android:layout_width="match_parent"
+                android:layout_height="47.33dp"
+                android:layout_alignParentBottom="true"
+                android:background="#374246"
+                android:text="@string/update_btn_update"
+                android:textColor="#ffffff"
+                android:textSize="15.67dp"
+                android:textStyle="bold"
+                android:layout_below="@id/update_version_container"
+                android:layout_marginTop="5dp"
+
+                />
+
+        </RelativeLayout>
+
+
+
+    </ScrollView>
+
+</RelativeLayout>

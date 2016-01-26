@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="#ffffff"
+    >
+
+    <RelativeLayout
+        android:id="@+id/join_member_begin_menu_bar"
+        android:layout_width="match_parent"
+        android:layout_height="51dp"
+        android:background="#f7c243">
+
+        <RelativeLayout
+            android:id="@+id/join_member_begin_cancel_container"
+            android:layout_width="51dp"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:clickable="true">
+
+            <ImageView
+                android:id="@+id/join_member_begin_btn_cancel"
+                android:layout_width="6.33dp"
+                android:layout_height="12.33dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="16.33dp"
+                android:src="@drawable/upload_btn_back"
+                android:scaleType="fitXY"
+
+                />
+
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="@string/join_title"
+            android:textSize="14dp"
+            android:layout_toRightOf="@id/join_member_begin_cancel_container"
+            android:textStyle="bold"
+            />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/join_member_begin_img_contents_container"
+        android:layout_width="match_parent"
+        android:layout_height="185.65dp"
+        android:layout_below="@id/join_member_begin_menu_bar"
+        >
+
+        <ImageView
+            android:id="@+id/join_member_begin_img_contents"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/member_img_01"
+            android:scaleType="fitXY"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:text="@string/join_txt_begin"
+            android:textSize="19dp"
+            />
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/join_member_begin_social_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/join_member_begin_img_contents_container"
+        android:layout_marginTop="16.33dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="20.49dp"
+        android:layout_marginRight="20.49dp"
+
+        >
+
+        <RelativeLayout
+            android:id="@+id/join_member_begin_twitter_container"
+            android:layout_width="319.63dp"
+            android:layout_height="50.66dp"
+            android:layout_marginBottom="11.33dp"
+            android:layout_centerHorizontal="true"
+            android:clickable="true"
+            >
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/member_btn_01"
+                android:scaleType="fitXY"
+                android:background="@null"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="105dp"
+                android:text="@string/join_btn_twitter"
+                android:textColor="#ffffff"
+                android:textStyle="bold"
+                android:textSize="16dp"
+
+                />
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/join_member_begin_facebook_container"
+            android:layout_width="319.63dp"
+            android:layout_height="50.66dp"
+            android:layout_marginBottom="11.33dp"
+            android:layout_below="@id/join_member_begin_twitter_container"
+            android:layout_centerHorizontal="true"
+            android:clickable="true"
+            >
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/member_btn_02"
+                android:scaleType="fitXY"
+                android:background="@null"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="105dp"
+                android:text="@string/join_btn_facebook"
+                android:textColor="#ffffff"
+                android:textStyle="bold"
+                android:textSize="16dp"
+
+                />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/join_member_begin_google_container"
+            android:layout_width="319.63dp"
+            android:layout_height="50.66dp"
+            android:layout_marginBottom="11.33dp"
+            android:layout_below="@id/join_member_begin_facebook_container"
+            android:layout_centerHorizontal="true"
+            android:clickable="true"
+            android:visibility="gone"
+            >
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/member_btn_03"
+                android:scaleType="fitXY"
+                android:background="@null"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="105dp"
+                android:text="구글플러스로 시작하냥"
+                android:textColor="#ffffff"
+                android:textStyle="bold"
+                android:textSize="16dp"
+
+                />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/join_member_begin_email_container"
+            android:layout_width="319.63dp"
+            android:layout_height="50.66dp"
+            android:layout_marginBottom="23dp"
+            android:layout_below="@id/join_member_begin_google_container"
+            android:layout_centerHorizontal="true"
+            android:clickable="true"
+            >
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/member_btn_04"
+                android:scaleType="fitXY"
+
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="105dp"
+                android:text="@string/join_btn_email"
+                android:textColor="#000000"
+                android:textStyle="bold"
+                android:textSize="16dp"
+
+
+                />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/join_member_begin_email_container"
+            android:layout_centerHorizontal="true"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:text="@string/join_txt_existing_member"
+                android:textSize="11dp"
+                android:textColor="#7c7c7c"
+                android:layout_centerVertical="true"
+                />
+
+            <Button
+                android:id="@+id/join_member_begin_btn_login"
+                android:layout_width="67.66dp"
+                android:layout_height="22dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:text="@string/join_btn_login"
+                android:background="@drawable/member_btn_05"
+                android:textSize="12dp"
+                android:textColor="#374246"
+                android:textStyle="bold"
+                />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</RelativeLayout>

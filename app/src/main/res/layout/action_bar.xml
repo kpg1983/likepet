@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="51dp"
+    android:background="#f7c243"
+    >
+
+    <ImageView
+        android:id="@+id/action_bar_title"
+        android:layout_width="100dp"
+        android:layout_height="30dp"
+        android:layout_centerVertical="true"
+        android:paddingLeft="19.67dp"
+        android:background="@drawable/mypage_img_logo"
+
+        />
+
+    <RelativeLayout
+        android:id="@+id/btn_more_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="20dp"
+        >
+
+        <ImageButton
+            android:id="@+id/btn_more"
+            android:layout_width="24.33dp"
+            android:layout_height="24dp"
+            android:layout_centerInParent="true"
+            android:src="@drawable/mypage_btn_more"
+            android:background="@null"
+
+            />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/btn_notice_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@id/btn_more_container"
+        android:layout_centerVertical="true"
+        >
+
+        <ImageButton
+            android:id="@+id/btn_notice"
+            android:layout_width="24.33dp"
+            android:layout_height="24dp"
+            android:layout_centerInParent="true"
+            android:src="@drawable/mypage_btn_notice_01"
+            android:background="@null"
+
+            />
+
+    </RelativeLayout>
+
+</RelativeLayout>

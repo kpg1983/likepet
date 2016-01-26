@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <RelativeLayout
+        android:id="@+id/camera_preview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
+
+
+    <RelativeLayout
+        android:id="@+id/upload_photo_transparent_box"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="51dp"
+        android:background="#99000000"
+        android:visibility="invisible">
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/upload_photo_camera_button_container"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="40dp"
+        android:background="#374246">
+
+
+        <ImageButton
+            android:id="@+id/upload_photo_video_button"
+            android:layout_width="99dp"
+            android:layout_height="99dp"
+            android:layout_centerInParent="true"
+            android:background="@drawable/selector_btn_video_click"
+            android:onClick="onClick"
+            android:visibility="invisible"
+
+            />
+
+        <ImageButton
+            android:id="@+id/upload_photo_camera_button"
+            android:layout_width="99dp"
+            android:layout_height="99dp"
+            android:layout_centerInParent="true"
+            android:background="@drawable/selector_btn_camera_click"
+            android:onClick="onClick"
+
+            />
+
+        <ImageButton
+            android:id="@+id/upload_photo_btn_size_1_1"
+            android:layout_width="33dp"
+            android:layout_height="33dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="32.5dp"
+            android:background="@null"
+            android:src="@drawable/upload_btn_size_1_1" />
+
+        <ImageButton
+            android:id="@+id/upload_photo_btn_size_4_3"
+            android:layout_width="44.33dp"
+            android:layout_height="33dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="26.835dp"
+            android:background="@null"
+            android:src="@drawable/upload_btn_size_4_3"
+            android:visibility="invisible" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/camera_photo_util_button_container"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_above="@id/upload_photo_camera_button_container"
+        android:background="#99000000">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            >
+
+            <RelativeLayout
+                android:id="@+id/upload_photo_flash_container"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                >
+
+                <ImageButton
+                    android:id="@+id/upload_photo_camera_flash"
+                    android:layout_width="15.67dp"
+                    android:layout_height="18dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="35.67dp"
+                    android:background="@null"
+                    android:src="@drawable/upload_btn_flash" />
+
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:id="@+id/upload_photo_change_camera_container"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                >
+
+                <ImageButton
+                    android:id="@+id/upload_photo_change_camera"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_centerInParent="true"
+                    android:background="@null"
+                    android:src="@drawable/upload_btn_switch"
+
+                    />
+
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:id="@+id/upload_photo_timer_container"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                >
+
+                <ImageButton
+                    android:id="@+id/upload_photo_camera_timer"
+                    android:layout_width="19.33dp"
+                    android:layout_height="21.33dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="35.67dp"
+                    android:background="@null"
+                    android:src="@drawable/upload_btn_time_00"
+
+                    />
+
+            </RelativeLayout>
+
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/upload_photo_txt_timer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="40dp"
+        android:text="10"
+        android:layout_above="@+id/camera_photo_util_button_container"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="10dp"
+        android:textStyle="bold"
+        android:textColor="#ffffff"
+        android:visibility="invisible"
+        />
+
+    <ProgressBar
+        android:id="@+id/upload_photo_progress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="15dp"
+        android:layout_above="@+id/camera_photo_util_button_container"
+        android:max="60"
+        android:visibility="invisible"
+        />
+
+</RelativeLayout>

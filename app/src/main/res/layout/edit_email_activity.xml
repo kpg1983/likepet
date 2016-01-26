@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff"
+    >
+
+    <RelativeLayout
+        android:id="@+id/edit_email_menu_bar"
+        android:layout_width="match_parent"
+        android:layout_height="51dp"
+        android:background="#ffffff">
+
+        <RelativeLayout
+            android:id="@+id/edit_email_cancel_container"
+            android:layout_width="51dp"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:clickable="true">
+
+            <ImageButton
+                android:id="@+id/edit_email_btn_cancel"
+                android:layout_width="6.33dp"
+                android:layout_height="12.33dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="16.33dp"
+                android:background="@null"
+                android:scaleType="fitXY"
+                android:src="@drawable/upload_btn_back" />
+
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/edit_email_cancel_container"
+            android:text="@string/modify_email_title"
+            android:textSize="17dp"
+            android:textStyle="bold" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0.33dp"
+            android:layout_alignParentBottom="true"
+            android:background="#000000">
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/edit_email_menu_bar"
+        android:layout_marginLeft="16.33dp"
+        android:layout_marginRight="20.66dp"
+
+        >
+
+        <RelativeLayout
+            android:id="@+id/edit_email_before_container"
+            android:layout_width="match_parent"
+            android:layout_height="90dp"
+
+            >
+
+            <TextView
+                android:id="@+id/edit_email_txt_before_email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="17.66dp"
+                android:layout_marginTop="25.66dp"
+                android:text="@string/modify_email_txt_current"
+                android:textColor="#494949"
+                android:textSize="12.13dp"
+
+                />
+
+            <TextView
+                android:id="@+id/edit_email_txt_setting_before_email"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@id/edit_email_txt_before_email"
+                android:layout_marginBottom="11.33dp"
+                android:singleLine="true"
+                android:textColor="#494949"
+                android:textSize="14dp" />
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="0.33dp"
+                android:layout_alignParentBottom="true"
+                android:background="#f7c243">
+
+
+            </RelativeLayout>
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/edit_email_new_container"
+            android:layout_width="match_parent"
+            android:layout_height="90dp"
+            android:layout_below="@id/edit_email_before_container"
+
+            >
+
+            <TextView
+                android:id="@+id/edit_email_txt_new_email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="17.66dp"
+                android:layout_marginTop="25.66dp"
+                android:text="@string/modify_email_txt_new"
+                android:textColor="#494949"
+                android:textSize="12.13dp"
+
+                />
+
+            <EditText
+                android:id="@+id/edit_email_edit_setting_new_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@id/edit_email_txt_new_email"
+                android:layout_marginBottom="11.33dp"
+                android:singleLine="true"
+                android:background="@null"
+                android:hint="@string/modify_email_edit_new"
+                android:textColor="#494949"
+                android:textSize="14dp"
+                android:inputType="textEmailAddress"
+                />
+
+
+                />
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="0.33dp"
+                android:layout_alignParentBottom="true"
+                android:background="#f7c243">
+
+
+            </RelativeLayout>
+
+            <ImageView
+                android:id="@+id/edit_email_img_check"
+                android:layout_width="29.33dp"
+                android:layout_height="29.66dp"
+                android:src="@drawable/member_btn_07_check"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="11.33dp"
+                android:visibility="invisible"
+                />
+
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/edit_email_txt_error_message_email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#f7c243"
+            android:text="@string/join_insert_email_password_txt_incorrect_email"
+            android:layout_below="@id/edit_email_new_container"
+            android:layout_marginTop="5dp"
+            android:visibility="invisible"
+            />
+
+
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/edit_email_btn_confirm"
+        android:layout_width="match_parent"
+        android:layout_height="50.66dp"
+        android:layout_below="@id/account_setting_container"
+        android:layout_centerHorizontal="true"
+        android:text="@string/login_btn_confirm"
+        android:textSize="14.33dp"
+        android:background="#f7c243"
+        android:layout_alignParentBottom="true"
+        />
+
+</RelativeLayout>

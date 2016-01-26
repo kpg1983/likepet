@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="#ffffff"
+    >
+
+    <RelativeLayout
+        android:id="@+id/like_user_menu_bar"
+        android:layout_width="match_parent"
+        android:layout_height="51dp">
+
+        <RelativeLayout
+            android:id="@+id/like_user_cancel_container"
+            android:layout_width="51dp"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:clickable="true">
+
+            <ImageView
+                android:id="@+id/like_user_btn_cancel"
+                android:layout_width="6.33dp"
+                android:layout_height="12.33dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="16.33dp"
+                android:src="@drawable/upload_btn_back"
+                android:scaleType="fitXY"
+                android:background="@null"
+                />
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/like_user_txt_number_of_like"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:textSize="14dp"
+            android:text="@string/like_user_people"
+            android:layout_toRightOf="@id/like_user_cancel_container"
+            android:textStyle="bold"
+            />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0.33dp"
+            android:background="#cacaca"
+            android:layout_alignParentBottom="true"
+            >
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/like_user_number_of_like_container"
+        android:layout_width="match_parent"
+        android:layout_height="37dp"
+        android:background="#f0f0f0"
+        android:layout_below="@id/like_user_menu_bar"
+
+        >
+
+        <RelativeLayout
+            android:id="@+id/like_user_like_container_1"
+            android:layout_width="85.66dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="19.66dp"
+            >
+            
+            <ImageView
+                android:id="@+id/like_user_img_like_1"
+                android:layout_width="23.33dp"
+                android:layout_height="23dp"
+                android:src="@drawable/view_img_like_small_01"
+                android:layout_centerVertical="true"
+                />
+            <TextView
+                android:id="@+id/like_user_txt_like_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/like_user_img_like_1"
+                android:layout_centerVertical="true"
+                android:text="0"
+                android:textSize="11dp"
+                android:textColor="#494949"
+                android:layout_marginLeft="3dp"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/like_user_txt_like_1"
+                android:layout_centerVertical="true"
+                android:textSize="11dp"
+                android:textColor="#494949"
+                />
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/like_user_like_container_2"
+            android:layout_width="85.66dp"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@id/like_user_like_container_1"
+            >
+
+            <ImageView
+                android:id="@+id/like_user_img_like_2"
+                android:layout_width="23.33dp"
+                android:layout_height="23dp"
+                android:src="@drawable/view_img_like_small_02"
+                android:layout_centerVertical="true"
+                />
+            <TextView
+                android:id="@+id/like_user_txt_like_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/like_user_img_like_2"
+                android:layout_centerVertical="true"
+                android:text="0"
+                android:textSize="11dp"
+                android:textColor="#494949"
+                android:layout_marginLeft="3dp"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/like_user_txt_like_2"
+                android:layout_centerVertical="true"
+                android:textSize="11dp"
+                android:textColor="#494949"
+                />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/like_user_like_container_3"
+            android:layout_width="85.66dp"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@id/like_user_like_container_2"
+            >
+
+            <ImageView
+                android:id="@+id/like_user_img_like_3"
+                android:layout_width="23.33dp"
+                android:layout_height="23dp"
+                android:src="@drawable/view_img_like_small_03"
+                android:layout_centerVertical="true"
+                />
+            <TextView
+                android:id="@+id/like_user_txt_like_3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/like_user_img_like_3"
+                android:layout_centerVertical="true"
+                android:text="0"
+                android:textSize="11dp"
+                android:textColor="#494949"
+                android:layout_marginLeft="3dp"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/like_user_txt_like_3"
+                android:layout_centerVertical="true"
+                android:textSize="11dp"
+                android:textColor="#494949"
+                />
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/like_user_like_container_4"
+            android:layout_width="85.66dp"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@id/like_user_like_container_3"
+            >
+
+            <ImageView
+                android:id="@+id/like_user_img_like_4"
+                android:layout_width="23.33dp"
+                android:layout_height="23dp"
+                android:src="@drawable/view_img_like_small_04"
+                android:layout_centerVertical="true"
+                />
+            <TextView
+                android:id="@+id/like_user_txt_like_4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/like_user_img_like_4"
+                android:layout_centerVertical="true"
+                android:text="0"
+                android:textSize="11dp"
+                android:textColor="#494949"
+                android:layout_marginLeft="3dp"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/like_user_txt_like_4"
+                android:layout_centerVertical="true"
+                android:textSize="11dp"
+                android:textColor="#494949"
+                />
+
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <ListView
+        android:id="@+id/like_user_list_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/like_user_number_of_like_container"
+        android:scrollbars="none"
+        android:divider="#cbcbcb"
+        android:dividerHeight="0.33dp"
+        >
+
+
+    </ListView>
+
+</RelativeLayout>

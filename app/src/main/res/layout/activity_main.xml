@@ -1,0 +1,242 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <RelativeLayout
+        android:id="@+id/main_top_menu_container"
+        android:layout_width="match_parent"
+        android:layout_height="51dp"
+        android:background="#f7c243">
+
+        <ImageView
+            android:id="@+id/action_bar_title"
+            android:layout_width="100dp"
+            android:layout_height="30dp"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ios_bi"
+            android:layout_alignParentLeft="true"
+
+            />
+
+        <RelativeLayout
+            android:id="@+id/btn_alarm_container"
+            android:layout_width="wrap_content"
+            android:layout_height="56.99dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="64dp">
+
+
+            <ImageView
+                android:id="@+id/btn_alarm"
+                android:layout_width="22dp"
+                android:layout_height="24dp"
+                android:layout_centerInParent="true"
+                android:background="@null"
+                android:src="@drawable/mypage_btn_notice_01"
+                android:scaleType="fitXY"
+                />
+
+            <ImageView
+                android:id="@+id/main_img_alarm_new"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:layout_alignRight="@id/btn_alarm"
+                android:layout_alignTop="@id/btn_alarm"
+                android:src="@drawable/mypage_btn_notice_02"
+                android:visibility="invisible"
+                />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/btn_more_container"
+            android:layout_width="wrap_content"
+            android:layout_height="56.99dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="16.33dp">
+
+
+            <ImageView
+                android:id="@+id/btn_more"
+                android:layout_width="24.33dp"
+                android:layout_height="24dp"
+                android:layout_centerInParent="true"
+                android:background="@null"
+                android:src="@drawable/mypage_btn_more"
+                android:scaleType="fitXY"
+                />
+
+            <ImageView
+                android:id="@+id/main_img_more_new"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:layout_alignRight="@id/btn_more"
+                android:layout_alignTop="@id/btn_more"
+                android:src="@drawable/mypage_btn_notice_02"
+                android:visibility="invisible"
+                />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/main_top_menu_divider"
+        android:layout_width="match_parent"
+        android:layout_height="0.67dp"
+        android:layout_below="@id/main_top_menu_container"
+        android:background="#d99d3b">
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/main_button_container"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_below="@id/main_top_menu_divider"
+        android:background="#f7c243"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:id="@+id/main_home_tab_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageButton
+                    android:id="@+id/btn_home"
+                    android:layout_width="30.67dp"
+                    android:layout_height="24.33dp"
+                    android:layout_centerInParent="true"
+                    android:background="@null" />
+
+                <RelativeLayout
+                    android:id="@+id/main_tabBar_home"
+                    android:layout_width="match_parent"
+                    android:layout_height="2.33dp"
+                    android:layout_alignParentBottom="true"
+                    android:background="#ffffff">
+
+                </RelativeLayout>
+
+
+            </RelativeLayout>
+
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:id="@+id/main_feed_tab_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageButton
+                    android:id="@+id/btn_feed"
+                    android:layout_width="25.67dp"
+                    android:layout_height="22dp"
+                    android:layout_centerInParent="true"
+                    android:background="@null" />
+
+                <RelativeLayout
+                    android:id="@+id/main_tabBar_feed"
+                    android:layout_width="match_parent"
+                    android:layout_height="2.33dp"
+                    android:layout_alignParentBottom="true"
+                    android:background="#ffffff" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:id="@+id/main_mypage_tab_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageButton
+                    android:id="@+id/btn_mypage"
+                    android:layout_width="25.33dp"
+                    android:layout_height="24dp"
+                    android:layout_centerInParent="true"
+                    android:background="@null" />
+
+                <RelativeLayout
+                    android:id="@+id/main_tabBar_myPage"
+                    android:layout_width="match_parent"
+                    android:layout_height="2.33dp"
+                    android:layout_alignParentBottom="true"
+                    android:background="#ffffff" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/main_viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/main_button_container">
+
+    </android.support.v4.view.ViewPager>
+
+    <RelativeLayout
+
+        android:id="@+id/upload_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="15dp"
+        >
+
+        <ImageButton
+            android:id="@+id/btn_upload"
+            android:layout_width="51.66dp"
+            android:layout_height="51.66dp"
+            android:layout_marginRight="5dp"
+            android:background="@null"
+            android:src="@drawable/mypage_btn_upload"
+
+            />
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/main_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#70000000"
+        android:visibility="invisible">
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

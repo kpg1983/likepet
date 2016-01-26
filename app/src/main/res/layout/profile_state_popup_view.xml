@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/profile_state_popup_container"
+        android:layout_width="267.97dp"
+        android:layout_height="317.30dp"
+        android:background="#ffffff">
+
+        <RelativeLayout
+            android:id="@+id/profile_state_popup_bar_container"
+            android:layout_width="match_parent"
+            android:layout_height="51dp">
+
+            <RelativeLayout
+                android:id="@+id/profile_state_popup_cancel_container"
+                android:layout_width="51dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:clickable="true">
+
+                <ImageButton
+                    android:id="@+id/profile_state_popup_btn_cancel"
+                    android:layout_width="12dp"
+                    android:layout_height="12.33dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="16.33dp"
+                    android:background="@null"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/more_btn_02_cancel"
+
+                    />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="0.33dp"
+                android:layout_alignParentBottom="true"
+                android:background="#000000">
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="254.95dp"
+            android:layout_below="@id/profile_state_popup_bar_container"
+            android:background="#ececec"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:id="@+id/profile_state_popup_date_container"
+                android:layout_width="match_parent"
+                android:layout_height="50.99dp"
+                android:clickable="true"
+                >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="50.99dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="7.33dp"
+                        android:layout_height="7.33dp"
+                        android:layout_marginLeft="15dp"
+                        android:src="@drawable/more_img_point" />
+
+                    <TextView
+                        android:id="@+id/profile_state_txt_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="7dp"
+                        android:text="@string/profile_edit_status_date"
+                        android:textColor="#000000"
+                        android:textSize="16dp"
+                        android:textStyle="bold"
+
+                        />
+
+                </LinearLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0.33dp"
+                    android:background="#b5b5b5"
+                    android:layout_alignParentBottom="true"
+                    >
+
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/profile_state_popup_single_container"
+                android:layout_width="match_parent"
+                android:layout_height="50.99dp"
+                android:layout_below="@id/profile_state_popup_date_container"
+                android:clickable="true"
+                >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="50.99dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="7.33dp"
+                        android:layout_height="7.33dp"
+                        android:layout_marginLeft="15dp"
+                        android:src="@drawable/more_img_point" />
+
+                    <TextView
+                        android:id="@+id/profile_state_txt_single"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="7dp"
+                        android:text="@string/profile_edit_status_single"
+                        android:textColor="#000000"
+                        android:textSize="16dp"
+                        android:textStyle="bold"
+
+                        />
+
+                </LinearLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0.33dp"
+                    android:background="#b5b5b5"
+                    android:layout_alignParentBottom="true"
+                    >
+
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/profile_state_popup_married_container"
+                android:layout_width="match_parent"
+                android:layout_height="50.99dp"
+                android:layout_below="@id/profile_state_popup_single_container"
+                android:clickable="true"
+                >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="50.99dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="7.33dp"
+                        android:layout_height="7.33dp"
+                        android:layout_marginLeft="15dp"
+                        android:src="@drawable/more_img_point" />
+
+                    <TextView
+                        android:id="@+id/profile_state_txt_married"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="7dp"
+                        android:text="@string/profile_edit_status_marry"
+                        android:textColor="#000000"
+                        android:textSize="16dp"
+                        android:textStyle="bold"
+
+                        />
+
+                </LinearLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0.33dp"
+                    android:background="#b5b5b5"
+                    android:layout_alignParentBottom="true"
+                    >
+
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/profile_state_popup_walk_container"
+                android:layout_width="match_parent"
+                android:layout_height="50.99dp"
+                android:layout_below="@id/profile_state_popup_married_container"
+                android:clickable="true"
+                >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="50.99dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="7.33dp"
+                        android:layout_height="7.33dp"
+                        android:layout_marginLeft="15dp"
+                        android:src="@drawable/more_img_point" />
+
+                    <TextView
+                        android:id="@+id/profile_state_txt_walk"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="7dp"
+                        android:text="@string/profile_edit_status_work"
+                        android:textColor="#000000"
+                        android:textSize="16dp"
+                        android:textStyle="bold"
+
+                        />
+
+                </LinearLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0.33dp"
+                    android:background="#b5b5b5"
+                    android:layout_alignParentBottom="true"
+                    >
+
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/profile_state_popup_look_mom_container"
+                android:layout_width="match_parent"
+                android:layout_height="50.99dp"
+                android:layout_below="@id/profile_state_popup_walk_container"
+                android:clickable="true"
+                >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="50.99dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="7.33dp"
+                        android:layout_height="7.33dp"
+                        android:layout_marginLeft="15dp"
+                        android:src="@drawable/more_img_point" />
+
+                    <TextView
+                        android:id="@+id/profile_state_txt_look_mom"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="7dp"
+                        android:text="@string/profile_edit_status_parent"
+                        android:textColor="#000000"
+                        android:textSize="16dp"
+                        android:textStyle="bold"
+
+                        />
+
+                </LinearLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0.33dp"
+                    android:background="#b5b5b5"
+                    android:layout_alignParentBottom="true"
+                    >
+
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/profile_state_popup_blank_container"
+            android:layout_width="match_parent"
+            android:layout_height="11.30dp"
+            android:layout_alignParentBottom="true">
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</RelativeLayout>

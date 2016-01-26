@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/upload_viewPager"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        >
+
+    </android.support.v4.view.ViewPager>
+
+    <RelativeLayout
+        android:id="@+id/upload_menu_bar_container"
+        android:layout_width="match_parent"
+        android:layout_height="51dp"
+        android:background="#374246"
+        android:layout_alignParentTop="true"
+        >
+
+        <RelativeLayout
+            android:id="@+id/btn_upload_cancel_container"
+            android:layout_width="51dp"
+            android:layout_height="match_parent"
+            android:clickable="true">
+
+            <ImageView
+                android:id="@+id/btn_upload_cancel"
+                android:layout_width="12dp"
+                android:layout_height="12.33dp"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="16.33dp"
+                android:background="@null" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true">
+
+            <TextView
+                android:id="@+id/btn_upload_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="@string/upload_title_select_picture"
+                android:textColor="#ffffff" />
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/btn_upload_next_container"
+            android:layout_width="51dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:clickable="true">
+
+            <ImageView
+                android:id="@+id/btn_upload_next"
+                android:layout_width="7dp"
+                android:layout_height="13.67dp"
+                android:layout_centerInParent="true"
+                android:background="@null"
+                />
+
+        </RelativeLayout>
+
+
+    </RelativeLayout>
+
+
+
+    <RelativeLayout
+        android:id="@+id/upload_tab_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+
+
+        <LinearLayout
+
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="#F2374246"
+            android:orientation="horizontal">
+
+            <LinearLayout
+
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+
+                android:orientation="horizontal">
+
+                <RelativeLayout
+                    android:id="@+id/upload_gallery_bar_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clickable="true">
+
+                    <TextView
+                        android:id="@+id/btn_gallery_bar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:text="@string/upload_tab_bar_gallery"
+                        android:textColor="#ffffff" />
+
+                    <RelativeLayout
+                        android:id="@+id/upload_tab_gallery"
+                        android:layout_width="match_parent"
+                        android:layout_height="2.63dp"
+                        android:layout_alignParentBottom="true"
+                        android:background="#f7c243"
+
+                        >
+
+                    </RelativeLayout>
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+
+            <LinearLayout
+
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+
+                android:orientation="vertical">
+
+
+                <RelativeLayout
+                    android:id="@+id/upload_photo_bar_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clickable="true">
+
+
+                    <TextView
+                        android:id="@+id/btn_photo_bar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:background="@null"
+                        android:text="@string/upload_tab_bar_picture"
+                        android:textColor="#ffffff" />
+
+                    <RelativeLayout
+                        android:id="@+id/upload_tab_photo"
+                        android:layout_width="match_parent"
+                        android:layout_height="2.67dp"
+                        android:layout_alignParentBottom="true"
+                        android:background="#f7c243"
+                        android:visibility="invisible">
+
+                    </RelativeLayout>
+
+                </RelativeLayout>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <RelativeLayout
+                    android:id="@+id/upload_movie_bar_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clickable="true">
+
+                    <TextView
+                        android:id="@+id/btn_movie_bar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:background="@null"
+                        android:text="@string/upload_tab_bar_gif"
+                        android:textColor="#ffffff" />
+
+                    <RelativeLayout
+                        android:id="@+id/upload_tab_video"
+                        android:layout_width="match_parent"
+                        android:layout_height="2.67dp"
+                        android:layout_alignParentBottom="true"
+                        android:background="#f7c243"
+                        android:visibility="invisible">
+
+                    </RelativeLayout>
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</RelativeLayout>

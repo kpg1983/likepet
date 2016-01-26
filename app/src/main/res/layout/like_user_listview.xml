@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="#ffffff"
+    >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="67.99dp"
+        android:layout_marginLeft="19.66dp"
+        android:layout_marginRight="19.66dp"
+        >
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="46dp"
+            android:layout_centerVertical="true"
+            >
+
+            <RelativeLayout
+                android:id="@+id/like_user_img_container"
+                android:layout_width="49dp"
+                android:layout_height="match_parent"
+                >
+
+                <ImageView
+                    android:id="@+id/like_user_img_profile"
+                    android:layout_width="46dp"
+                    android:layout_height="46dp"
+                    />
+                <ImageView
+                    android:id="@+id/like_user_img_like_type"
+                    android:layout_width="23.33dp"
+                    android:layout_height="23dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true"
+                    />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/like_user_name_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/like_user_img_container"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="5dp"
+                >
+
+                <ImageView
+                    android:id="@+id/like_user_img_clan"
+                    android:layout_width="18dp"
+                    android:layout_height="14dp"
+                    android:scaleType="fitXY"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="3dp"
+                    />
+
+                <TextView
+                    android:id="@+id/like_user_txt_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="14dp"
+                    android:textColor="#000000"
+                    android:textStyle="bold"
+                    android:layout_toRightOf="@id/like_user_img_clan"
+                    />
+
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+        <ImageButton
+            android:id="@+id/like_user_img_add"
+            android:layout_width="25.66dp"
+            android:layout_height="25.66dp"
+            android:src="@drawable/view_img_like_plus"
+            android:scaleType="fitXY"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:clickable="true"
+            android:background="@null"
+            />
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

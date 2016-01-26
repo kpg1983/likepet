@@ -1,0 +1,150 @@
+ECLIPSE ANDROID PROJECT IMPORT SUMMARY
+======================================
+
+Ignored Files:
+--------------
+The following files were *not* copied into the new Gradle project; you
+should evaluate whether these are still needed in your project and if
+so manually move them:
+
+* .DS_Store
+* .gitignore
+* gpuimage-library.iml
+* pom.xml
+* proguard-project.txt
+* target/
+* target/classes/
+* target/classes/jp/
+* target/classes/jp/co/
+* target/classes/jp/co/cyberagent/
+* target/classes/jp/co/cyberagent/android/
+* target/classes/jp/co/cyberagent/android/gpuimage/
+* target/classes/jp/co/cyberagent/android/gpuimage/BuildConfig.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImage$1.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImage$LoadImageFileTask.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImage$LoadImageTask.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImage$LoadImageUriTask.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImage$OnPictureSavedListener.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImage$ResponseListener.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImage$SaveTask$1$1.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImage$SaveTask$1.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImage$SaveTask.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImage$ScaleType.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImage.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImage3x3ConvolutionFilter.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImage3x3TextureSamplingFilter.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageAddBlendFilter.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageAlphaBlendFilter.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageBrightnessFilter.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageChromaKeyBlendFilter.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageColorBlendFilter.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageColorBurnBlendFilter.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageColorDodgeBlendFilter.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageColorInvertFilter.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageColorMatrixFilter.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageContrastFilter.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageDarkenBlendFilter.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageDifferenceBlendFilter.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageDirectionalSobelEdgeDetectionFilter.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageDissolveBlendFilter.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageDivideBlendFilter.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageEmbossFilter.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageExclusionBlendFilter.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageExposureFilter.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageFilter$1.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageFilter$2.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageFilter$3.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageFilter$4.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageFilter$5.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageFilter$6.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageFilter$7.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageFilter$8.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageFilter$9.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageFilter.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageFilterGroup.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageGammaFilter.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageGrayscaleFilter.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageHardLightBlendFilter.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageHighlightShadowFilter.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageHueBlendFilter.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageHueFilter.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageLightenBlendFilter.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageLinearBurnBlendFilter.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageLomoFilter.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageLookupFilter.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageLuminosityBlendFilter.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageMixBlendFilter.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageMonochromeFilter.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageMultiplyBlendFilter.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageNativeLibrary.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageNormalBlendFilter.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageOpacityFilter.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageOverlayBlendFilter.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImagePixelationFilter.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImagePosterizeFilter.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageRGBFilter.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageRenderer$1.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageRenderer$2.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageRenderer$3.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageRenderer$4.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageRenderer$5.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageRenderer.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageSaturationBlendFilter.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageSaturationFilter.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageScreenBlendFilter.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageSepiaFilter.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageSharpenFilter.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageSobelEdgeDetection.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageSoftLightBlendFilter.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageSourceOverBlendFilter.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageSubtractBlendFilter.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageToneCurveFilter$1.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageToneCurveFilter$2.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageToneCurveFilter.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageTwoInputFilter$1.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageTwoInputFilter.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageView.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageVignetteFilter.class
+* target/classes/jp/co/cyberagent/android/gpuimage/GPUImageWhiteBalanceFilter.class
+* target/classes/jp/co/cyberagent/android/gpuimage/OpenGlUtils.class
+* target/classes/jp/co/cyberagent/android/gpuimage/PixelBuffer.class
+* target/classes/jp/co/cyberagent/android/gpuimage/Rotation.class
+* target/classes/jp/co/cyberagent/android/gpuimage/util/
+* target/classes/jp/co/cyberagent/android/gpuimage/util/TextureRotationUtil$1.class
+* target/classes/jp/co/cyberagent/android/gpuimage/util/TextureRotationUtil.class
+* target/generated-sources/
+* target/generated-sources/r/
+* target/generated-sources/r/jp/
+* target/generated-sources/r/jp/co/
+* target/generated-sources/r/jp/co/cyberagent/
+* target/generated-sources/r/jp/co/cyberagent/android/
+* target/generated-sources/r/jp/co/cyberagent/android/gpuimage/
+* target/generated-sources/r/jp/co/cyberagent/android/gpuimage/BuildConfig.java
+* target/generated-sources/r/jp/co/cyberagent/android/gpuimage/Manifest.java
+* target/generated-sources/r/jp/co/cyberagent/android/gpuimage/R.java
+
+Moved Files:
+------------
+Android Gradle projects use a different directory structure than ADT
+Eclipse projects. Here's how the projects were restructured:
+
+* AndroidManifest.xml => gpuimage/src/main/AndroidManifest.xml
+* jni/ => gpuimage/src/main/jni/
+* res/ => gpuimage/src/main/res/
+* src/ => gpuimage/src/main/java/
+* src/.DS_Store => gpuimage/src/main/resources/.DS_Store
+
+Next Steps:
+-----------
+You can now build the project. The Gradle project needs network
+connectivity to download dependencies.
+
+Bugs:
+-----
+If for some reason your project does not build, and you determine that
+it is due to a bug or limitation of the Eclipse to Gradle importer,
+please file a bug at http://b.android.com with category
+Component-Tools.
+
+(This import summary is for your information only, and can be deleted
+after import once you are satisfied with the results.)

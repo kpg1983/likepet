@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="#ffffff"
+    >
+
+    <RelativeLayout
+        android:id="@+id/no_profile_menu_bar"
+        android:layout_width="match_parent"
+        android:layout_height="51dp"
+        >
+
+        <RelativeLayout
+            android:id="@+id/no_profile_cancel_container"
+            android:layout_width="51dp"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:clickable="true">
+
+            <ImageButton
+                android:id="@+id/no_profile_btn_cancel"
+                android:layout_width="12dp"
+                android:layout_height="12.33dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="16.33dp"
+                android:src="@drawable/upload_btn_back"
+                android:scaleType="fitXY"
+                android:background="@null"
+
+                />
+
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="프로필"
+            android:textSize="19dp"
+            android:layout_toRightOf="@id/no_profile_cancel_container"
+            android:textStyle="bold"
+            />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0.33dp"
+            android:background="#cbcbcb"
+            android:layout_alignParentBottom="true"
+            >
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/no_profile_recommend_join"
+        android:layout_width="match_parent"
+        android:layout_height="360dp"
+        android:layout_below="@id/no_profile_menu_bar"
+        android:background="#ececec"
+
+        >
+
+        <ImageView
+            android:id="@+id/no_profile_img_speech_bubble"
+            android:layout_width="231.98dp"
+            android:layout_height="167.32dp"
+            />
+
+        <ImageView
+            android:id="@+id/no_profile_img_cat"
+            android:layout_width="234.98dp"
+            android:layout_height="186.65dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="20.66dp"
+            />
+
+        <TextView
+            android:id="@+id/no_profile_txt_bubble"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="알고 있겠지만, 회원 등록을\n하면 캐릭터 설정이\n가능하다옹\n회원이 되겠냥?"
+            android:layout_marginTop="16.33dp"
+            android:layout_marginLeft="16.33dp"
+            android:textSize="18dp"
+            android:textColor="#263034"
+            />
+
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/no_profile_btn_join"
+        android:layout_width="319.63dp"
+        android:layout_height="50.66dp"
+        android:layout_below="@id/no_profile_recommend_join"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:text="회원 등록하기"
+        android:textSize="14.33dp"
+        android:background="#f7c243"
+        />
+
+
+</RelativeLayout>

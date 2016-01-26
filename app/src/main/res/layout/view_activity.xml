@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff"
+
+    >
+
+    <RelativeLayout
+        android:id="@+id/view_menu_tab"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/top_menu_bar_height"
+        android:background="@color/top_menu_bar_color">
+
+        <RelativeLayout
+            android:id="@+id/view_user_profile_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true">
+
+            <ImageView
+                android:id="@+id/view_img_user_profile"
+                android:layout_width="32.66dp"
+                android:layout_height="32.66dp"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="5.33dp" />
+
+            <TextView
+                android:id="@+id/view_txt_user_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@id/view_img_user_profile"
+                android:text="곰순이와 여돌이"
+                android:textColor="#374246"
+                android:textSize="12dp"
+                android:textStyle="bold"
+
+                />
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/view_back_key_container"
+            android:layout_width="45.65dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:clickable="true"
+
+            >
+
+            <ImageView
+                android:id="@+id/view_btn_back_key"
+                android:layout_width="6.33dp"
+                android:layout_height="12dp"
+                android:layout_centerInParent="true"
+                android:background="@null"
+                android:src="@drawable/view_btn_back"
+                />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/view_btn_more_container"
+            android:layout_width="47dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            >
+
+
+            <ImageButton
+                android:id="@+id/view_btn_more"
+                android:layout_width="3dp"
+                android:layout_height="16dp"
+                android:layout_centerInParent="true"
+                android:background="@null"
+
+                />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+
+
+    <ListView
+        android:id="@+id/view_comments_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/view_menu_tab"
+        android:layout_marginBottom="60dp"
+        android:clickable="true"
+        android:divider="@null"
+        android:scrollbars="none">
+
+    </ListView>
+
+
+    <RelativeLayout
+        android:id="@+id/view_edit_comment_container"
+        android:layout_width="match_parent"
+        android:layout_height="59.99dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="19.66dp"
+        android:background="#ffffff"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+
+        >
+
+        <ImageButton
+            android:id="@+id/view_btn_camera"
+            android:layout_width="34.66dp"
+            android:layout_height="34.66dp"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="6.33dp"
+            android:background="@null" />
+
+        <EditText
+            android:id="@+id/view_edit_comment"
+            android:layout_width="234dp"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@id/view_btn_camera"
+            android:background="@null"
+            android:gravity="center_vertical"
+            android:hint="@string/view_edit_comment"
+            android:textColorHint="#b8b8b8"
+            android:textSize="12.33dp"
+            android:maxLength="151"
+
+            />
+
+        <RelativeLayout
+            android:id="@+id/view_send_container"
+            android:layout_width="64.99dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:clickable="true">
+
+            <TextView
+                android:id="@+id/view_txt_send"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="@string/view_edit_send"
+                android:textColor="#f7c243"
+                android:textSize="12.67dp"
+                android:textStyle="bold" />
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:layout_width="0.33dp"
+            android:layout_height="25dp"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@id/view_send_container"
+            android:background="#e5e5e5">
+
+        </RelativeLayout>
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/view_img_comment_container"
+        android:layout_width="match_parent"
+        android:layout_height="79.66dp"
+        android:layout_above="@id/view_edit_comment_container"
+        android:background="#ffffff"
+        android:visibility="invisible">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0.33dp"
+            android:layout_alignParentTop="true"
+            android:background="#cbcbcb">
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="66.32dp"
+            android:layout_height="66.32dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="60.65dp">
+
+            <ImageView
+                android:id="@+id/view_img_comment"
+                android:layout_width="58.99dp"
+                android:layout_height="58.99dp"
+                android:layout_alignParentBottom="true" />
+
+            <ImageButton
+                android:id="@+id/view_img_cancel"
+                android:layout_width="23.66dp"
+                android:layout_height="23.66dp"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:background="@null" />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0.33dp"
+        android:layout_above="@id/view_edit_comment_container"
+        android:background="#e5e5e5"></RelativeLayout>
+
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/view_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#70000000"
+        android:visibility="invisible">
+
+    </RelativeLayout>
+
+
+</RelativeLayout>
+

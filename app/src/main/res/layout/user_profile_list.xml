@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:background="#ffffff" android:id="@+id/mypage_info_container"
+    >
+
+    <RelativeLayout
+        android:id="@+id/menu_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20.67dp"
+        android:layout_marginLeft="19.67dp"
+        android:layout_marginRight="19.67dp"
+        >
+
+        <RelativeLayout
+            android:id="@+id/mypage_user_profile_summary_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            >
+
+            <ImageView
+                android:id="@+id/img_user_clan"
+                android:layout_width="20dp"
+                android:layout_height="16.5dp"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="5dp"
+
+                />
+
+            <TextView
+                android:id="@+id/user_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:textSize="15.5dp"
+                android:layout_toRightOf="@id/img_user_clan"
+                android:textColor="#282828"
+                />
+
+        </RelativeLayout>
+
+
+        <ImageButton
+            android:id="@+id/button_bookmark"
+            android:layout_width="@dimen/button_size_1"
+            android:layout_height="@dimen/button_size_1"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:background="@null"
+            />
+
+        <ImageButton
+            android:id="@+id/button_setting"
+            android:layout_width="@dimen/button_size_1"
+            android:layout_height="@dimen/button_size_1"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@null"
+            />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/user_profile_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/menu_button"
+        android:layout_marginBottom="10dp"
+        >
+
+        <ImageView
+            android:id="@+id/main_profile_image"
+            android:layout_width="@dimen/main_profile_iamge_size"
+            android:layout_height="@dimen/main_profile_iamge_size"
+            android:layout_centerInParent="true"
+            android:clickable="true"
+            />
+
+
+        <ImageButton
+            android:id="@+id/mypage_btn_camera"
+            android:layout_width="@dimen/button_size_1"
+            android:layout_height="@dimen/button_size_1"
+            android:layout_alignBottom="@id/main_profile_image"
+            android:layout_alignRight="@id/main_profile_image"
+            android:background="@null"
+            android:scaleType="fitXY"
+
+            />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/user_profile_line"
+        android:layout_width="match_parent"
+        android:layout_height="0.33dp"
+        android:background="#282828"
+        android:layout_below="@id/user_profile_container"
+        >
+        </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/mypage_info"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/mypage_info_container_height"
+        android:layout_below="@id/user_profile_line"
+        android:paddingLeft="@dimen/activity_horizontal_padding"
+        android:paddingRight="@dimen/activity_horizontal_padding"
+        >
+
+        <RelativeLayout
+            android:id="@+id/following_info_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:clickable="true"
+            >
+
+            <TextView
+                android:id="@+id/number_of_following"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/mypage_info_text_size_1"
+                android:layout_centerHorizontal="true"
+                />
+
+            <TextView
+                android:id="@+id/string_following"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/number_of_following"
+                android:textSize="@dimen/mypage_info_text_size_2"
+                android:text="@string/mypage_following"
+                />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/follower_info_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/following_info_container"
+            android:layout_centerVertical="true"
+            >
+
+            <TextView
+                android:id="@+id/number_of_follower"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:textSize="@dimen/mypage_info_text_size_1"
+                />
+
+            <TextView
+                android:id="@+id/string_follower"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/number_of_follower"
+                android:layout_centerHorizontal="true"
+                android:textSize="@dimen/mypage_info_text_size_2"
+                android:text="@string/mypage_follower"
+                />
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/moments_info_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@id/following_info_container"
+            android:layout_centerVertical="true"
+            >
+
+            <TextView
+                android:id="@+id/number_of_moments"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:textSize="@dimen/mypage_info_text_size_1"
+                />
+
+            <TextView
+                android:id="@+id/sting_moments"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/number_of_moments"
+                android:layout_centerHorizontal="true"
+                android:text="@string/mypage_moment"
+                android:textSize="@dimen/mypage_info_text_size_2"
+
+                />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/mypage_join_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/mypage_info"
+        android:visibility="gone"
+        >
+
+        <ImageView
+            android:id="@+id/mypage_img_join"
+            android:layout_width="match_parent"
+            android:layout_height="297.64dp"
+            android:scaleType="fitXY"
+            />
+
+        <TextView
+            android:id="@+id/mypage_txt_join"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/mypage_img_join"
+            android:layout_alignTop="@id/mypage_img_join"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="20dp"
+            android:text="@string/mypage_no_member"
+            android:textSize="19dp"
+
+
+            />
+        <Button
+            android:id="@+id/mypage_btn_join"
+            android:layout_width="match_parent"
+            android:layout_height="51dp"
+            android:text="@string/mypage_btn_sign_up"
+            android:textStyle="bold"
+            android:layout_below="@id/mypage_img_join"
+            android:background="#f7c243"
+
+            />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/mypage_no_moment_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/mypage_info"
+        android:background="#ececec"
+        android:visibility="gone"
+
+        >
+
+        <RelativeLayout
+            android:id="@+id/contents_date_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/date_container_padding_bottom"
+            android:paddingLeft="@dimen/activity_horizontal_padding"
+            android:paddingTop="@dimen/date_container_padding_top"
+
+            >
+
+            <ImageView
+                android:id="@+id/contents_start"
+                android:layout_width="@dimen/date_image_width"
+                android:layout_height="@dimen/date_image_height"
+                android:layout_marginRight="5dp"
+
+                />
+
+            <TextView
+                android:id="@+id/contents_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/contents_start"
+                android:textColor="#282828"
+                android:textSize="@dimen/date_text_size"
+
+                />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/content_main_image_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/contents_date_container"
+            android:paddingLeft="@dimen/activity_horizontal_padding"
+            android:paddingRight="@dimen/activity_horizontal_padding">
+
+            <ProgressBar
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:id="@+id/mypage_upload_indicator"
+                android:indeterminateOnly="true"
+                android:keepScreenOn="true"
+                android:layout_centerInParent="true"
+                android:visibility="gone"
+                android:layout_marginBottom="10dp"
+                />
+
+            <ImageView
+                android:id="@+id/mypage_img_noMoment_image"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginBottom="@dimen/comment_box_margin"
+                android:adjustViewBounds="true"
+                />
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/content_info_container"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/like_and_share_button_container_height"
+            android:layout_below="@id/content_main_image_container"
+            android:background="#ffffff">
+
+            <RelativeLayout
+                android:id="@+id/like_button_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/like_and_share_button_margin"
+                android:paddingLeft="@dimen/like_and_share_button_padding"
+                >
+
+                <ImageButton
+                    android:id="@+id/button_like"
+                    android:layout_width="@dimen/like_and_share_button_size"
+                    android:layout_height="@dimen/like_and_share_button_size"
+                    android:layout_marginRight="@dimen/like_and_share_button_margin"
+                    android:background="@null"
+                    android:focusable ="false"
+                    android:src="@drawable/mypage_btn_bottom_like_n"
+                    android:scaleType="fitXY"
+                    />
+
+                <TextView
+                    android:id="@+id/number_of_like"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@id/button_like"
+                    android:textSize="@dimen/mypage_info_text_size_1"
+                    android:text="0"
+                    />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/comment_button_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@id/like_button_container">
+
+                <ImageView
+                    android:id="@+id/button_comment"
+                    android:layout_width="@dimen/like_and_share_button_size"
+                    android:layout_height="@dimen/like_and_share_button_size"
+                    android:layout_marginRight="@dimen/like_and_share_button_margin"
+                    android:background="@null"
+                    android:src="@drawable/mypage_btn_bottom_comment"
+                    android:focusable ="false"
+                    />
+
+                <TextView
+                    android:id="@+id/number_of_comment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@id/button_comment"
+                    android:textSize="@dimen/mypage_info_text_size_1"
+                    android:text="0"
+                    />
+
+            </RelativeLayout>
+
+
+            <ImageButton
+                android:id="@+id/button_share"
+                android:layout_width="@dimen/like_and_share_button_size"
+                android:layout_height="@dimen/like_and_share_button_size"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/like_and_share_button_padding"
+                android:background="@null"
+                android:src="@drawable/mypage_btn_bottom_public"
+                android:focusable ="false"
+                android:scaleType="fitXY"
+                />
+
+        </RelativeLayout>
+
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

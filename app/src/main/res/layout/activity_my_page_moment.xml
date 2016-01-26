@@ -1,0 +1,92 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:RelativeLayoutandroid="http://schemas.android.com/apk/res-auto"
+    tools:context=".MyPageMoment">
+
+
+    <RelativeLayout
+        android:id="@+id/mypage_menu_tab"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/top_menu_bar_height"
+        android:background="@color/top_menu_bar_color"
+        android:visibility="gone">
+
+        <RelativeLayout
+            android:id="@+id/mypage_user_profile_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true">
+
+            <TextView
+                android:id="@+id/mypage_txt_user_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:textColor="#374246"
+                android:textSize="13dp"
+                android:textStyle="bold"
+
+                />
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/mypage_back_key_container"
+            android:layout_width="45.65dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:clickable="true"
+
+            >
+
+            <ImageView
+                android:id="@+id/mypage_btn_back_key"
+                android:layout_width="6.33dp"
+                android:layout_height="12dp"
+                android:layout_centerInParent="true"
+                android:src="@drawable/view_btn_back"
+                android:background="@null" />
+
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+
+    <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/swype_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/mypage_menu_tab"
+        >
+
+        <ListView
+            android:id="@+id/contents_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="#cacaca"
+            android:dividerHeight="0.67dp"
+            android:scrollbars="none"
+            >
+
+        </ListView>
+
+
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/mypage_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#70000000"
+        android:visibility="invisible">
+
+    </RelativeLayout>
+
+</RelativeLayout>

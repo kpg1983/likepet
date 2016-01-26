@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff"
+    >
+
+    <RelativeLayout
+        android:id="@+id/more_menu_bar"
+        android:layout_width="match_parent"
+        android:layout_height="51dp"
+        android:background="#f7c243">
+
+        <RelativeLayout
+            android:id="@+id/more_cancel_container"
+            android:layout_width="51dp"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:clickable="true">
+
+
+            <ImageButton
+                android:id="@+id/more_btn_cancel"
+                android:layout_width="6.67dp"
+                android:layout_height="12.33dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="16.33dp"
+                android:src="@drawable/upload_btn_back"
+                android:scaleType="fitXY"
+                android:background="@null"
+                />
+
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="@string/more_title"
+            android:textSize="14dp"
+            android:layout_toRightOf="@id/more_cancel_container"
+            android:textStyle="bold"
+            />
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/more_first_container"
+        android:layout_width="match_parent"
+        android:layout_height="119.65dp"
+        android:layout_below="@id/more_menu_bar"
+        android:background="#ececec"
+        >
+
+        <RelativeLayout
+            android:id="@+id/more_profile_container"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            >
+
+            <ImageView
+                android:id="@+id/more_btn_profile"
+                android:layout_width="37.66dp"
+                android:layout_height="46.33dp"
+                android:background="@null"
+                android:src="@drawable/more_img_01"
+                android:layout_centerHorizontal="true"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/more_btn_profile"
+                android:textSize="12.33dp"
+                android:textColor="#494949"
+                android:text="@string/more_container_profile"
+                android:layout_marginTop="10dp"
+                android:layout_centerHorizontal="true"
+                />
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/more_profile_divider"
+            android:layout_width="0.33dp"
+            android:layout_height="match_parent"
+            android:background="#bebebe"
+            android:layout_toRightOf="@id/more_profile_container"
+            >
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/more_setting_container"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/more_profile_divider"
+            >
+
+            <ImageView
+                android:id="@+id/more_btn_setting"
+                android:layout_width="34dp"
+                android:layout_height="35.42dp"
+                android:background="@null"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/more_img_02" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/more_btn_setting"
+                android:layout_centerHorizontal="true"
+                android:textSize="12.33dp"
+                android:textColor="#494949"
+                android:text="@string/more_container_setting"
+                android:layout_marginTop="15dp"
+                />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/more_setting_divider"
+            android:layout_width="0.33dp"
+            android:layout_height="match_parent"
+            android:background="#bebebe"
+            android:layout_toRightOf="@id/more_setting_container"
+            >
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/more_notice_container"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/more_setting_divider"
+            >
+
+            <ImageView
+                android:id="@+id/more_btn_notice"
+                android:layout_width="35.33dp"
+                android:layout_height="46.66dp"
+                android:background="@null"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/more_img_03" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/more_btn_notice"
+                android:layout_centerHorizontal="true"
+                android:textSize="12.33dp"
+                android:textColor="#494949"
+                android:text="@string/more_container_notice"
+                android:layout_marginTop="10dp"
+                />
+
+        </RelativeLayout>
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/more_first_divider"
+        android:layout_width="match_parent"
+        android:layout_height="0.33dp"
+        android:background="#bebebe"
+        android:layout_below="@id/more_first_container"
+        >
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/more_second_container"
+        android:layout_width="match_parent"
+        android:layout_height="119.65dp"
+        android:layout_below="@id/more_first_divider"
+        android:orientation="horizontal"
+        android:background="#ececec"
+        >
+
+        <RelativeLayout
+            android:id="@+id/more_account_container"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            >
+
+            <ImageView
+                android:id="@+id/more_btn_account"
+                android:layout_width="25.66dp"
+                android:layout_height="38.33dp"
+                android:src="@drawable/more_img_04"
+                android:layout_centerHorizontal="true"
+                android:background="@null"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:textSize="12.33dp"
+                android:textColor="#494949"
+                android:text="@string/more_container_account"
+                android:layout_below="@id/more_btn_account"
+                android:layout_marginTop="10dp"
+                />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/more_account_divider"
+            android:layout_width="0.33dp"
+            android:layout_height="match_parent"
+            android:background="#bebebe"
+            android:layout_toRightOf="@id/more_account_container"
+            >
+
+        </RelativeLayout>
+
+        <RelativeLayout
+
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:layout_weight="1"
+            >
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:layout_weight="1"
+            >
+
+
+        </RelativeLayout>
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/more_second_divider"
+        android:layout_width="match_parent"
+        android:layout_height="0.33dp"
+        android:background="#bebebe"
+        android:layout_below="@id/more_second_container"
+        >
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/more_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#70000000"
+        android:visibility="invisible">
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

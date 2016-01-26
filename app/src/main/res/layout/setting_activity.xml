@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="#ececec"
+    >
+
+    <RelativeLayout
+        android:id="@+id/setting_menu_bar"
+        android:layout_width="match_parent"
+        android:layout_height="51dp"
+        android:background="#f7c243">
+
+        <RelativeLayout
+            android:id="@+id/setting_cancel_container"
+            android:layout_width="51dp"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:clickable="true">
+
+            <ImageButton
+                android:id="@+id/setting_btn_cancel"
+                android:layout_width="6.63dp"
+                android:layout_height="12.33dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="16.33dp"
+                android:src="@drawable/upload_btn_back"
+                android:scaleType="fitXY"
+                android:background="@null"
+
+                />
+
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="@string/setting_title"
+            android:textSize="15dp"
+            android:layout_toRightOf="@id/setting_cancel_container"
+            android:textStyle="bold"
+            />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/setting_menu_bar"
+
+
+        android:background="#ffffff"
+        >
+
+        <RelativeLayout
+            android:id="@+id/setting_version_container"
+            android:layout_width="match_parent"
+            android:layout_height="72.33dp">
+
+            <TextView
+                android:id="@+id/setting_txt_version"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/setting_app_version"
+                android:textSize="17dp"
+                android:textColor="#494949"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="5dp"
+                android:layout_marginLeft="16.33dp"
+                />
+
+            <ImageView
+                android:id="@+id/setting_img_new_version"
+                android:layout_width="15.33dp"
+                android:layout_height="15.33dp"
+                android:src="@drawable/more_img_new"
+                android:layout_toRightOf="@id/setting_txt_version"
+                android:layout_centerVertical="true"
+                android:visibility="invisible"
+                />
+
+            <TextView
+                android:id="@+id/setting_txt_new_version"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20dp"
+                android:textColor="#f7c243"
+                android:textStyle="bold"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="16.33dp"
+
+                />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="0.33dp"
+                android:background="#bebebe"
+                android:layout_alignParentBottom="true"
+                >
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/setting_alarm_container"
+            android:layout_width="match_parent"
+            android:layout_height="72.33dp"
+            android:layout_below="@id/setting_version_container"
+            android:visibility="gone"
+            >
+
+            <TextView
+                android:id="@+id/setting_txt_alarm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="알림"
+                android:textSize="17dp"
+                android:textColor="#494949"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="5dp"
+                android:layout_marginLeft="16.33dp"
+                />
+
+            <Switch
+                android:id="@+id/setting_sw_alarm"
+                android:layout_width="67.66dp"
+                android:layout_height="39dp"
+                android:textOff="OFF"
+                android:textOn="ON"
+                android:checked="true"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="16.33dp"
+                />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="0.33dp"
+                android:background="#bebebe"
+                android:layout_alignParentBottom="true"
+                >
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/setting_friend_alarm_container"
+            android:layout_width="match_parent"
+            android:layout_height="72.33dp"
+            android:layout_below="@id/setting_alarm_container"
+            android:visibility="gone"
+            >
+
+            <TextView
+                android:id="@+id/setting_txt_friend_alarm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="친구 등록 알림"
+                android:textSize="17dp"
+                android:textColor="#494949"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="5dp"
+                android:layout_marginLeft="16.33dp"
+                />
+
+            <Switch
+                android:id="@+id/setting_sw_friend_alarm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textOff="OFF"
+                android:textOn="ON"
+                android:checked="true"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="16.33dp"
+                />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="0.33dp"
+                android:background="#bebebe"
+                android:layout_alignParentBottom="true"
+                >
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/setting_comment_alarm_container"
+            android:layout_width="match_parent"
+            android:layout_height="72.33dp"
+            android:layout_below="@id/setting_friend_alarm_container"
+            android:visibility="gone"
+            >
+
+            <TextView
+                android:id="@+id/setting_txt_comment_alarm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="댓글과 공감 알림"
+                android:textSize="17dp"
+                android:textColor="#494949"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="5dp"
+                android:layout_marginLeft="16.33dp"
+                />
+
+            <Switch
+                android:id="@+id/setting_sw_comment_alarm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textOff="OFF"
+                android:textOn="ON"
+                android:checked="true"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="16.33dp"
+                />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="0.33dp"
+                android:background="#bebebe"
+                android:layout_alignParentBottom="true"
+                >
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/setting_like_pet_alarm_container"
+            android:layout_width="match_parent"
+            android:layout_height="72.33dp"
+            android:layout_below="@id/setting_comment_alarm_container"
+            android:visibility="gone"
+            >
+
+            <TextView
+                android:id="@+id/setting_txt_like_pet_alarm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="라이크펫 알림"
+                android:textSize="17dp"
+                android:textColor="#494949"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="5dp"
+                android:layout_marginLeft="16.33dp"
+                />
+
+            <Switch
+                android:id="@+id/setting_sw_like_pet_alarm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textOff="OFF"
+                android:textOn="ON"
+                android:checked="true"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="16.33dp"
+                />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="0.33dp"
+                android:background="#bebebe"
+                android:layout_alignParentBottom="true"
+                >
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</RelativeLayout>

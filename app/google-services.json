@@ -1,0 +1,85 @@
+{
+  "project_info": {
+    "project_id": "likepet-1003",
+    "project_number": "766928524075",
+    "name": "LikePet"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:766928524075:android:3bf88622f2071745",
+        "client_id": "android:com.example.kpg1983.mypagebegin",
+        "client_type": 1,
+        "android_client_info": {
+          "package_name": "com.example.kpg1983.mypagebegin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "cloud_messaging_service": {
+          "status": 1,
+          "apns_config": []
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "google_signin_service": {
+          "status": 1
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:766928524075:android:a10af37107f9bce2",
+        "client_id": "android:com.likelab.likepet",
+        "client_type": 1,
+        "android_client_info": {
+          "package_name": "com.likelab.likepet"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "766928524075-amrmdkq0unblpcv78ddb4uat09vnpob8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.likelab.likepet",
+            "certificate_hash": "9ABCA5850D19F894E169F02474A8357799AE2D5C"
+          }
+        }
+      ],
+      "api_key": [],
+      "services": {
+        "analytics_service": {
+          "status": 2,
+          "analytics_property": {
+            "tracking_id": "UA-71145888-1"
+          }
+        },
+        "cloud_messaging_service": {
+          "status": 1,
+          "apns_config": []
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "google_signin_service": {
+          "status": 2
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "client_info": [],
+  "ARTIFACT_VERSION": "1"
+}
