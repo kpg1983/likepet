@@ -30,11 +30,12 @@ public class YourPageContents {
     String videoScreenShotUrl;
     String profileImageUrl;
     String name;
+    String clan;
 
 
     YourPageContents(String contentsUrl, String contentsType, String registryDate, int likeCount, int numberOfBestComment, String firstBestCommentUrl, String secondBestCommentUrl, String thirdBestCommentUrl,
              String firstBestCommentType, String secondBestCommentType, String thirdBestCommentType, String firstBestCommentDescription, String secondBestCommentDescription, String thirdBestCommentDescription, int commentCount, int blackFlag
-            , String contentId, String iLikeThis, String descriptionTag, String userId, String videoScreenShotUrl, String status, int reportCount, String profileImageUrl, String name, int mediaWidth, int mediaHeight) {
+            , String contentId, String iLikeThis, String descriptionTag, String userId, String videoScreenShotUrl, String status, int reportCount, String profileImageUrl, String name, int mediaWidth, int mediaHeight, String clan) {
 
         this.contentsUrl = contentsUrl;
         this.contentsType = contentsType;
@@ -63,5 +64,6 @@ public class YourPageContents {
         this.name = name;
         this.mediaWidth = mediaWidth;
         this.mediaHeight = mediaHeight;
+        this.clan = clan;
     }
 }

@@ -31,7 +31,6 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.Window;
-import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -66,12 +65,12 @@ import com.google.android.exoplayer.util.Util;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.koushikdutta.ion.Ion;
+import com.likelab.likepet.CircleTransform;
 import com.likelab.likepet.R;
 import com.likelab.likepet.UploadContents;
 import com.likelab.likepet.global.GlobalSharedPreference;
 import com.likelab.likepet.global.GlobalUrl;
 import com.likelab.likepet.global.RecycleUtils;
-import com.likelab.likepet.global.RoundedAvatarDrawable;
 import com.likelab.likepet.likeUser.LikeUserListActivity;
 import com.likelab.likepet.likeUser.LikeUserListContents;
 import com.likelab.likepet.player.DemoPlayer;
@@ -159,7 +158,6 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
 
     //onActivityResult에 사용될 result 변수
     private static final int RESULT_MODIFY_CONTENT_SUMMARY = 5;
-    private static final int RESULT_MODIFY_CONTENT = 6;
     private static final int RESULT_DELETE_CONTENT = 7;
 
     View footer;
@@ -229,7 +227,7 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
 
     private ImageLoader imageLoader = AppController.getInstance().getImageLoader();
     private RequestQueue queue = AppController.getInstance().getRequestQueue();
-    ;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -239,10 +237,12 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
         //멤버 변수 초기화
         initView();
 
-
         //뷰에 나타낼 컨텐츠들 표시
         inflateContents();
 
+        //데이터 리퀘스트
+        //컨텐츠 읽음 카운트를 1개 증가 시킨다.
+        readContentsRequest(contentId);
 
         //베스트 코멘트를 호출
         //리퀘스트가 완료되면 전체 댓글들이 호출된다.
@@ -256,10 +256,9 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
         }
 
 
-        //문제가 있어서 주석처리 해 놓음 떨림 현상등 이런저런 문제
+        //페이지 더 불러오기 표시 listview footer
         footerListLoader = getLayoutInflater().inflate(R.layout.listview_load_footer, null, false);
         listViewLoaderContainer = (RelativeLayout) footerListLoader.findViewById(R.id.listview_load_indicator);
-        //contentsListView.addFooterView(footer);
 
         contentsListView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
@@ -283,12 +282,8 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
                     currentPage = currentPage + 1;
 
                     if (currentPage < maxPage) {
-
                         loadAllCommentRequest(contentId, currentPage);
 
-                    } else {
-
-                        //listViewLoaderContainer.setVisibility(View.GONE);
                     }
                 }
 
@@ -613,15 +608,18 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
         mReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                String str = intent.getAction();
-                if (intent.getAction().equals("android.intent.action.SCREEN_OFF")) {
+                String action = intent.getAction();
+                if (action.equals(Intent.ACTION_SCREEN_OFF)) {
                     screenOff = true;
-                    player.getPlayerControl().pause();
-                    mCurrentPosition = player.getCurrentPosition();
-                } else if (intent.getAction().equals("android.intent.action.USER_PRESENT")) {
-                    onResume();
-                } else if (intent.getAction().equals("android.intent.action.SCREEN_ON")) {
+                    if(player != null && player.getPlayerControl().isPlaying()) {
+                        player.getPlayerControl().pause();
+                        mCurrentPosition = player.getCurrentPosition();
+                    }
+
+                } else if (action.equals(Intent.ACTION_SCREEN_ON)) {
                     screenOff = false;
+                } else if(action.equals(Intent.ACTION_USER_PRESENT)) {
+                    onResume();
                 }
             }
         };
@@ -736,13 +734,8 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
         int reportCount = intent.getExtras().getInt("REPORT_COUNT");
         String status = intent.getExtras().getString("STATUS");
         String profileImageUrl = intent.getExtras().getString("PROFILE_IMAGE_URL");
+        String clan = intent.getExtras().getString("CLAN");
 
-        //데이터 리퀘스트
-        //컨텐츠 읽음 카운트를 1개 증가 시킨다.
-        readContentsRequest(contentId);
-
-        //댓글 수를 정확하게 표시하기 위한 변수
-        //뷰페이지에서 이전 페이지로 돌아갔을때 댓글의 갯수를 변경하여 표시해 주기 위함이다.
 
 
         //감정표현 등록 유무 확인 후 하트 색깔을 다르게 표시한다
@@ -756,33 +749,25 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
         }
 
 
-        //감정표현을 한 유저의 프로필 이미지 설정
-        imageLoader.get(profileImageUrl, new ImageLoader.ImageListener() {
-            @Override
-            public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
 
-                if (response.getBitmap() != null) {
-                    imgUserProfile.startAnimation(AnimationUtils.loadAnimation(ViewActivity.this, android.R.anim.fade_in));
-                    imgUserProfile.setImageDrawable(new RoundedAvatarDrawable(response.getBitmap(), 1));
-                } else {
-
-                    String clan = GlobalSharedPreference.getAppPreferences(ViewActivity.this, "clan");
-                    if (clan.equals("0")) {
-                        imgUserProfile.setImageResource(R.drawable.more_img_06_01_dog);
-                    } else if (clan.equals("1")) {
-                        imgUserProfile.setImageResource(R.drawable.more_img_06_01_cat);
-                    } else if (clan.equals("2")) {
-                        imgUserProfile.setImageResource(R.drawable.more_img_06_01_human);
-                    }
-
-                }
-            }
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                //To change body of implemented methods use File | Settings | File Templates.
-            }
-        });
+        //게시글 유저의 프로필 이미지 설정
+        //유저가 설정한 이미지가 없는 경우 종족에 따른 기본 이미지 셋팅팅
+        if(clan.equals("0")) {
+            Picasso.with(this)
+                    .load(profileImageUrl).placeholder(R.drawable.feed_profile_noimage_01)
+                    .resize(200, 200)
+                    .transform(new CircleTransform()).into(imgUserProfile);
+        } else if(clan.equals("1")) {
+            Picasso.with(this)
+                    .load(profileImageUrl).placeholder(R.drawable.feed_profile_noimage_02)
+                    .resize(200, 200)
+                    .transform(new CircleTransform()).into(imgUserProfile);
+        } else if(clan.equals("2")) {
+            Picasso.with(this)
+                    .load(profileImageUrl).placeholder(R.drawable.feed_profile_noimage_03)
+                    .resize(200, 200)
+                    .transform(new CircleTransform()).into(imgUserProfile);
+        }
 
         txtUserProfileName.setText(userName);
         txtNumberOfLike.setText(Integer.toString(numberOfLike));
@@ -816,6 +801,7 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
 
                 } else {
                     gifMainContents.setVisibility(View.VISIBLE);
+                    //Glide.with(this).load(imageURL).asGif().into(gifMainContents);
                     Ion.with(this).load(imageURL).intoImageView(gifMainContents);
 
                 }
@@ -996,7 +982,7 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
             //뒤로 가기 버튼. 플레이어를 릴리즈 한다.
             case R.id.view_back_key_container:
                 if (mContentType == 3) {
-                    //gifMainContents.setImageDrawable(null);
+                    gifMainContents.setImageDrawable(null);
                 }
 
                 releasePlayer();
@@ -1250,6 +1236,7 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
                 intent.putExtra("CONTENT_ID", contentId);
                 startActivity(intent);
                 break;
+
             }
         }
     }
@@ -1976,6 +1963,7 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
                                             imgNoComment.setImageResource(R.drawable.view_img_no_comment_image);
                                             imgNoComment.setVisibility(View.VISIBLE);
                                         } else {
+                                            imgNoComment.setImageDrawable(null);
                                             noCommentContainer.setVisibility(View.GONE);
                                         }
 
@@ -2279,7 +2267,7 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
         //비디오 플레이 중 화면이 꺼졌을 경우
         if (mContentType == 2) {
             if (screenOff == true) {
-                if (player.getPlayerControl().isPlaying()) {
+                if (player.getPlayerControl().isPlaying() && player != null) {
                     player.getPlayerControl().pause();
                 }
             } else {
@@ -2299,6 +2287,7 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
         if (mContentType == 2) {
             if (player != null) {
                 if (player.getPlayerControl().isPlaying()) {
+                    player.getPlayerControl().pause();
                     mCurrentPosition = player.getCurrentPosition();
                 }
             }
@@ -2467,35 +2456,29 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
             //메소드 안에 final 변수가 대입 가능하므로 j에 i 값 대입
             final int j = i;
 
+            //뷰페이지에서는 기본 5개만 나타낸다
             if (i != 5) {
-                imageLoader.get(likeArrayList.get(i).profileImageUrl, new ImageLoader.ImageListener() {
-                    @Override
-                    public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
 
-                        //유저의 프로필 이미지를 셋팅한다.
-                        if (response.getBitmap() != null) {
-                            imgLikeUser[j].startAnimation(AnimationUtils.loadAnimation(ViewActivity.this, android.R.anim.fade_in));
-                            imgLikeUser[j].setImageDrawable(new RoundedAvatarDrawable(response.getBitmap(), 1));
+                //유저의 프로필 이미지를 셋팅한다.
+                //유저가 설정한 프로필 이미지가 없다면 종족에 따른 기본 이미지를 표시한다.
+                if(likeArrayList.get(j).clan.equals("0")) {
+                    Picasso.with(ViewActivity.this)
+                            .load(likeArrayList.get(j).profileImageUrl).placeholder(R.drawable.feed_profile_noimage_01)
+                            .resize(90, 90)
+                            .transform(new CircleTransform()).into(imgLikeUser[j]);
+                } else if(likeArrayList.get(j).clan.equals("1")) {
+                    Picasso.with(ViewActivity.this)
+                            .load(likeArrayList.get(j).profileImageUrl).placeholder(R.drawable.feed_profile_noimage_02)
+                            .resize(90, 90)
+                            .transform(new CircleTransform()).into(imgLikeUser[j]);
+                } else if(likeArrayList.get(j).clan.equals("2")) {
+                    Picasso.with(ViewActivity.this)
+                            .load(likeArrayList.get(j).profileImageUrl).placeholder(R.drawable.feed_profile_noimage_03)
+                            .resize(90, 90)
+                            .transform(new CircleTransform()).into(imgLikeUser[j]);
+                }
 
-                        } else {
-                            //유저가 설정한 프로필 이미지가 없다면 종족에 따른 기본 이미지를 표시한다.
 
-                            String clan = GlobalSharedPreference.getAppPreferences(ViewActivity.this, "clan");
-                            if (clan.equals("0")) {
-                                imgLikeUser[j].setImageResource(R.drawable.more_img_06_01_dog);
-                            } else if (clan.equals("1")) {
-                                imgLikeUser[j].setImageResource(R.drawable.more_img_06_01_cat);
-                            } else if (clan.equals("2")) {
-                                imgLikeUser[j].setImageResource(R.drawable.more_img_06_01_human);
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        //To change body of implemented methods use File | Settings | File Templates.
-                    }
-                });
             } else {
                 break;
             }
@@ -2647,8 +2630,31 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
                     mCurrentPosition = player.getCurrentPosition();
                 }
             }
+        } else if(mContentType == 3) {
+            gifMainContents.setImageDrawable(null);
+        } else {
+            imgMainContents.setImageDrawable(null);
         }
 
+        imgNoComment.setImageDrawable(null);
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        if(mContentType == 3) {
+            Ion.with(this).load(imageURL).intoImageView(gifMainContents);
+        } else if(mContentType == 1) {
+            Picasso.with(this).load(imageURL).into(imgMainContents);
+        }
+
+        if(contentsArrayList.size() == 0) {
+            imgNoComment.setImageResource(R.drawable.view_img_no_comment_image);
+        } else {
+            imgNoComment.setImageDrawable(null);
+        }
     }
 
 

@@ -10,7 +10,7 @@ public class LikeUserListContents implements Serializable{
     String userName;
     String userGender;
     int likeType;
-    String clan;
+    public String clan;
     public String profileImageUrl;
     String userId;
     String myFriend;

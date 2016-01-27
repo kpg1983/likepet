@@ -20,7 +20,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -42,8 +41,10 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.bumptech.glide.Glide;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.likelab.likepet.CircleTransform;
 import com.likelab.likepet.CommentBtnClickListener;
 import com.likelab.likepet.Main.MainActivity;
 import com.likelab.likepet.R;
@@ -60,7 +61,7 @@ import com.likelab.likepet.more.UserProfile;
 import com.likelab.likepet.singIn.JoinMemberBeginActivity;
 import com.likelab.likepet.view.ViewActivity;
 import com.likelab.likepet.volleryCustom.AppController;
-import com.likelab.likepet.volleryCustom.CustomNetworkImageView;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -342,6 +343,7 @@ public class MyPageMoment extends Fragment implements CommentBtnClickListener{
                 //마이페이지 이므로 핸드폰에 저장되어 있는 유저의 정보를 불러온다
                 String profileImageUrl = GlobalSharedPreference.getAppPreferences(getContext(), "profileImageUrl");
                 String userName = GlobalSharedPreference.getAppPreferences(getContext(), "name");
+                String clan = GlobalSharedPreference.getAppPreferences(getContext(), "clan");
                 int likeCount = contentsArrayList.get(position).likeCount;
                 int commentCount = contentsArrayList.get(position).commentCount;
                 String userId = contentsArrayList.get(position).userId;
@@ -376,6 +378,7 @@ public class MyPageMoment extends Fragment implements CommentBtnClickListener{
                 intent.putExtra("USER_ID", userId);
                 intent.putExtra("REPORT_COUNT", reportCount);
                 intent.putExtra("STATUS", status);
+                intent.putExtra("CLAN", clan);
 
                 //컨텐츠를 선택하고 다시 마이페이지로 돌아왔을때 view 페이지에서 좋아요 한 이벤트를 처리하기 위함
                 startActivityForResult(intent, REQ_CODE_MODIFY_CONTENT_INFO);
@@ -453,31 +456,28 @@ public class MyPageMoment extends Fragment implements CommentBtnClickListener{
         //유저가 로그인 상태일때 프로필 이미지를 표시한다.
         //로그 아웃 상태일때는 기본 이미지를 교시한다.
         if(GlobalSharedPreference.getAppPreferences(getActivity(), "login").equals("login")) {
-            imageLoader.get(GlobalSharedPreference.getAppPreferences(getContext(), "profileImageUrl"), new ImageLoader.ImageListener() {
-                @Override
-                public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
 
-                    if (response.getBitmap() != null) {
-                        mainProfileImage.startAnimation(AnimationUtils.loadAnimation(getContext(), android.R.anim.fade_in));
-                        mainProfileImage.setImageDrawable(new RoundedAvatarDrawable(response.getBitmap(), 1));
 
-                    } else {
-                        String clan = GlobalSharedPreference.getAppPreferences(getContext(), "clan");
-                        if (clan.equals("0")) {
-                            mainProfileImage.setImageResource(R.drawable.more_img_06_01_dog);
-                        } else if (clan.equals("1")) {
-                            mainProfileImage.setImageResource(R.drawable.more_img_06_01_cat);
-                        } else if (clan.equals("2")) {
-                            mainProfileImage.setImageResource(R.drawable.more_img_06_01_human);
-                        }
-                    }
-                }
+            String profileImageUrl = GlobalSharedPreference.getAppPreferences(getContext(), "profileImageUrl");
 
-                @Override
-                public void onErrorResponse(VolleyError error) {
-
-                }
-            });
+            //유저의 프로필 이미지를 셋팅한다.
+            //유저가 설정한 프로필 이미지가 없다면 종족에 따른 기본 이미지를 표시한다.
+            if(clan.equals("0")) {
+                Picasso.with(getContext())
+                        .load(profileImageUrl).placeholder(R.drawable.feed_profile_noimage_01)
+                        .resize(90, 90)
+                        .transform(new CircleTransform()).into(mainProfileImage);
+            } else if(clan.equals("1")) {
+                Picasso.with(getContext())
+                        .load(profileImageUrl).placeholder(R.drawable.feed_profile_noimage_02)
+                        .resize(90, 90)
+                        .transform(new CircleTransform()).into(mainProfileImage);
+            } else if(clan.equals("2")) {
+                Picasso.with(getContext())
+                        .load(profileImageUrl).placeholder(R.drawable.feed_profile_noimage_03)
+                        .resize(90, 90)
+                        .transform(new CircleTransform()).into(mainProfileImage);
+            }
         } else {
             mainProfileImage.setImageResource(R.drawable.more_img_profile_human);
         }
@@ -511,7 +511,7 @@ public class MyPageMoment extends Fragment implements CommentBtnClickListener{
     }
 
     //프로필 이미지를 선택했을때 확대 화면으로 표시한다.
-    private void ProfileImagePopup(View v, String imageUrl) {
+    private void ProfileImagePopup(View v, String profileImageUrl) {
 
         final PopupWindow popupWindow = new PopupWindow(v);
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -530,14 +530,15 @@ public class MyPageMoment extends Fragment implements CommentBtnClickListener{
 
         popupWindow.showAtLocation(layout, Gravity.CENTER, 0, 0);
 
-        CustomNetworkImageView imgCommentExpansion = (CustomNetworkImageView)popupView.findViewById(R.id.view_img_comment_expansion);
-        imgCommentExpansion.setImageUrl(imageUrl, imageLoader);
+        final ImageView profileImageExpansion = (ImageView)popupView.findViewById(R.id.view_img_comment_expansion);
+        Glide.with(this).load(profileImageUrl).override(960, 960).into(profileImageExpansion);
 
 
         popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
             @Override
             public void onDismiss() {
                 overlay.setVisibility(View.INVISIBLE);
+                profileImageExpansion.setImageDrawable(null);
             }
         });
 
@@ -1120,11 +1121,13 @@ public class MyPageMoment extends Fragment implements CommentBtnClickListener{
         String iLikeThis = contentsArrayList.get(position).iLikeThis;
         String profileImageUrl = GlobalSharedPreference.getAppPreferences(getContext(), "profileImageUrl");
         String userName = GlobalSharedPreference.getAppPreferences(getContext(), "name");
+        String clan = GlobalSharedPreference.getAppPreferences(getContext(), "clan");
         int likeCount = contentsArrayList.get(position).likeCount;
         int commentCount = contentsArrayList.get(position).commentCount;
         String userId = contentsArrayList.get(position).userId;
         String status = contentsArrayList.get(position).status;
         int reportCount = contentsArrayList.get(position).reportCount;
+
 
         Intent intent = new Intent(getContext(), ViewActivity.class);
 
@@ -1153,6 +1156,7 @@ public class MyPageMoment extends Fragment implements CommentBtnClickListener{
         intent.putExtra("USER_ID", userId);
         intent.putExtra("REPORT_COUNT", reportCount);
         intent.putExtra("STATUS", status);
+        intent.putExtra("CLAN", clan);
 
         startActivityForResult(intent, REQ_CODE_MODIFY_CONTENT_INFO);
     }

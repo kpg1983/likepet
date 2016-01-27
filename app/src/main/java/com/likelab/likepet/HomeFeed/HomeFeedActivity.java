@@ -194,10 +194,8 @@ public class HomeFeedActivity extends Activity {
                 String mediaSize = contentsArrayList.get(position).mediaSize;
                 String status = contentsArrayList.get(position).status;
                 int reportCount = contentsArrayList.get(position).reportCount;
+                String clan = contentsArrayList.get(position).clan;
 
-                Log.d("Home mediaSize", mediaSize);
-
-                Log.d("iLikeThis", iLikeThis + ": " + Integer.toString(position));
 
                 Intent intent = new Intent(HomeFeedActivity.this, ViewActivity.class);
 
@@ -226,6 +224,7 @@ public class HomeFeedActivity extends Activity {
                 intent.putExtra("USER_ID", userId);
                 intent.putExtra("REPORT_COUNT", reportCount);
                 intent.putExtra("STATUS", status);
+                intent.putExtra("CLAN", clan);
 
                 startActivityForResult(intent, RESULT_CODE);
 

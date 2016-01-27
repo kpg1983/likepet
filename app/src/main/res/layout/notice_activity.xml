@@ -19,7 +19,7 @@
 
             <ImageButton
                 android:id="@+id/notice_btn_cancel"
-                android:layout_width="12dp"
+                android:layout_width="6.73dp"
                 android:layout_height="12.33dp"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="16.33dp"
@@ -29,6 +29,7 @@
                 />
 
         </RelativeLayout>
+
 
         <TextView
             android:layout_width="wrap_content"

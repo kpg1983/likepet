@@ -95,7 +95,7 @@
                 android:layout_below="@id/comment_userName"
                 android:layout_marginBottom="11.67dp">
 
-                <com.android.volley.toolbox.NetworkImageView
+                <ImageView
                     android:id="@+id/comment_img_comment"
                     android:layout_width="103.32dp"
                     android:layout_height="103.32dp"

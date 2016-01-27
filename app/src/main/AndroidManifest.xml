@@ -273,6 +273,7 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:windowSoftInputMode="adjustResize"
             android:screenOrientation="portrait"
+            android:hardwareAccelerated="false"
             />
 
         <activity

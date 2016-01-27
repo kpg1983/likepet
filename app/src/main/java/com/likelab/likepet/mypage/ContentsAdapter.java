@@ -8,7 +8,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -26,14 +25,15 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.likelab.likepet.CommentBtnClickListener;
 import com.likelab.likepet.R;
+import com.likelab.likepet.RoundedCornerTransformation;
 import com.likelab.likepet.global.GlobalSharedPreference;
 import com.likelab.likepet.global.GlobalUrl;
 import com.likelab.likepet.global.RecycleUtils;
-import com.likelab.likepet.global.RoundedAvatarDrawable;
 import com.likelab.likepet.view.ViewActivity;
 import com.likelab.likepet.volleryCustom.AppController;
 import com.likelab.likepet.volleryCustom.LruMemoryDiskBitmapCache;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Transformation;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -290,6 +290,8 @@ public class ContentsAdapter extends BaseAdapter {
                 viewHolder.imgCommentDeco[i].setVisibility(View.VISIBLE);
 
                 if(contentsArrayList.get(position).bestCommentUrl[i].contains("http")) {
+
+
                     imgBoxLine[i].setVisibility(View.INVISIBLE);
                     imgBoxLine[i].setImageDrawable(null);
 
@@ -297,6 +299,13 @@ public class ContentsAdapter extends BaseAdapter {
 
                     final int index = i;    //inner method에서는 final 변수만 사용할 수 있다
 
+                    final Transformation transFormation = new RoundedCornerTransformation(20, 0);
+                    Picasso.with(context)
+                            .load(contentsArrayList.get(position).bestCommentUrl[i])
+                            .transform(transFormation)
+                            .into(imgComment[i]);
+
+                    /*
                     imageLoader.get(contentsArrayList.get(position).bestCommentUrl[i], new ImageLoader.ImageListener() {
 
                         @Override
@@ -305,7 +314,7 @@ public class ContentsAdapter extends BaseAdapter {
                                 imgComment[index].startAnimation(AnimationUtils.loadAnimation(context, android.R.anim.fade_in));
                                 imgComment[index].setImageDrawable(new RoundedAvatarDrawable(response.getBitmap(), 2));
                             } else {
-                                imgComment[index].setImageResource(R.drawable.main_image);
+                                imgComment[index].setImageResource(R.drawable.place_holder_960);
                             }
                         }
 
@@ -314,6 +323,8 @@ public class ContentsAdapter extends BaseAdapter {
                             //To change body of implemented methods use File | Settings | File Templates.
                         }
                     });
+
+                    */
                 } else  {
                     imgComment[i].setVisibility(View.INVISIBLE);
                     imgComment[i].setImageBitmap(null);
@@ -366,6 +377,7 @@ public class ContentsAdapter extends BaseAdapter {
                 String iLikeThis = contentsArrayList.get(position).iLikeThis;
                 String profileImageUrl = GlobalSharedPreference.getAppPreferences(context, "profileImageUrl");
                 String userName = GlobalSharedPreference.getAppPreferences(context, "name");
+                String clan = GlobalSharedPreference.getAppPreferences(context, "clan");
                 int likeCount = contentsArrayList.get(position).likeCount;
                 int commentCount = contentsArrayList.get(position).commentCount;
                 String userId = contentsArrayList.get(position).userId;
@@ -400,6 +412,8 @@ public class ContentsAdapter extends BaseAdapter {
                 intent.putExtra("USER_ID", userId);
                 intent.putExtra("REPORT_COUNT", reportCount);
                 intent.putExtra("STATUS", status);
+                intent.putExtra("CLAN", clan);
+
 
                 context.startActivityForResult(intent, RESULT_CODE);
             }

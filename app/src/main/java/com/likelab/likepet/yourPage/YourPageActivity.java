@@ -15,7 +15,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
@@ -34,6 +33,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.bumptech.glide.Glide;
+import com.likelab.likepet.CircleTransform;
 import com.likelab.likepet.R;
 import com.likelab.likepet.UploadContents;
 import com.likelab.likepet.bookmark.BookmarkActivity;
@@ -46,7 +47,7 @@ import com.likelab.likepet.global.RoundedAvatarDrawable;
 import com.likelab.likepet.more.UserProfile;
 import com.likelab.likepet.view.ViewActivity;
 import com.likelab.likepet.volleryCustom.AppController;
-import com.likelab.likepet.volleryCustom.CustomNetworkImageView;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -113,7 +114,6 @@ public class YourPageActivity extends Activity {
     int followingFlag = 0;
 
     private static final int REQ_CODE_PICK_IMAGE = 0;
-
     private static final int REQ_CODE_MODIFY_CONTENT_INFO = 1;
 
     private static final int RESULT_MODIFY_CONTENT_SUMMARY = 5;
@@ -365,6 +365,7 @@ public class YourPageActivity extends Activity {
                 String userId = contentsArrayList.get(position).userId;
                 String status = contentsArrayList.get(position).status;
                 int reportCount = contentsArrayList.get(position).reportCount;
+                String clan = contentsArrayList.get(position).clan;
 
 
                 Intent intent = new Intent(YourPageActivity.this, ViewActivity.class);
@@ -394,6 +395,7 @@ public class YourPageActivity extends Activity {
                 intent.putExtra("USER_ID", userId);
                 intent.putExtra("REPORT_COUNT", reportCount);
                 intent.putExtra("STATUS", status);
+                intent.putExtra("CLAN", clan);
 
                 startActivityForResult(intent, RESULT_CODE);
 
@@ -459,29 +461,22 @@ public class YourPageActivity extends Activity {
 
         profileName.setText(name);
 
-        imageLoader.get(profileImageUrl, new ImageLoader.ImageListener() {
-            @Override
-            public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
-
-                if (response.getBitmap() != null) {
-                    mainProfileImage.startAnimation(AnimationUtils.loadAnimation(YourPageActivity.this, android.R.anim.fade_in));
-                    mainProfileImage.setImageDrawable(new RoundedAvatarDrawable(response.getBitmap(), 1));
-                } else {
-                    if (clan.equals("0")) {
-                        mainProfileImage.setImageResource(R.drawable.more_img_06_01_dog);
-                    } else if (clan.equals("1")) {
-                        mainProfileImage.setImageResource(R.drawable.more_img_06_01_cat);
-                    } else if (clan.equals("2")) {
-                        mainProfileImage.setImageResource(R.drawable.more_img_06_01_human);
-                    }
-                }
-            }
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                error.printStackTrace();
-            }
-        });
+        if(clan.equals("0")) {
+            Picasso.with(this)
+                    .load(profileImageUrl).placeholder(R.drawable.feed_profile_noimage_01)
+                    .resize(200, 200)
+                    .transform(new CircleTransform()).into(mainProfileImage);
+        } else if(clan.equals("1")) {
+            Picasso.with(this)
+                    .load(profileImageUrl).placeholder(R.drawable.feed_profile_noimage_02)
+                    .resize(200, 200)
+                    .transform(new CircleTransform()).into(mainProfileImage);
+        } else if(clan.equals("2")) {
+            Picasso.with(this)
+                    .load(profileImageUrl).placeholder(R.drawable.feed_profile_noimage_03)
+                    .resize(200, 200)
+                    .transform(new CircleTransform()).into(mainProfileImage);
+        }
 
 
         btn_bookmark.setImageResource(R.drawable.mypage_profile_btn_bookmark);
@@ -492,7 +487,7 @@ public class YourPageActivity extends Activity {
     }
 
     //사용자 이미지를 누르면 확대한다
-    private void ProfileImagePopup(View v, String imageUrl, final String clan) {
+    private void ProfileImagePopup(View v, String profileImageUrl, final String clan) {
 
         final PopupWindow popupWindow = new PopupWindow(v);
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -511,42 +506,14 @@ public class YourPageActivity extends Activity {
 
         popupWindow.showAtLocation(layout, Gravity.CENTER, 0, 0);
 
-        final CustomNetworkImageView profileImageExpansion = (CustomNetworkImageView)popupView.findViewById(R.id.view_img_comment_expansion);
-        profileImageExpansion.setImageUrl(imageUrl, imageLoader);
-
-            imageLoader.get(imageUrl, new ImageLoader.ImageListener() {
-                @Override
-                public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
-
-                    if (response.getBitmap() != null) {
-                        profileImageExpansion.startAnimation(AnimationUtils.loadAnimation(YourPageActivity.this, android.R.anim.fade_in));
-                        profileImageExpansion.setImageDrawable(new RoundedAvatarDrawable(response.getBitmap(), 1));
-
-                    } else {
-
-                        if (clan.equals("0")) {
-                            profileImageExpansion.setImageResource(R.drawable.more_img_06_01_dog);
-                        } else if (clan.equals("1")) {
-                            profileImageExpansion.setImageResource(R.drawable.more_img_06_01_cat);
-                        } else if (clan.equals("2")) {
-                            profileImageExpansion.setImageResource(R.drawable.more_img_06_01_human);
-                        }
-                    }
-                }
-
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    error.printStackTrace();
-                }
-            });
-
-
-
+        final ImageView profileImageExpansion = (ImageView)popupView.findViewById(R.id.view_img_comment_expansion);
+        Glide.with(this).load(profileImageUrl).override(960, 960).into(profileImageExpansion);
 
         popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
             @Override
             public void onDismiss() {
                 overlay.setVisibility(View.INVISIBLE);
+                profileImageExpansion.setImageDrawable(null);
             }
         });
 
@@ -725,6 +692,7 @@ public class YourPageActivity extends Activity {
                                 JSONObject other = otherJsonObject.getJSONObject("other");
                                 String profileImageUrl = other.getString("profileImageUrl");
                                 String name = other.getString("name");
+                                String clan = other.getString("clan");
 
                                 maxPage = pages.getInt("max");
 
@@ -781,8 +749,8 @@ public class YourPageActivity extends Activity {
                                     //베스트 댓글이 없는 경우
                                     if (!jsonArray.getJSONObject(i).has("bestCommentItems")) {
                                         YourPageContents content = new YourPageContents(contentUrl, contentType, registryDate, likeCount, 0, null, null, null, null,
-                                                null, null, null, null, null, commentCount, 0, contentId, iLikeThis, descriptions, userId, videoScreenshotUrl, status, reportCount,
-                                                profileImageUrl, name, mediaWidth, mediaHeight);
+                                                null, null, null, null, null, commentCount, 0, contentId, iLikeThis, descriptions, userId, videoScreenshotUrl, "1", reportCount,
+                                                profileImageUrl, name, mediaWidth, mediaHeight, clan);
 
                                         contentsArrayList.add(content);
 
@@ -806,7 +774,7 @@ public class YourPageActivity extends Activity {
 
                                         YourPageContents content = new YourPageContents(contentUrl, contentType, registryDate, likeCount, numberOfBestComment, commentUrl[0], commentUrl[1], commentUrl[2], commentType[0],
                                                 commentType[1], commentType[2], commentDescription[0], commentDescription[1], commentDescription[2], commentCount, 0, contentId, iLikeThis, descriptions, userId
-                                        , videoScreenshotUrl, status, reportCount, profileImageUrl, name, mediaWidth, mediaHeight);
+                                        , videoScreenshotUrl, "1", reportCount, profileImageUrl, name, mediaWidth, mediaHeight, clan);
 
                                         contentsArrayList.add(content);
                                     }
@@ -999,6 +967,7 @@ public class YourPageActivity extends Activity {
                 updateList(contentsArrayList);
                 return;
 
+
                 //좋아요, 댓글 카운트가 변경된 경우
             } else if(resultCode == RESULT_MODIFY_CONTENT_SUMMARY){
                 int position = data.getExtras().getInt("POSITION");
@@ -1006,14 +975,6 @@ public class YourPageActivity extends Activity {
             }
 
         }
-    }
-
-    private static class TIME_MAXIMUM {
-        public static final int SEC = 60;
-        public static final int MIN = 60;
-        public static final int HOUR = 24;
-        public static final int DAY = 30;
-        public static final int MONTH = 12;
     }
 
     public void updateList(ArrayList<YourPageContents> newList) {

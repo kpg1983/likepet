@@ -21,7 +21,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.NetworkImageView;
 import com.likelab.likepet.R;
 import com.likelab.likepet.global.GlobalSharedPreference;
 import com.likelab.likepet.global.GlobalUrl;
@@ -29,8 +28,8 @@ import com.likelab.likepet.global.RecycleUtils;
 import com.likelab.likepet.global.RoundedAvatarDrawable;
 import com.likelab.likepet.singIn.JoinMemberBeginActivity;
 import com.likelab.likepet.volleryCustom.AppController;
-import com.likelab.likepet.volleryCustom.CustomNetworkImageView;
 import com.likelab.likepet.yourPage.YourPageActivity;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -99,7 +98,7 @@ public class ViewContentsAdapter extends BaseAdapter {
     class ViewHolder {
 
         TextView txtUserName;
-        NetworkImageView imgComment;
+        ImageView imgComment;
         TextView txtComment;
 
         TextView txtDate;
@@ -130,7 +129,7 @@ public class ViewContentsAdapter extends BaseAdapter {
             itemLayout = inflater.inflate(layout, null);
 
             viewHolder.txtUserName = (TextView) itemLayout.findViewById(R.id.comment_userName);
-            viewHolder.imgComment = (NetworkImageView) itemLayout.findViewById(R.id.comment_img_comment);
+            viewHolder.imgComment = (ImageView) itemLayout.findViewById(R.id.comment_img_comment);
             viewHolder.txtComment = (TextView) itemLayout.findViewById(R.id.comment_txt_comment);
             viewHolder.txtDate = (TextView) itemLayout.findViewById(R.id.comment_date);
             viewHolder.txtLike = (TextView) itemLayout.findViewById(R.id.comment_txt_like);
@@ -257,10 +256,15 @@ public class ViewContentsAdapter extends BaseAdapter {
         //댓글에 이미지 포함 유무 확인후 레이아웃 변경
         if (viewContentsArrayList.get(position).commentUrl == null || viewContentsArrayList.get(position).commentUrl.equals("null") || viewContentsArrayList.get(position).commentUrl.equals("")) {
             viewHolder.imgComment.setVisibility(View.GONE);
+            viewHolder.imgComment.setImageDrawable(null);
 
         } else {
             viewHolder.imgComment.setVisibility(View.VISIBLE);
-            viewHolder.imgComment.setImageUrl(viewContentsArrayList.get(position).commentUrl, imageLoader);
+            Picasso.with(context)
+                    .load(viewContentsArrayList.get(position).commentUrl)
+                    .resize(300, 300)
+                    .into(viewHolder.imgComment);
+            //viewHolder.imgComment.setImageUrl(viewContentsArrayList.get(position).commentUrl, imageLoader);
 
         }
 
@@ -585,8 +589,8 @@ public class ViewContentsAdapter extends BaseAdapter {
 
         popupWindow.showAtLocation(v, Gravity.CENTER, 0, 0);
 
-        CustomNetworkImageView imgCommentExpansion = (CustomNetworkImageView) popupView.findViewById(R.id.view_img_comment_expansion);
-        imgCommentExpansion.setImageUrl(imageUrl, imageLoader);
+        ImageView imgCommentExpansion = (ImageView) popupView.findViewById(R.id.view_img_comment_expansion);
+        Picasso.with(context).load(imageUrl).into(imgCommentExpansion);
 
         popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
             @Override

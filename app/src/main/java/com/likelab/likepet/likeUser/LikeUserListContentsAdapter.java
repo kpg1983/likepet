@@ -135,10 +135,8 @@ public class LikeUserListContentsAdapter extends BaseAdapter {
 
 
         final ImageView imgLikeUserProfileImage = (ImageView)itemLayout.findViewById(R.id.like_user_img_profile);
-
         final ImageButton btnFriendAdd = (ImageButton)itemLayout.findViewById(R.id.like_user_img_add);
 
-        System.out.println("LikeType :" + contentsArrayList.get(position).likeType);
 
         if(contentsArrayList.get(position).likeType == 0) {
             viewHolder.imgLikeType.setImageResource(R.drawable.view_img_like_small_01);
@@ -152,10 +150,6 @@ public class LikeUserListContentsAdapter extends BaseAdapter {
         else if(contentsArrayList.get(position).likeType == 3) {
             viewHolder.imgLikeType.setImageResource(R.drawable.view_img_like_small_04);
         }
-
-        //BitmapDrawable bImageMain = (BitmapDrawable)context.getResources().getDrawable(contentsArrayList.get(position).userProfileImage);
-        //viewHolder.imgLikeUserProfileImage.setImageDrawable(new RoundedAvatarDrawable(bImageMain.getBitmap(), 1));
-
 
         if(contentsArrayList.get(position).clan.equals("0")) {
 

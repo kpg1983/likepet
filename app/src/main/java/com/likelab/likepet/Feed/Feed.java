@@ -717,6 +717,7 @@ public class Feed extends Fragment implements CommentBtnClickListener {
         String userId = contentsArrayList.get(position).userId;
         String status = contentsArrayList.get(position).status;
         int reportCount = contentsArrayList.get(position).reportCount;
+        String clan = contentsArrayList.get(position).clan;
 
 
         if (contentsArrayList.get(position).contentType.matches(".*image.*")) {
@@ -746,6 +747,7 @@ public class Feed extends Fragment implements CommentBtnClickListener {
         intent.putExtra("USER_ID", userId);
         intent.putExtra("REPORT_COUNT", reportCount);
         intent.putExtra("STATUS", status);
+        intent.putExtra("CLAN", clan);
 
         startActivityForResult(intent, RESULT_CODE);
     }
