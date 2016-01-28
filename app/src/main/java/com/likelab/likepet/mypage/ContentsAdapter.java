@@ -289,43 +289,26 @@ public class ContentsAdapter extends BaseAdapter {
                 viewHolder.imgNoComment[i].setImageDrawable(null);
                 viewHolder.imgCommentDeco[i].setVisibility(View.VISIBLE);
 
+                //이미지 comment
                 if(contentsArrayList.get(position).bestCommentUrl[i].contains("http")) {
 
-
+                    //텍스트 comment 입력시 필요한 배경들은 보이지 않게 처리한다.
                     imgBoxLine[i].setVisibility(View.INVISIBLE);
                     imgBoxLine[i].setImageDrawable(null);
 
+                    //이미지 comment 컨테이너
                     imgComment[i].setVisibility(View.VISIBLE);
 
-                    final int index = i;    //inner method에서는 final 변수만 사용할 수 있다
-
-                    final Transformation transFormation = new RoundedCornerTransformation(20, 0);
+                    final Transformation transFormation = new RoundedCornerTransformation(10, 0);
                     Picasso.with(context)
                             .load(contentsArrayList.get(position).bestCommentUrl[i])
+                            .resize(300, 300)
                             .transform(transFormation)
                             .into(imgComment[i]);
 
-                    /*
-                    imageLoader.get(contentsArrayList.get(position).bestCommentUrl[i], new ImageLoader.ImageListener() {
 
-                        @Override
-                        public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
-                            if (response.getBitmap() != null) {
-                                imgComment[index].startAnimation(AnimationUtils.loadAnimation(context, android.R.anim.fade_in));
-                                imgComment[index].setImageDrawable(new RoundedAvatarDrawable(response.getBitmap(), 2));
-                            } else {
-                                imgComment[index].setImageResource(R.drawable.place_holder_960);
-                            }
-                        }
-
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            //To change body of implemented methods use File | Settings | File Templates.
-                        }
-                    });
-
-                    */
                 } else  {
+                    //텍스트 comment
                     imgComment[i].setVisibility(View.INVISIBLE);
                     imgComment[i].setImageBitmap(null);
 
@@ -336,10 +319,12 @@ public class ContentsAdapter extends BaseAdapter {
                 }
             }
 
+            //베스트 comment가 3개 미만을때는 나머지 항목을 채워준다
             for(int i=numberOfBestComment; i<3; i++) {
                 viewHolder.noCommentContainer[i].setVisibility(View.VISIBLE);
                 imgComment[i].setVisibility(View.INVISIBLE);
 
+                //베스트 댓글을 기다리고 있다멍
                 if(i == 1) {
                     viewHolder.imgNoComment[i].setImageResource(R.drawable.mypage_comment_no_comment_03);
                 } else if (i == 2) {

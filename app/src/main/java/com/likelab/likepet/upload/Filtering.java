@@ -236,14 +236,13 @@ public class Filtering extends Activity {
             bitmap = GlobalUploadBitmapImage.bitmap;
             bmp = bitmap;
 
-        } else {
-
         }
 
         GlobalUploadBitmapImage.bitmap = bitmap;
 
         if(isThisGif){
             filterBitmap = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth() / 4, bitmap.getHeight() / 4, true);
+            filterBitmap = imgRotate(filterBitmap);
         }else{
             filterBitmap = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth() / 8, bitmap.getHeight() / 8, true);
         }
@@ -712,6 +711,22 @@ public class Filtering extends Activity {
         }
 
         Bitmap resizedBitmap = Bitmap.createBitmap(GlobalUploadBitmapImage.bitmap, 0, 0, width, height, matrix, true);
+
+        return resizedBitmap;
+
+    }
+    //전면카메라로 촬영을 하면 오른쪽으로 회전이 되어 일단 임시조치로 강제회전
+    private Bitmap imgRotate(Bitmap bitmap) {
+
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+
+        Matrix matrix = new Matrix();
+
+        matrix.postRotate(270);
+
+
+        Bitmap resizedBitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, true);
 
         return resizedBitmap;
 

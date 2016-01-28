@@ -109,7 +109,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 		// TODO Auto-generated method stub
 
 		//mCamera.release();
-	//	mCamera = null;
+		//	mCamera = null;
 
 	}
 

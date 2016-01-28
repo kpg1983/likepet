@@ -749,7 +749,7 @@ public class YourPageActivity extends Activity {
                                     //베스트 댓글이 없는 경우
                                     if (!jsonArray.getJSONObject(i).has("bestCommentItems")) {
                                         YourPageContents content = new YourPageContents(contentUrl, contentType, registryDate, likeCount, 0, null, null, null, null,
-                                                null, null, null, null, null, commentCount, 0, contentId, iLikeThis, descriptions, userId, videoScreenshotUrl, "1", reportCount,
+                                                null, null, null, null, null, commentCount, 0, contentId, iLikeThis, descriptions, userId, videoScreenshotUrl, status, reportCount,
                                                 profileImageUrl, name, mediaWidth, mediaHeight, clan);
 
                                         contentsArrayList.add(content);
@@ -774,7 +774,7 @@ public class YourPageActivity extends Activity {
 
                                         YourPageContents content = new YourPageContents(contentUrl, contentType, registryDate, likeCount, numberOfBestComment, commentUrl[0], commentUrl[1], commentUrl[2], commentType[0],
                                                 commentType[1], commentType[2], commentDescription[0], commentDescription[1], commentDescription[2], commentCount, 0, contentId, iLikeThis, descriptions, userId
-                                        , videoScreenshotUrl, "1", reportCount, profileImageUrl, name, mediaWidth, mediaHeight, clan);
+                                        , videoScreenshotUrl, status, reportCount, profileImageUrl, name, mediaWidth, mediaHeight, clan);
 
                                         contentsArrayList.add(content);
                                     }

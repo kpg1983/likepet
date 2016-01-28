@@ -8,7 +8,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -28,14 +27,15 @@ import com.likelab.likepet.CircleTransform;
 import com.likelab.likepet.CommentBtnClickListener;
 import com.likelab.likepet.Main.MainActivity;
 import com.likelab.likepet.R;
+import com.likelab.likepet.RoundedCornerTransformation;
 import com.likelab.likepet.global.GlobalSharedPreference;
 import com.likelab.likepet.global.GlobalUrl;
-import com.likelab.likepet.global.RoundedAvatarDrawable;
 import com.likelab.likepet.singIn.JoinMemberBeginActivity;
 import com.likelab.likepet.view.ViewActivity;
 import com.likelab.likepet.volleryCustom.AppController;
 import com.likelab.likepet.yourPage.YourPageActivity;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Transformation;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -408,25 +408,12 @@ public class FeedContentsAdapter extends BaseAdapter{
 
                     imgComment[i].setVisibility(View.VISIBLE);
 
-                    final int index = i;    //inner method에서는 final 변수만 사용할 수 있다
-
-                    imageLoader.get(contentsArrayList.get(position).bestCommentUrl[i], new ImageLoader.ImageListener() {
-
-                        @Override
-                        public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
-                            if (response.getBitmap() != null) {
-                                imgComment[index].startAnimation(AnimationUtils.loadAnimation(context, android.R.anim.fade_in));
-                                imgComment[index].setImageDrawable(new RoundedAvatarDrawable(response.getBitmap(), 2));
-                            } else {
-                                imgComment[index].setImageResource(R.drawable.place_holder_960);
-                            }
-                        }
-
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            //To change body of implemented methods use File | Settings | File Templates.
-                        }
-                    });
+                    final Transformation transFormation = new RoundedCornerTransformation(10, 0);
+                    Picasso.with(context)
+                            .load(contentsArrayList.get(position).bestCommentUrl[i])
+                            .resize(300, 300)
+                            .transform(transFormation)
+                            .into(imgComment[i]);
                 } else  {
                     imgComment[i].setVisibility(View.INVISIBLE);
                     imgComment[i].setImageBitmap(null);
