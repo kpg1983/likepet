@@ -66,7 +66,6 @@ public class LoginActivity extends Activity {
     private TextView txtLostEmail;
     private TextView txtLostPassword;
 
-    private int blackLayoutFlag = 0;
 
     private RequestQueue queue;
     private Tracker mTracker = AppController.getInstance().getDefaultTracker();
@@ -149,8 +148,6 @@ public class LoginActivity extends Activity {
 
                 final RelativeLayout blackLayout = (RelativeLayout)findViewById(R.id.login_black_layout);
                 final Button btnConfirmLogin = (Button)findViewById(R.id.login_btn_next);
-
-                blackLayoutFlag = 1;
 
                 popupView = inflater.inflate(R.layout.lost_password_popup_view, null);
 

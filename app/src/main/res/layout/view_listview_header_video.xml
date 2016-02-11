@@ -8,6 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="270dp"
         android:layout_below="@id/view_menu_tab"
+        android:background="#000000"
         >
 
         <RelativeLayout

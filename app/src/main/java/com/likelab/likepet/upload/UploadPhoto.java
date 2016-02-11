@@ -644,10 +644,6 @@ public class UploadPhoto extends Fragment implements View.OnClickListener {
             mPicture = getPictureCallback();
             mPreview.refreshCamera(mCamera);
 
-            int width = mPreview.getPreviewWidth();
-            int height = mPreview.getPreviewHeight();
-
-            //cameraPreview.setLayoutParams(new RelativeLayout.LayoutParams(height, width));
         }
 
         //카메라 타이머 초기화

@@ -164,7 +164,16 @@ public class JoinMemberBeginActivity extends Activity implements GoogleApiClient
                             public void failure(TwitterException e) {
 
                                 e.printStackTrace();
-                            }
+
+                                if(e.getMessage().contains("This user does not have an email address")) {
+                                    String email = "tw" + id + "@likepet.me";
+                                    checkEmailRequest("twitter", email, id);
+
+                                } else if(e.getMessage().contains("The user chose not to share their email address at this time")) {
+                                    Toast.makeText(JoinMemberBeginActivity.this, getResources().getString(R.string.join_incorrect_twitter_email),
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                             }
                         });
 
                         Twitter.getApiClient(session).getAccountService().verifyCredentials(true, false, new Callback<User>() {
@@ -316,24 +325,27 @@ public class JoinMemberBeginActivity extends Activity implements GoogleApiClient
                                             name = (String) response.getJSONObject().get("name");//페이스북 이름String email = (String) response.getJSONObject().get("email");//이메일
                                             email = (String) response.getJSONObject().get("email");//이메일
 
+                                            //소셜을 통한 회원 가입 프로세스 중 중복체크
+                                            if(email != null) {
+                                                checkEmailRequest("facebook", email, id);
+
+                                            } else {
+                                                Toast.makeText(JoinMemberBeginActivity.this, getResources().getString(R.string.join_incorrect_facebook_email), Toast.LENGTH_SHORT).show();
+                                            }
+
                                         } catch (JSONException e) {
 
                                             // TODO Auto-generated catch block
 
                                             e.printStackTrace();
 
-                                        }
-                                        // new joinTask().execute(); //자신의 서버에서 로그인 처리를 해줍니다
-                                        Log.d("accountId", id);
+                                            if(e.getMessage().contains("No value for email")) {
 
-                                        //queue.add(new StringRequest(detail_info_request_url+endPoint, successListener, errorListener));
-                                        //String parameter = null;
+                                                String email = "fb" + id + "@likepet.me";
+                                                checkEmailRequest("facebook", email, id);
 
-                                        //소셜을 통한 회원 가입 프로세스 중 중복체크
-                                        if(email != null) {
-                                            checkEmailRequest("facebook", email, id);
-                                        } else {
-                                            Toast.makeText(JoinMemberBeginActivity.this, getResources().getString(R.string.join_incorrect_facebook_email), Toast.LENGTH_SHORT).show();
+                                            }
+
                                         }
 
                                     }
@@ -423,12 +435,6 @@ public class JoinMemberBeginActivity extends Activity implements GoogleApiClient
         String endPoint = "/users/id/friendly/duplicate?login="+ social + "&accountId=" + accountId;
 
         System.out.println(endPoint);
-
-       // Log.d("accountId", accountId);
-
-        //queue.add(new StringRequest(detail_info_request_url+endPoint, successListener, errorListener));
-        //String parameter = null;
-
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, GlobalUrl.BASE_URL + endPoint,
                 new Response.Listener<JSONObject>() {

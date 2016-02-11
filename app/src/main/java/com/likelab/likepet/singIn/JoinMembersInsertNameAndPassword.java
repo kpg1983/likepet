@@ -66,8 +66,6 @@ public class JoinMembersInsertNameAndPassword extends Activity {
     private TextView txtPasswordErrorMessageSpecialCharacter;
     private TextView txtPasswordErrorMessageNoSpace;
 
-    private final String detail_info_request_url = "http://54.169.212.108:8080";
-
     String clan;
     String name;
 

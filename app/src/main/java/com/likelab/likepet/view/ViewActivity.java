@@ -2851,14 +2851,24 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
         public void onCallStateChanged(int state, String incomingNumber) {
             if (mContentType == 2) {
                 if (state == TelephonyManager.CALL_STATE_IDLE) {
-                    player.seekTo(mCurrentPosition);
+                    try {
+                        player.seekTo(mCurrentPosition);
+                    }catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     //mVideoView.start();
                 } else if (state == TelephonyManager.CALL_STATE_RINGING) {
-                    if (player.getPlayerControl().isPlaying()) {
-                        player.getPlayerControl().pause();
-                        mCurrentPosition = player.getCurrentPosition();
 
+                    try {
+                        if (player.getPlayerControl().isPlaying()) {
+                            player.getPlayerControl().pause();
+                            mCurrentPosition = player.getCurrentPosition();
+
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
+
                 }
             }
         }

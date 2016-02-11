@@ -340,9 +340,19 @@ public class InsertUserNameActivity extends Activity {
                             if (responseCode == 200) {
                                 Toast.makeText(InsertUserNameActivity.this,
                                         getResources().getString(R.string.join_insert_email_password_toast_finish), Toast.LENGTH_SHORT).show();
+
+                                //후에 회원계정 정보에서 어떠한 소셜과 연동되어 있는지 확인해준다.
+                                if(socialType.equals("twitter")) {
+                                    GlobalSharedPreference.setAppPreferences(InsertUserNameActivity.this, "linkageTwitter", "1");
+                                } else if(socialType.equals("facebook")) {
+                                    GlobalSharedPreference.setAppPreferences(InsertUserNameActivity.this, "linkageFacebook", "1");
+                                } else {
+                                    GlobalSharedPreference.setAppPreferences(InsertUserNameActivity.this, "linkageGoogle", "1");
+
+                                }
+
                                 loginRequest(email, id);
 
-                                System.out.println(response.toString());
 
                             } else if (responseCode == 409) {
                                 loginRequest(email, id);
