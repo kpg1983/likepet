@@ -22,6 +22,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.likelab.likepet.R;
 import com.likelab.likepet.global.GlobalSharedPreference;
 import com.likelab.likepet.global.GlobalUrl;
+import com.likelab.likepet.global.GlobalVariable;
 import com.likelab.likepet.volleryCustom.AppController;
 
 import org.json.JSONException;
@@ -126,12 +127,9 @@ public class EditEmail extends Activity {
     }
 
 
-    public void editEmailRequest(String newEmail) {
+    public void editEmailRequest(final String newEmail) {
 
         String endPoint = "/users/user/email";
-
-
-        //Toast.makeText(JoinMemberBeginActivity.this, token, Toast.LENGTH_LONG).show();
 
         JSONObject obj = new JSONObject();
         try {
@@ -156,6 +154,7 @@ public class EditEmail extends Activity {
                             if (responseCode == 200) {
                                 Toast.makeText(EditEmail.this, getResources().getString(R.string.modify_email_toast_complited),
                                         Toast.LENGTH_LONG).show();
+                                GlobalSharedPreference.setAppPreferences(EditEmail.this, "email", newEmail);
                                 finish();
                             }
                             else if(responseCode == 404) {
@@ -184,6 +183,8 @@ public class EditEmail extends Activity {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("sessionId", GlobalSharedPreference.getAppPreferences(EditEmail.this, "sid"));
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 

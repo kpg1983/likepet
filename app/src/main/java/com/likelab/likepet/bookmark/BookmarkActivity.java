@@ -18,6 +18,7 @@ import com.google.android.gms.analytics.Tracker;
 import com.likelab.likepet.global.GlobalSharedPreference;
 import com.likelab.likepet.global.GlobalUrl;
 import com.likelab.likepet.R;
+import com.likelab.likepet.global.GlobalVariable;
 import com.likelab.likepet.global.RecycleUtils;
 import com.likelab.likepet.volleryCustom.AppController;
 
@@ -213,6 +214,8 @@ public class BookmarkActivity extends Activity {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("sessionId", GlobalSharedPreference.getAppPreferences(BookmarkActivity.this, "sid"));
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 

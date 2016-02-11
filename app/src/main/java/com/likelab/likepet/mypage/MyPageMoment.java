@@ -35,13 +35,14 @@ import android.widget.Toast;
 
 import com.alexbbb.uploadservice.UploadServiceBroadcastReceiver;
 import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
+import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.bumptech.glide.Glide;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.likelab.likepet.CircleTransform;
@@ -55,6 +56,7 @@ import com.likelab.likepet.follow.FollowingUserListActivity;
 import com.likelab.likepet.global.GlobalSharedPreference;
 import com.likelab.likepet.global.GlobalUploadBitmapImage;
 import com.likelab.likepet.global.GlobalUrl;
+import com.likelab.likepet.global.GlobalVariable;
 import com.likelab.likepet.global.RecycleUtils;
 import com.likelab.likepet.global.RoundedAvatarDrawable;
 import com.likelab.likepet.more.UserProfile;
@@ -69,11 +71,14 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 public class MyPageMoment extends Fragment implements CommentBtnClickListener{
 
@@ -88,10 +93,11 @@ public class MyPageMoment extends Fragment implements CommentBtnClickListener{
     ImageButton btn_bookmark;
     ImageButton btn_setting;
     ImageView btn_camera;
-
     ImageView mainProfileImage;
-
     ImageView imgNoMoment;
+    ImageView imgClan;
+    ImageView contentStart;
+    ImageView imgJoin;
 
     TextView txtFollower;
     TextView txtFollowing;
@@ -99,18 +105,12 @@ public class MyPageMoment extends Fragment implements CommentBtnClickListener{
 
     RelativeLayout followingInfoContainer;
     RelativeLayout followerInfoContainer;
-
     RelativeLayout userProfileImageContainer;
 
-    ImageView imgClan;
-    ImageView contentStart;
-
     View header;
-
     String sid;
 
     private RequestQueue queue = AppController.getInstance().getRequestQueue();;
-    ImageLoader imageLoader = AppController.getInstance().getImageLoader();
 
     ContentsAdapter adapter;
 
@@ -148,6 +148,10 @@ public class MyPageMoment extends Fragment implements CommentBtnClickListener{
     private View footer;
     private RelativeLayout listViewLoadIndicator;
 
+    boolean refreshLock = false;
+
+    MainActivity mainActivity;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -159,6 +163,32 @@ public class MyPageMoment extends Fragment implements CommentBtnClickListener{
         //뷰들을 화면에 셋팅
         inflateLayout();
 
+        //파일을 업로드 하는 중인 경우 프로그레스 바를 표시한다
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mainActivity = (MainActivity) getActivity();
+                String isUploading = mainActivity.upload;
+
+                if (isUploading.equals("uploading")) {
+
+                    //업로드 상태 표시
+                    noMomentContainer.setVisibility(View.VISIBLE);
+                    imgNoMoment.setVisibility(View.GONE);
+                    progressUpload.setVisibility(View.VISIBLE);
+
+                    SimpleDateFormat sdfNow = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                    String time = sdfNow.format(new Date(System.currentTimeMillis()));
+
+                    time = time.substring(0, time.indexOf(" "));
+                    time = time.replaceFirst("\\/", ".");
+                    time = time.replaceFirst("\\/", ".");
+
+                    txtNoMomentTime.setText(time);
+                }
+            }
+        });
+
         //회원 가입을 하거나 로그인을 하였을 경우 마이페이지를 새로 고침하여 사용자 화면을 보여준다.
 
         //페이지 새로 고침
@@ -167,6 +197,7 @@ public class MyPageMoment extends Fragment implements CommentBtnClickListener{
             public void onRefresh() {
 
                 listViewLoadIndicator.setVisibility(View.GONE);
+                refreshLock = true;
 
                 if (GlobalSharedPreference.getAppPreferences(getActivity(), "login").equals("login")) {
 
@@ -175,9 +206,11 @@ public class MyPageMoment extends Fragment implements CommentBtnClickListener{
                     contentsArrayList.clear();
                     adapterFlag = 0;
                     mypageRequest(currentPage);
+                    myPageSummaryRequest();
 
                 } else {
                     mSwipeRefresh.setRefreshing(false);
+                    refreshLock = false;
                 }
             }
         });
@@ -251,7 +284,6 @@ public class MyPageMoment extends Fragment implements CommentBtnClickListener{
                     startActivity(intent);
                 } else {
 
-
                 }
             }
         });
@@ -303,7 +335,7 @@ public class MyPageMoment extends Fragment implements CommentBtnClickListener{
 
                 int count = totalItemCount - visibleItemCount;
 
-                if (firstVisibleItem >= count && totalItemCount != 0 && lockListView == false) {
+                if (firstVisibleItem >= count && totalItemCount != 0 && lockListView == false && refreshLock == false) {
                     currentPage = currentPage + 1;
 
                     if (currentPage < maxPage) {
@@ -427,6 +459,7 @@ public class MyPageMoment extends Fragment implements CommentBtnClickListener{
         contentsList = (ListView) layout.findViewById(R.id.contents_list);
         contentsList.addHeaderView(header);
         contentsList.addFooterView(footer);
+
     }
 
     private void inflateLayout() {
@@ -483,7 +516,7 @@ public class MyPageMoment extends Fragment implements CommentBtnClickListener{
         }
 
         //로그 아웃 상태이면 회원가입 페이지를 노출한다.
-        ImageView imgJoin = (ImageView)header.findViewById(R.id.mypage_img_join);
+        imgJoin = (ImageView)header.findViewById(R.id.mypage_img_join);
 
         //로그인 상태이면 유저의 마이페이지 정보를 노출한다
         if(GlobalSharedPreference.getAppPreferences(getActivity(), "login").equals("login")) {
@@ -531,7 +564,7 @@ public class MyPageMoment extends Fragment implements CommentBtnClickListener{
         popupWindow.showAtLocation(layout, Gravity.CENTER, 0, 0);
 
         final ImageView profileImageExpansion = (ImageView)popupView.findViewById(R.id.view_img_comment_expansion);
-        Glide.with(this).load(profileImageUrl).override(960, 960).into(profileImageExpansion);
+        Picasso.with(getContext()).load(profileImageUrl).resize(960, 960).into(profileImageExpansion);
 
 
         popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
@@ -572,9 +605,8 @@ public class MyPageMoment extends Fragment implements CommentBtnClickListener{
                     String time = sdfNow.format(new Date(System.currentTimeMillis()));
 
                     time = time.substring(0, time.indexOf(" "));
-                    time = time.replaceFirst("\\/", "년 ");
-                    time = time.replaceFirst("\\/", "월 ");
-                    time = time + "일";
+                    time = time.replaceFirst("\\/", ".");
+                    time = time.replaceFirst("\\/", ".");
 
                     txtNoMomentTime.setText(time);
                 }
@@ -592,6 +624,18 @@ public class MyPageMoment extends Fragment implements CommentBtnClickListener{
                                         String serverResponseMessage) {
 
                     if(serverResponseCode == 200) {
+
+                        // 임시파일들을 삭제한다
+                        for (int i=0; i<GlobalUploadBitmapImage.fileList.size(); i++) {
+                            if(GlobalUploadBitmapImage.fileList.get(i).exists()) {
+                                GlobalUploadBitmapImage.fileList.get(i).delete();
+                            }
+                        }
+                        GlobalUploadBitmapImage.fileList.clear();
+
+                        //이미지 업로딩 화면을 취소한다
+                        mainActivity = (MainActivity)getActivity();
+                        mainActivity.upload = "finish";
 
                         noMomentContainer.setVisibility(View.GONE);
                         imgNoMoment.setVisibility(View.GONE);
@@ -674,7 +718,12 @@ public class MyPageMoment extends Fragment implements CommentBtnClickListener{
                 //좋아요, 댓글 카운트가 변경된 경우
             } else if(resultCode == RESULT_MODIFY_CONTENT_SUMMARY){
                 int position = data.getExtras().getInt("POSITION");
-                contentsInfoRequest(position, contentsArrayList.get(position).contentsId);
+                try {
+                    contentsInfoRequest(position, contentsArrayList.get(position).contentsId);
+
+                }  catch (Exception e) {
+                    e.printStackTrace();
+                }
 
             }
 
@@ -781,7 +830,12 @@ public class MyPageMoment extends Fragment implements CommentBtnClickListener{
                 Map<String, String> params = new HashMap<String, String>();
 
                 if(GlobalSharedPreference.getAppPreferences(getActivity(), "login").equals("login"))
-                    params.put("sessionId", sid);
+                    params.put("sessionId", GlobalSharedPreference.getAppPreferences(getContext(), "sid"));
+
+                Log.d("myageSummarySid", sid);
+
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc + ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 
@@ -833,7 +887,14 @@ public class MyPageMoment extends Fragment implements CommentBtnClickListener{
                                     String status = jsonArray.getJSONObject(i).getString("status");
                                     int reportCount = jsonArray.getJSONObject(i).getInt("reportCount");
 
-                                    registryDate = registryDate.substring(0, registryDate.indexOf(" "));
+
+                                    registryDate = registryDate.replaceAll("\\.", "-");
+
+                                    //날짜를 조금전, 방금전, 4일전 식으로 변환한다
+                                    String localTime = convertUtcToLocal(registryDate);
+                                    localTime = localTime.replaceAll("-", ".");
+                                    registryDate = localTime.substring(0, localTime.indexOf(" "));
+
                                     //registryDate = registryDate.replaceFirst("\\.", "년 ");
                                     //registryDate = registryDate.replaceFirst("\\.", "월 ");
                                     //registryDate = registryDate + "일";
@@ -910,13 +971,12 @@ public class MyPageMoment extends Fragment implements CommentBtnClickListener{
                                         handler.postDelayed(new Runnable() {
                                             @Override
                                             public void run() {
-
+                                                adapter.notifyDataSetChanged();
                                             }
-                                        }, 2000);
-
-                                        adapter.notifyDataSetChanged();
+                                        }, 200);
                                         lockListView = false;
                                         listViewLoadIndicator.setVisibility(View.GONE);
+                                        refreshLock = false;
                                     }
                                 });
 
@@ -924,8 +984,9 @@ public class MyPageMoment extends Fragment implements CommentBtnClickListener{
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
-                                //Toast.makeText(getActivity(), "JSONException", Toast.LENGTH_LONG).show();
+
                             }
+
                         }
                     }
 
@@ -943,7 +1004,11 @@ public class MyPageMoment extends Fragment implements CommentBtnClickListener{
                 Map<String, String> params = new HashMap<String, String>();
 
                 if(GlobalSharedPreference.getAppPreferences(getActivity(), "login").equals("login"))
-                    params.put("sessionId", sid);
+                    params.put("sessionId", GlobalSharedPreference.getAppPreferences(getContext(), "sid"));
+
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
+
 
                 Log.d("mypageSid", GlobalSharedPreference.getAppPreferences(getActivity(), "sid"));
                 return params;
@@ -984,6 +1049,7 @@ public class MyPageMoment extends Fragment implements CommentBtnClickListener{
                                 if (contentCount == 0) {
                                     noMomentContainer.setVisibility(View.VISIBLE);
                                     imgNoMoment.setImageResource(R.drawable.img_no_moment_01_960x960_02);
+                                    imgNoMoment.setVisibility(View.VISIBLE);
                                     contentStart.setImageResource(R.drawable.mypage_img_01);
 
                                     SimpleDateFormat sdfNow = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -995,9 +1061,29 @@ public class MyPageMoment extends Fragment implements CommentBtnClickListener{
 
                                     txtNoMomentTime.setText(time);
 
-                                } else {
+                                } else if(contentCount > 0 && !mainActivity.upload.equals("uploading")){
+
                                     noMomentContainer.setVisibility(View.GONE);
+                                    imgNoMoment.setImageDrawable(null);
                                 }
+
+                            } else if(responseCode == 401) {
+
+                                if(GlobalSharedPreference.getAppPreferences(getActivity(), "loginType").equals("sns")) {
+
+                                    String accountId = GlobalSharedPreference.getAppPreferences(getActivity(), "accountId");
+                                    String email = GlobalSharedPreference.getAppPreferences(getActivity(), "email");
+
+                                    snsLoginRequest(email, accountId);
+
+                                } else if(GlobalSharedPreference.getAppPreferences(getActivity(), "loginType").equals("email")) {
+
+                                    String password = GlobalSharedPreference.getAppPreferences(getActivity(), "password");
+                                    String email = GlobalSharedPreference.getAppPreferences(getActivity(), "email");
+
+                                    emailLoginRequest(email, password);
+                                }
+
 
                             }
 
@@ -1017,7 +1103,10 @@ public class MyPageMoment extends Fragment implements CommentBtnClickListener{
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
                 if(GlobalSharedPreference.getAppPreferences(getActivity(), "login").equals("login"))
-                    params.put("sessionId", sid);
+                    params.put("sessionId", GlobalSharedPreference.getAppPreferences(getContext(), "sid"));
+
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 
@@ -1025,6 +1114,274 @@ public class MyPageMoment extends Fragment implements CommentBtnClickListener{
 
         };
         queue.add(jsonObjectRequest);
+    }
+
+    public void snsLoginRequest(final String email, final String id) {
+
+        String endPoint = "/login/friendly/" + email;
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, GlobalUrl.BASE_URL + endPoint,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        int responseCode=0;
+
+                        try {
+
+                            responseCode = response.getInt("code");
+                        }
+                        catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        if (responseCode == 200) {
+                            loadUserInformation(email);
+                            GlobalSharedPreference.setAppPreferences(getActivity(), "email", email);
+                            GlobalSharedPreference.setAppPreferences(getActivity(), "accountId", id);
+                            GlobalSharedPreference.setAppPreferences(getActivity(), "loginType", "sns");
+                        }
+                    }
+
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        //Toast.makeText(getActivity(), error.toString(), Toast.LENGTH_LONG).show();
+                        System.out.println(error.toString());
+                    }
+
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("accountId", id);
+
+                return params;
+
+            }
+
+            @Override
+            protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
+
+                Map<String, String> responseHeaders = response.headers;
+                String sid = responseHeaders.get("sessionID");
+
+                GlobalSharedPreference.setAppPreferences(getActivity(), "sid", sid);
+
+                try {
+                    String jsonString = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+                    return Response.success(new JSONObject(jsonString),HttpHeaderParser.parseCacheHeaders(response));
+                } catch (UnsupportedEncodingException e) {
+                    return Response.error(new ParseError(e));
+                } catch (JSONException je) {
+                    return Response.error(new ParseError(je));
+                }
+
+            }
+
+        };
+        // Add the request to the RequestQueue.
+        queue.add(jsonObjectRequest);
+
+    }
+
+    public void emailLoginRequest(final String email, final String password) {
+
+        String endPoint = "/login/" + email;
+
+        JSONObject obj = new JSONObject();
+
+        try {
+            obj.put("password", password);
+            obj.put("contentApi", true);
+        } catch(JSONException e) {
+            e.printStackTrace();
+        }
+
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, GlobalUrl.BASE_URL + endPoint, obj,
+                new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                        int responseCode=0;
+
+                        try {
+                            responseCode = response.getInt("code");
+
+                            if (responseCode == 200) {
+
+                                GlobalSharedPreference.setAppPreferences(getActivity(), "email", email);
+                                GlobalSharedPreference.setAppPreferences(getActivity(), "password", password);
+                                GlobalSharedPreference.setAppPreferences(getActivity(), "loginType", "email");
+
+
+                                loadUserInformation(email);
+
+
+                            } else if(responseCode == 401) {
+
+
+                            } else if(responseCode == 404) {
+
+                            }
+
+                        }
+                        catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        //Toast.makeText(JoinMemberBeginActivity.this, error.toString(), Toast.LENGTH_LONG).show();
+                    }
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
+
+                return params;
+
+            }
+
+            @Override
+            protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
+
+                Map<String, String> responseHeaders = response.headers;
+                String sid = responseHeaders.get("sessionId");
+
+                if(sid != null) {
+                    Log.d("재발급 받은 sid", sid);
+                    GlobalSharedPreference.setAppPreferences(getActivity(), "sid", sid);
+
+                }
+                try {
+                    String jsonString = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+                    return Response.success(new JSONObject(jsonString),HttpHeaderParser.parseCacheHeaders(response));
+                } catch (UnsupportedEncodingException e) {
+                    return Response.error(new ParseError(e));
+                } catch (JSONException je) {
+                    return Response.error(new ParseError(je));
+                }
+
+            }
+
+        };
+        queue.add(jsonObjectRequest);
+    }
+
+
+    public void loadUserInformation(String email) {
+
+        String endPoint = "/users/user/" + email;
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, GlobalUrl.BASE_URL + endPoint,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        int responseCode=0;
+
+                        try {
+                            responseCode = response.getInt("code");
+
+                            if (responseCode == 200) {
+
+                                JSONObject jsonObject = response.getJSONObject("item");
+
+                                String userId = jsonObject.getString("userId");
+                                String name = jsonObject.getString("name");
+                                String email = jsonObject.getString("email");
+                                String gender = jsonObject.getString("sex");
+                                String clan = jsonObject.getString("clan");
+                                String status = jsonObject.getString("status");
+                                String parentUserId = jsonObject.getString("parentUserId");
+                                String profileImageUrl = jsonObject.getString("profileImageUrl");
+                                String national = jsonObject.getString("national");
+                                String ownerType = jsonObject.getString("ownerType");
+                                String birthday = jsonObject.getString("birthday");
+                                String registryDate = jsonObject.getString("registryDate");
+                                String modifyDate = jsonObject.getString("modifyDate");
+                                String termServiceDate = jsonObject.getString("termServiceDate");
+                                String privacyTermDate = jsonObject.getString("privacyTermDate");
+                                String withdrawReqDate = jsonObject.getString("withdrawReqDate");
+                                String withdrawDate = jsonObject.getString("withdrawDate");
+                                String mailAuthConfirmDate = jsonObject.getString("mailAuthConfirmDate");
+                                String lastLoginDate = jsonObject.getString("lastLoginDate");
+                                String mailAuth = jsonObject.getString("mailAuth");
+
+                                //로그인을 하면 서버로부터 사용자의 정보를 받아와 기기에 저장한다.
+                                GlobalSharedPreference.setAppPreferences(getActivity(), "userId", userId);
+                                GlobalSharedPreference.setAppPreferences(getActivity(), "name", name);
+                                GlobalSharedPreference.setAppPreferences(getActivity(), "email", email);
+                                GlobalSharedPreference.setAppPreferences(getActivity(), "gender", gender);
+                                GlobalSharedPreference.setAppPreferences(getActivity(), "clan", clan);
+                                GlobalSharedPreference.setAppPreferences(getActivity(), "status", status);
+                                GlobalSharedPreference.setAppPreferences(getActivity(), "parentUserId", parentUserId);
+                                GlobalSharedPreference.setAppPreferences(getActivity(), "profileImageUrl", profileImageUrl);
+                                GlobalSharedPreference.setAppPreferences(getActivity(), "national", national);
+                                GlobalSharedPreference.setAppPreferences(getActivity(), "ownerType", ownerType);
+                                GlobalSharedPreference.setAppPreferences(getActivity(), "birthday", birthday);
+                                GlobalSharedPreference.setAppPreferences(getActivity(), "registryDate", registryDate);
+                                GlobalSharedPreference.setAppPreferences(getActivity(), "modifyDate", modifyDate);
+                                GlobalSharedPreference.setAppPreferences(getActivity(), "termServiceDate", termServiceDate);
+                                GlobalSharedPreference.setAppPreferences(getActivity(), "privacyTermDate", privacyTermDate);
+                                GlobalSharedPreference.setAppPreferences(getActivity(), "withdrawReqDate", withdrawReqDate);
+                                GlobalSharedPreference.setAppPreferences(getActivity(), "withdrawDate", withdrawDate);
+                                GlobalSharedPreference.setAppPreferences(getActivity(), "mailAuthConfirmDate", mailAuthConfirmDate);
+                                GlobalSharedPreference.setAppPreferences(getActivity(), "lastLoginDate", lastLoginDate);
+                                GlobalSharedPreference.setAppPreferences(getActivity(), "mailAuth", mailAuth);
+                                GlobalSharedPreference.setAppPreferences(getActivity(), "useNotice", "1");
+                                GlobalSharedPreference.setAppPreferences(getActivity(), "useNoticeAddedFriend", "1");
+                                GlobalSharedPreference.setAppPreferences(getActivity(), "useNoticeReply", "1");
+                                GlobalSharedPreference.setAppPreferences(getActivity(), "useNoticeSystem", "1");
+
+                                GlobalSharedPreference.setAppPreferences(getActivity(), "login", "login");
+
+                                currentPage = 0;
+                                adapter.notifyDataSetInvalidated();
+                                contentsArrayList.clear();
+                                adapterFlag = 0;
+
+                                myPageSummaryRequest();
+                                mypageRequest(currentPage);
+
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        System.out.println(error.toString());
+                    }
+
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                String sid = GlobalSharedPreference.getAppPreferences(getActivity(), "sid");
+                params.put("sessionId", sid);
+
+                return params;
+
+            }
+
+        };
+        // Add the request to the RequestQueue.
+        queue.add(jsonObjectRequest);
+
     }
 
 
@@ -1085,6 +1442,14 @@ public class MyPageMoment extends Fragment implements CommentBtnClickListener{
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+
+        imgNoMoment.setImageDrawable(null);
+        imgJoin.setImageDrawable(null);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
 
@@ -1094,6 +1459,10 @@ public class MyPageMoment extends Fragment implements CommentBtnClickListener{
 
         if(GlobalSharedPreference.getAppPreferences(getActivity(), "login").equals("login"))
             myPageSummaryRequest();
+
+        else {
+            imgJoin.setImageResource(R.drawable.membership_img_01);
+        }
 
         String pageName = "Mypage";
         mTracker.setScreenName(pageName);
@@ -1160,6 +1529,35 @@ public class MyPageMoment extends Fragment implements CommentBtnClickListener{
 
         startActivityForResult(intent, REQ_CODE_MODIFY_CONTENT_INFO);
     }
+
+    //표준시간과 local 시간 변환
+    private static String convertUtcToLocal(String utcTime) {
+
+        String localTime = null;
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        try {
+            Date dateUtcTime = dateFormat.parse(utcTime);
+
+            long longUtcTime = dateUtcTime.getTime();
+
+            TimeZone timeZone = TimeZone.getDefault();
+            int offset = timeZone.getOffset(longUtcTime);
+            long longLocalTime = longUtcTime + offset;
+
+            Date dateLocalTime = new Date();
+            dateLocalTime.setTime(longLocalTime);
+
+            localTime = dateFormat.format(dateLocalTime);
+
+        } catch (ParseException e) {
+            e.printStackTrace();;
+        }
+
+        return localTime;
+    }
+
+
 
 }
 

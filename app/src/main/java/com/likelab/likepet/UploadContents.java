@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.likelab.likepet.global.GlobalSharedPreference;
+import com.likelab.likepet.global.GlobalVariable;
 
 import org.json.JSONObject;
 
@@ -38,6 +39,8 @@ public class UploadContents {
             conn.setUseCaches(false);
             conn.setRequestMethod("POST");
             conn.setRequestProperty("sessionId", GlobalSharedPreference.getAppPreferences(context, "sid"));
+            conn.setRequestProperty("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                    GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
             conn.setRequestProperty("Connection", "Keep-Alive");
             conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
 
@@ -78,7 +81,6 @@ public class UploadContents {
                 b.append( (char)ch );
             }
             String s=b.toString();
-            Log.e("Test", "result = " + s);
 
             resultCode = s;
 
@@ -109,6 +111,8 @@ public class UploadContents {
             conn.setUseCaches(false);
             conn.setRequestMethod("POST");
             conn.setRequestProperty("sessionId", GlobalSharedPreference.getAppPreferences(context, "sid"));
+            conn.setRequestProperty("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                    GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
             conn.setRequestProperty("Connection", "Keep-Alive");
             conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
 
@@ -120,8 +124,6 @@ public class UploadContents {
             dos.write(buf, 0, buf.length);
             dos.writeBytes(lineEnd);
             dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
-
-            Log.d("comment", comment);
 
             // close streams
             Log.e("Test", "File is written");
@@ -162,6 +164,8 @@ public class UploadContents {
             conn.setUseCaches(false);
             conn.setRequestMethod("PUT");
             conn.setRequestProperty("sessionId", GlobalSharedPreference.getAppPreferences(context, "sid"));
+            conn.setRequestProperty("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                    GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
             conn.setRequestProperty("Connection", "Keep-Alive");
             conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
 

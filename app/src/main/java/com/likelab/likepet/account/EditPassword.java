@@ -23,6 +23,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.likelab.likepet.R;
 import com.likelab.likepet.global.GlobalUrl;
+import com.likelab.likepet.global.GlobalVariable;
 import com.likelab.likepet.volleryCustom.AppController;
 
 import org.json.JSONException;
@@ -49,11 +50,11 @@ public class EditPassword extends Activity{
     private EditText editOldPassword;
 
     private RequestQueue queue;
-    private final String detail_info_request_url = "http://54.169.212.108:8080";
     private String sid;
 
     private TextView txtPasswordErrorMessage;
     private TextView txtPasswordErrorMessageSpecialCharacter;
+    private TextView txtPasswordErrorMessageNoSpace;
 
     boolean isPasswordOK = false;
 
@@ -67,6 +68,7 @@ public class EditPassword extends Activity{
 
         txtPasswordErrorMessage = (TextView)findViewById(R.id.edit_password_txt_error_message_password);
         txtPasswordErrorMessageSpecialCharacter = (TextView)findViewById(R.id.edit_password_txt_error_message_password_special_character);
+        txtPasswordErrorMessageNoSpace = (TextView)findViewById(R.id.edit_password_txt_error_message_password_no_space);
 
         cancelContainer = (RelativeLayout)findViewById(R.id.edit_password_cancel_container);
         btnCancel = (ImageButton)findViewById(R.id.edit_password_btn_cancel);
@@ -93,6 +95,9 @@ public class EditPassword extends Activity{
 
                         } else if(!isPasswordValidate(editNewPassword.getText().toString())) {
                             txtPasswordErrorMessageSpecialCharacter.setVisibility(View.VISIBLE);
+
+                        } else if(editNewPassword.getText().toString().contains(" ")){
+                            txtPasswordErrorMessageNoSpace.setVisibility(View.VISIBLE);
                         }
                     }
                 }
@@ -126,11 +131,13 @@ public class EditPassword extends Activity{
 
                 txtPasswordErrorMessage.setVisibility(View.INVISIBLE);
                 txtPasswordErrorMessageSpecialCharacter.setVisibility(View.INVISIBLE);
+                txtPasswordErrorMessageNoSpace.setVisibility(View.INVISIBLE);
+
 
                 String tempPassword = editNewPassword.getText().toString();
                 int passwordLength = tempPassword.length();
 
-                if(isPasswordValidate(editNewPassword.getText().toString()) && passwordLength > 5 && passwordLength < 21) {
+                if(isPasswordValidate(editNewPassword.getText().toString()) && passwordLength > 5 && passwordLength < 21 && !editNewPassword.getText().toString().contains(" ")) {
                     imgCheckPassword.setVisibility(View.VISIBLE);
                     isPasswordOK = true;
                 }
@@ -164,8 +171,6 @@ public class EditPassword extends Activity{
     public void editPasswordRequest() {
 
         String endPoint = "/users/user/password";
-
-        //Toast.makeText(JoinMemberBeginActivity.this, token, Toast.LENGTH_LONG).show();
 
         JSONObject obj = new JSONObject();
         try {
@@ -219,6 +224,8 @@ public class EditPassword extends Activity{
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("sessionId", sid);
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 

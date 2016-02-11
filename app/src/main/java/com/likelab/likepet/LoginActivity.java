@@ -35,6 +35,7 @@ import com.google.android.gms.analytics.Tracker;
 import com.likelab.likepet.Main.MainActivity;
 import com.likelab.likepet.global.GlobalSharedPreference;
 import com.likelab.likepet.global.GlobalUrl;
+import com.likelab.likepet.global.GlobalVariable;
 import com.likelab.likepet.singIn.SignInFlowActivityList;
 import com.likelab.likepet.volleryCustom.AppController;
 
@@ -242,8 +243,6 @@ public class LoginActivity extends Activity {
 
         String endPoint = "/login/" + email;
 
-        //Toast.makeText(JoinMemberBeginActivity.this, token, Toast.LENGTH_LONG).show();
-
         JSONObject obj = new JSONObject();
 
         try {
@@ -267,6 +266,10 @@ public class LoginActivity extends Activity {
                             Toast.makeText(LoginActivity.this, Integer.toString(responseCode), Toast.LENGTH_LONG);
 
                             if (responseCode == 200) {
+
+                                GlobalSharedPreference.setAppPreferences(LoginActivity.this, "email", email);
+                                GlobalSharedPreference.setAppPreferences(LoginActivity.this, "password", password);
+                                GlobalSharedPreference.setAppPreferences(LoginActivity.this, "loginType", "email");
                                 Toast.makeText(LoginActivity.this, getResources().getString(R.string.join_insert_email_password_txt_login_complete),
                                         Toast.LENGTH_LONG).show();
                                 loadUserInformation(email);
@@ -299,6 +302,8 @@ public class LoginActivity extends Activity {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 
@@ -396,7 +401,6 @@ public class LoginActivity extends Activity {
 
                                 GlobalSharedPreference.setAppPreferences(LoginActivity.this, "login", "login");
 
-                                Log.d("userId", userId);
 
                                 try {
                                     Thread.sleep(100);
@@ -442,6 +446,8 @@ public class LoginActivity extends Activity {
                 Map<String, String> params = new HashMap<String, String>();
                 String sid = GlobalSharedPreference.getAppPreferences(LoginActivity.this, "sid");
                 params.put("sessionId", sid);
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 

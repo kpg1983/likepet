@@ -564,6 +564,8 @@ public class UploadGallery extends Fragment implements AdapterView.OnItemClickLi
             imageAdapter.recycle();
         }
 
+        imageView.setImageDrawable(null);
+
         RecycleUtils.recursiveRecycle(imageView);
         RecycleUtils.recursiveRecycle(getActivity().getWindow().getDecorView());
         System.gc();

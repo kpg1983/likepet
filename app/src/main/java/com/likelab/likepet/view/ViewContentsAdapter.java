@@ -24,6 +24,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.likelab.likepet.R;
 import com.likelab.likepet.global.GlobalSharedPreference;
 import com.likelab.likepet.global.GlobalUrl;
+import com.likelab.likepet.global.GlobalVariable;
 import com.likelab.likepet.global.RecycleUtils;
 import com.likelab.likepet.global.RoundedAvatarDrawable;
 import com.likelab.likepet.singIn.JoinMemberBeginActivity;
@@ -278,114 +279,6 @@ public class ViewContentsAdapter extends BaseAdapter {
             }
         });
 
-        /*
-
-        //사진 댓글을 롱클릭 했을 경우도 신고하기 또는 삭제하기 기능을 수행한다.
-        viewHolder.imgComment.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                if (GlobalSharedPreference.getAppPreferences(context, "login").equals("login")) {
-
-                    final PopupWindow popupWindow = new PopupWindow(v);
-                    LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                    final View popupView;
-
-                    viewActivity.overlay.setVisibility(View.VISIBLE);
-
-                    RelativeLayout deleteConfirmContainer = null;
-                    RelativeLayout deleteCancelContainer = null;
-
-                    RelativeLayout reportConfirmContainer = null;
-                    RelativeLayout reportCancelContainer = null;
-
-
-                    //나의 댓글일 경우, 삭제하기 기능
-                    if (viewContentsArrayList.get(position).userId.equals(GlobalSharedPreference.getAppPreferences(context, "userId"))) {
-                        popupView = inflater.inflate(R.layout.comment_delete_popup_window, null);
-
-                        deleteConfirmContainer = (RelativeLayout) popupView.findViewById(R.id.comment_delete_confirm_container);
-                        deleteCancelContainer = (RelativeLayout) popupView.findViewById(R.id.comment_delete_cancel_container);
-
-
-                        deleteConfirmContainer.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                deleteCommentRequest(viewContentsArrayList.get(position).contentId, viewContentsArrayList.get(position).commentId);
-
-                                viewContentsArrayList.remove(position);
-
-                                popupWindow.dismiss();
-                            }
-                        });
-
-                        deleteCancelContainer.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                popupWindow.dismiss();
-                            }
-                        });
-
-                        popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
-                            @Override
-                            public void onDismiss() {
-                                viewActivity.overlay.setVisibility(View.INVISIBLE);
-                            }
-                        });
-
-                        //상대방 댓글일 경우 신고하기
-                    } else {
-                        popupView = inflater.inflate(R.layout.comment_report_popup_window, null);
-
-                        reportConfirmContainer = (RelativeLayout) popupView.findViewById(R.id.comment_report_confirm_container);
-                        reportCancelContainer = (RelativeLayout) popupView.findViewById(R.id.comment_report_cancel_container);
-
-                        viewActivity.overlay.setVisibility(View.VISIBLE);
-
-                        reportConfirmContainer.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-
-                                reportCommentRequest(viewContentsArrayList.get(position).contentId, viewContentsArrayList.get(position).commentId);
-                                popupWindow.dismiss();
-                            }
-                        });
-
-                        reportCancelContainer.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                popupWindow.dismiss();
-                            }
-                        });
-
-                        popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
-                            @Override
-                            public void onDismiss() {
-                                viewActivity.overlay.setVisibility(View.INVISIBLE);
-                            }
-                        });
-                    }
-
-                    popupWindow.setContentView(popupView);
-                    popupWindow.setWindowLayoutMode(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                    popupWindow.setTouchable(true);
-                    popupWindow.setFocusable(true);
-                    popupWindow.setOutsideTouchable(true);
-                    popupWindow.setBackgroundDrawable(new BitmapDrawable());
-
-                    //팝업 윈도우 위치 조정
-                    popupWindow.showAtLocation(v, Gravity.CENTER, 0, 0);
-
-                } else {
-                    loginPopupRequest(v);
-                }
-
-
-                return false;
-            }
-        });
-        */
-
-
         //댓글의 좋아요 유무로 하트 색상을 다르게 표시한다.
         if (viewContentsArrayList.get(position).iLikeThis.equals("0")) {
             imgLike.setImageResource(R.drawable.view_btn_04_like_n);
@@ -499,6 +392,8 @@ public class ViewContentsAdapter extends BaseAdapter {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("sessionId", GlobalSharedPreference.getAppPreferences(context, "sid"));
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 
@@ -559,6 +454,8 @@ public class ViewContentsAdapter extends BaseAdapter {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("sessionId", GlobalSharedPreference.getAppPreferences(context, "sid"));
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 

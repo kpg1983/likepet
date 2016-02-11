@@ -24,6 +24,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.likelab.likepet.R;
 import com.likelab.likepet.global.GlobalSharedPreference;
 import com.likelab.likepet.global.GlobalUrl;
+import com.likelab.likepet.global.GlobalVariable;
 import com.likelab.likepet.global.RecycleUtils;
 import com.likelab.likepet.view.ViewActivity;
 import com.likelab.likepet.volleryCustom.AppController;
@@ -206,6 +207,7 @@ public class BookmarkContentsAdapter extends BaseAdapter {
                 String userId = contentsArrayList.get(position).userId;
                 String status = contentsArrayList.get(position).status;
                 int reportCount = contentsArrayList.get(position).reportCount;
+                String clan = contentsArrayList.get(position).clan;
 
                 Intent intent = new Intent(context, ViewActivity.class);
 
@@ -236,6 +238,7 @@ public class BookmarkContentsAdapter extends BaseAdapter {
                 intent.putExtra("USER_ID", userId);
                 intent.putExtra("STATUS", status);
                 intent.putExtra("REPORT_COUNT", reportCount);
+                intent.putExtra("CLAN", clan);
 
 
                 context.startActivity(intent);
@@ -294,6 +297,8 @@ public class BookmarkContentsAdapter extends BaseAdapter {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("sessionId", GlobalSharedPreference.getAppPreferences(context, "sid"));
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 

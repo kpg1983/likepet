@@ -27,6 +27,7 @@ import com.google.android.gms.analytics.Tracker;
 import com.likelab.likepet.R;
 import com.likelab.likepet.global.GlobalSharedPreference;
 import com.likelab.likepet.global.GlobalUrl;
+import com.likelab.likepet.global.GlobalVariable;
 import com.likelab.likepet.volleryCustom.AppController;
 
 import org.json.JSONArray;
@@ -46,11 +47,9 @@ public class Home extends Fragment {
     ArrayList<HomeContents> contentsArrayList;
     ListView contentsList;
 
-    private int mPageNumber;
     private Button btnMemoryPopup;
 
     RequestQueue queue = AppController.getInstance().getRequestQueue();
-
     HomeContentsAdapter adapter;
 
     int currentPage = 0;
@@ -64,13 +63,11 @@ public class Home extends Fragment {
     View footer;
     RelativeLayout listViewLoadIndicator;
 
+    boolean refreshLock = false;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (getArguments() != null) {
-            mPageNumber = getArguments().getInt("PAGE");
-        }
 
     }
 
@@ -98,8 +95,8 @@ public class Home extends Fragment {
             @Override
             public void onRefresh() {
 
+                refreshLock = true;
                 currentPage = 0;
-
                 adapter.notifyDataSetInvalidated();
                 contentsArrayList.clear();
                 homeContentsRequest(currentPage);
@@ -150,7 +147,7 @@ public class Home extends Fragment {
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 int count = totalItemCount - visibleItemCount;
 
-                if (firstVisibleItem >= count && totalItemCount != 0 && lockListView == false) {
+                if (firstVisibleItem >= count && totalItemCount != 0 && lockListView == false && refreshLock == false) {
 
                     lockListView = true;
 
@@ -192,6 +189,7 @@ public class Home extends Fragment {
 
         Locale mLocale = getResources().getConfiguration().locale;
         String deviceLanguage = mLocale.getLanguage();
+
         String language = null;
         if(deviceLanguage.contains("ko")) {
             language = "ko";
@@ -201,11 +199,14 @@ public class Home extends Fragment {
             language = "es";
         } else if(deviceLanguage.contains("ja")) {
             language = "ja";
+        } else if(deviceLanguage.contains("pt")) {
+            language = "pt";
         } else {
             language = "en";
         }
 
-        String urlParameter = "?language=" + language+"&pageNo="+currentPage;
+
+        String urlParameter = "?language=" + language + "&pageNo=" + currentPage;
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, GlobalUrl.BASE_URL + endPoint + urlParameter,
                 new Response.Listener<JSONObject>() {
@@ -244,9 +245,9 @@ public class Home extends Fragment {
                                     int readCount = 0;
                                     String groupRegistryDate = null;
                                     String ownerName = null;
-
                                     String description = null;
                                     String thumbnailUrl = null;
+                                    String newStory = null;
 
                                     String groupIdRight = null;
                                     int feedCountRight = 0;
@@ -256,6 +257,7 @@ public class Home extends Fragment {
                                     String descriptionRight = null;
                                     String thumbnailUrlRight = null;
                                     String thumbnailType = null;
+                                    String newStoryRight = null;
 
                                     int count = 0;  //1:1 홈컨텐츠를 왼쪽, 오른쪽으로 카운트 해주기 위하여 사용
                                     for (int j = 0; j < itemArrayLength; j++) {
@@ -272,10 +274,11 @@ public class Home extends Fragment {
                                             ownerName = itemsArray.getJSONObject(j).getString("ownerName");
                                             thumbnailUrl = itemsArray.getJSONObject(j).getString("thumbnailUrl");
                                             description = itemsArray.getJSONObject(j).getString("descriptions");
+                                            newStory = itemsArray.getJSONObject(j).getString("newstory");
 
                                             HomeContents contents = new HomeContents(pageId, language, status, registryDate, displayStartDate,
                                                     displayEndDate, groupId, feedCount, readCount, thumbnailType, groupRegistryDate, ownerName, thumbnailUrl,
-                                                    description);
+                                                    description, newStory);
 
                                             contentsArrayList.add(contents);
 
@@ -292,6 +295,7 @@ public class Home extends Fragment {
                                                 ownerName = itemsArray.getJSONObject(j).getString("ownerName");
                                                 thumbnailUrl = itemsArray.getJSONObject(j).getString("thumbnailUrl");
                                                 description = itemsArray.getJSONObject(j).getString("descriptions");
+                                                newStory = itemsArray.getJSONObject(j).getString("newstory");
 
                                                 count++;
 
@@ -306,13 +310,14 @@ public class Home extends Fragment {
                                                 ownerNameRight = itemsArray.getJSONObject(j).getString("ownerName");
                                                 thumbnailUrlRight = itemsArray.getJSONObject(j).getString("thumbnailUrl");
                                                 descriptionRight = itemsArray.getJSONObject(j).getString("descriptions");
+                                                newStoryRight = itemsArray.getJSONObject(j).getString("newstory");
 
                                                 //1:1 컨텐츠는 한쌍이며, 우축에서 끝나기 때문에 우측에 들어왔을때 좌측과 우측을 한번에 리스트에 추가한다
                                                 HomeContents contents = new HomeContents(pageId, language, status, registryDate, displayStartDate,
                                                         displayEndDate, groupId, feedCount, readCount, thumbnailType, groupRegistryDate, ownerName, thumbnailUrl,
                                                         description, pageId, language, status, registryDate, displayStartDate,
                                                         displayEndDate, groupIdRight, feedCountRight, readCountRight, thumbnailType, groupRegistryDateRight, ownerNameRight, thumbnailUrlRight,
-                                                        descriptionRight);
+                                                        descriptionRight, newStory, newStoryRight);
 
                                                 count = 0;
 
@@ -342,6 +347,7 @@ public class Home extends Fragment {
                                         adapter.notifyDataSetChanged();
                                         lockListView = false;
                                         listViewLoadIndicator.setVisibility(View.GONE);
+                                        refreshLock = false;
                                     }
                                 });
 
@@ -366,6 +372,9 @@ public class Home extends Fragment {
                 Map<String, String> params = new HashMap<String, String>();
                 if(GlobalSharedPreference.getAppPreferences(getActivity(), "login").equals("login"))
                     params.put("sessionId", GlobalSharedPreference.getAppPreferences(getContext(), "sid"));
+
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 

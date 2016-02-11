@@ -21,14 +21,15 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.alexbbb.uploadservice.UploadService;
 import com.facebook.FacebookSdk;
-import com.likelab.likepet.global.BackPressCloseHandler;
 import com.likelab.likepet.BuildConfig;
 import com.likelab.likepet.R;
-import com.likelab.likepet.global.GlobalCommentCount;
+import com.likelab.likepet.global.BackPressCloseHandler;
 import com.likelab.likepet.global.GlobalSharedPreference;
+import com.likelab.likepet.global.GlobalVariable;
 import com.likelab.likepet.more.MoreActivity;
 import com.likelab.likepet.notification.AlarmActivity;
 import com.likelab.likepet.singIn.JoinMemberBeginActivity;
@@ -50,6 +51,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public final static int fragment_page_3 = 2;
 
     private ViewPager pager;
+
+    private TextView txtTitle;
 
     private ImageButton btnHome;
     private ImageButton btnFeed;
@@ -73,12 +76,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private static int REQ_UPLOAD_CONTENTS = 0;
     private static int REQ_LOGOUT = 5;
+    private static int REQ_NO_LOGIN = 7;
 
     private BackPressCloseHandler backPressCloseHandler;    //뒤로 버튼을 두번 눌러 종료하기 위한 핸들러
 
     public String uploadTempFilePath;      //업르드 완료 후 임시 파일 경로 저장
 
-    View v;
+
+    public String upload = "finish";
 
 
     @Override
@@ -86,9 +91,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        GlobalCommentCount.backKeyPressed = getResources().getString(R.string.common_toast_finish_app);
+        GlobalVariable.backKeyPressed = getResources().getString(R.string.common_toast_finish_app);
 
         backPressCloseHandler = new BackPressCloseHandler(this);
+
+        txtTitle = (TextView)findViewById(R.id.main_txt_title);
 
         PackageInfo pInfo = null;
         try {
@@ -222,6 +229,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(new Intent(MainActivity.this, MainActivity.class));
             }
 
+        } else if(requestCode == REQ_NO_LOGIN) {
+            if(resultCode == 0) {
+                pager.setCurrentItem(fragment_page_1);
+            }
         }
 
     }
@@ -303,6 +314,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     case 0: {
                         btnHome.setImageResource(R.drawable.mypage_top_btn_home_s);
                         tabBarHome.setVisibility(View.VISIBLE);
+                        txtTitle.setText("");
                         break;
                     }
                     case 1: {
@@ -310,10 +322,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         btnFeed.setImageResource(R.drawable.mypage_top_btn_feed_s);
                         tabBarFeed.setVisibility(View.VISIBLE);
 
+                        txtTitle.setText("Feed");
+
                         if(GlobalSharedPreference.getAppPreferences(MainActivity.this, "login").equals("login")) {
 
                         } else  {
-                            loginPopupRequest(v);
+                            Intent intent = new Intent(MainActivity.this, JoinMemberBeginActivity.class);
+                            startActivityForResult(intent, REQ_NO_LOGIN);
                         }
 
 
@@ -322,6 +337,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     case 2: {
                         btnMypage.setImageResource(R.drawable.mypage_top_btn_mypage_s);
                         tabBarMyPage.setVisibility(View.VISIBLE);
+
+                        txtTitle.setText("My Page");
                         break;
                     }
                 }
@@ -350,8 +367,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             case R.id.btn_feed : {
 
-                pager.setCurrentItem(fragment_page_2);
-
+                if(GlobalSharedPreference.getAppPreferences(MainActivity.this, "login").equals("login"))
+                    pager.setCurrentItem(fragment_page_2);
+                else {
+                    startActivity(new Intent(MainActivity.this, JoinMemberBeginActivity.class));
+                }
                 break;
             }
             case R.id.btn_mypage : {
@@ -363,7 +383,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
             case R.id.main_feed_tab_container:
-                pager.setCurrentItem(fragment_page_2);
+                if(GlobalSharedPreference.getAppPreferences(MainActivity.this, "login").equals("login"))
+                    pager.setCurrentItem(fragment_page_2);
+                else {
+                    startActivity(new Intent(MainActivity.this, JoinMemberBeginActivity.class));
+                }
                 break;
 
             case R.id.main_mypage_tab_container:
@@ -373,7 +397,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void loginPopupRequest(View v) {
-
 
         final PopupWindow popupWindow = new PopupWindow(v);
         LayoutInflater inflater = (LayoutInflater) MainActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -434,9 +457,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 uploadTempFilePath = intent.getStringExtra("FILE_PATH");
             }
 
+            if(intent.hasExtra("UPLOAD_REQUEST")) {
+                upload = "uploading";
+
+            }
+
             pager.getAdapter().notifyDataSetChanged();
             pager.setCurrentItem(fragment_page_3);
-
         }
     }
 

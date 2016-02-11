@@ -28,6 +28,7 @@ import com.likelab.likepet.R;
 import com.likelab.likepet.RoundedCornerTransformation;
 import com.likelab.likepet.global.GlobalSharedPreference;
 import com.likelab.likepet.global.GlobalUrl;
+import com.likelab.likepet.global.GlobalVariable;
 import com.likelab.likepet.global.RecycleUtils;
 import com.likelab.likepet.view.ViewActivity;
 import com.likelab.likepet.volleryCustom.AppController;
@@ -210,7 +211,7 @@ public class ContentsAdapter extends BaseAdapter {
             viewHolder.imgGifICON.setVisibility(View.VISIBLE);
         } else {
             viewHolder.imgGifICON.setVisibility(View.INVISIBLE);
-            viewHolder.imgGifICON.setImageDrawable(null);
+            //viewHolder.imgGifICON.setImageDrawable(null);
         }
 
         if(contentsArrayList.get(position).status.equals("1") || contentsArrayList.get(position).reportCount > 10) {
@@ -227,6 +228,7 @@ public class ContentsAdapter extends BaseAdapter {
             int mediaWidth = contentsArrayList.get(position).mediaWidth;
             int mediaHeight = contentsArrayList.get(position).mediaHeight;
 
+
             if (contentsArrayList.get(position).contentsType.matches(".*image.*")) {
                 Picasso.with(context)
                         .load(contentsArrayList.get(position).contentsUrl)
@@ -240,6 +242,7 @@ public class ContentsAdapter extends BaseAdapter {
                         .placeholder(R.drawable.place_holder_960)
                         .into(viewHolder.mainContents);
             }
+
         }
 
         viewHolder.registerTime.setText(contentsArrayList.get(position).registryDate);
@@ -586,6 +589,8 @@ public class ContentsAdapter extends BaseAdapter {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("sessionId", GlobalSharedPreference.getAppPreferences(context, "sid"));
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 
@@ -642,6 +647,8 @@ public class ContentsAdapter extends BaseAdapter {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("sessionId", GlobalSharedPreference.getAppPreferences(context, "sid"));
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 

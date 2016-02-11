@@ -10,7 +10,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.webkit.WebView;
@@ -29,14 +28,15 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
-import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.likelab.likepet.Main.MainActivity;
+import com.likelab.likepet.MccTable;
+import com.likelab.likepet.R;
 import com.likelab.likepet.global.GlobalSharedPreference;
 import com.likelab.likepet.global.GlobalUrl;
-import com.likelab.likepet.Main.MainActivity;
-import com.likelab.likepet.R;
+import com.likelab.likepet.global.GlobalVariable;
 import com.likelab.likepet.volleryCustom.AppController;
 
 import org.json.JSONException;
@@ -58,13 +58,11 @@ public class InsertUserNameActivity extends Activity {
 
     private RelativeLayout cancelContainer;
 
-    private TextView txtServiceTerms;
-    private TextView txtPersonalData;
-
     private Button btnConfirm;
 
     private TextView txtErrorMessageTwoWord;
     private TextView txtErrorMessage15Word;
+    private TextView txtErrorMessageNoSpace;
 
     int socialFlag = 0;
 
@@ -75,15 +73,12 @@ public class InsertUserNameActivity extends Activity {
     String socialType;  //페이스북, 구글, 트위터 중 하나
 
     RequestQueue queue = AppController.getInstance().getRequestQueue();
-    ImageLoader imageLoader = AppController.getInstance().getImageLoader();
     private Tracker mTracker = AppController.getInstance().getDefaultTracker();
 
     private WebView mWebView;
-    private String termUrl;
 
     private TextView txtWebServiceTerms;
     private TextView txtWebPersonalInfo;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,6 +126,7 @@ public class InsertUserNameActivity extends Activity {
 
         txtErrorMessageTwoWord = (TextView)findViewById(R.id.join_member_txt_error_message_1);
         txtErrorMessage15Word = (TextView)findViewById(R.id.join_member_txt_error_message_2);
+        txtErrorMessageNoSpace = (TextView)findViewById(R.id.join_member_txt_error_message_3);
 
         cancelContainer = (RelativeLayout)findViewById(R.id.join_member_choose_name_cancel_container);
         cancelContainer.setOnClickListener(new View.OnClickListener() {
@@ -142,7 +138,6 @@ public class InsertUserNameActivity extends Activity {
 
         editName = (EditText)findViewById(R.id.join_member_edit_insert_name);
 
-
         btnConfirm = (Button) findViewById(R.id.join_member_choose_name_btn_confirm);
         btnConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -152,6 +147,9 @@ public class InsertUserNameActivity extends Activity {
                     txtErrorMessageTwoWord.setVisibility(View.VISIBLE);
                 } else if (editName.getText().length() > 15) {
                     txtErrorMessage15Word.setVisibility(View.VISIBLE);
+                } else if(editName.getText().toString().contains(" ")) {
+
+                    txtErrorMessageNoSpace.setVisibility(View.VISIBLE);
                 } else {
 
                     name = editName.getText().toString();
@@ -170,6 +168,7 @@ public class InsertUserNameActivity extends Activity {
 
                 txtErrorMessageTwoWord.setVisibility(View.INVISIBLE);
                 txtErrorMessage15Word.setVisibility(View.INVISIBLE);
+                txtErrorMessageNoSpace.setVisibility(View.INVISIBLE);
             }
 
             public void afterTextChanged(Editable s) {
@@ -204,11 +203,10 @@ public class InsertUserNameActivity extends Activity {
                         try {
                             responseCode = response.getInt("code");
 
-                            Log.d("Respomse", Integer.toString(responseCode));
-
                             if (responseCode == 409) {
 
-                                Toast.makeText(InsertUserNameActivity.this, "중복된 이름이다옹, 다른 이름을 입력하라옹", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(InsertUserNameActivity.this,
+                                        getResources().getString(R.string.join_insert_userName_txt_overlap), Toast.LENGTH_SHORT).show();
 
                                 //사용 가능한 이름
                             } else if(responseCode == 404) {
@@ -226,7 +224,6 @@ public class InsertUserNameActivity extends Activity {
 
                                     //소셜 아이디를 통한 가입
                                 } else {
-                                    Toast.makeText(InsertUserNameActivity.this, "사용가능한 이름", Toast.LENGTH_SHORT).show();
                                     singInRequest(userId, email, socialType);
                                 }
 
@@ -247,12 +244,23 @@ public class InsertUserNameActivity extends Activity {
                         System.out.println(error.toString());
                     }
 
-                });
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
+
+                return params;
+
+            }
+
+        };
         // Add the request to the RequestQueue.
         queue.add(jsonObjectRequest);
 
     }
-
 
     public void singInRequest(final String id, final String email, final String socialType) {
 
@@ -263,6 +271,7 @@ public class InsertUserNameActivity extends Activity {
         Locale mLocale = getResources().getConfiguration().locale;
         String deviceLanguage = mLocale.getLanguage();
         String language = null;
+
         if(deviceLanguage.contains("ko")) {
             language = "ko";
         } else if(deviceLanguage.contains("en")) {
@@ -271,8 +280,19 @@ public class InsertUserNameActivity extends Activity {
             language = "es";
         } else if(deviceLanguage.contains("ja")) {
             language = "ja";
+        } else if(deviceLanguage.contains("pt")) {
+            language = "pt";
         } else {
             language = "en";
+        }
+
+        String country;
+        if(GlobalVariable.mcc.equals("null")) {
+
+            country = GlobalVariable.countryCode;
+        } else {
+            int mcc = Integer.parseInt(GlobalSharedPreference.getAppPreferences(this, "mcc"));
+            country = MccTable.countryCodeForMcc(mcc);
         }
 
         PackageInfo pi = null;
@@ -299,13 +319,7 @@ public class InsertUserNameActivity extends Activity {
             obj.put("accountId", id);
             obj.put("name", name);
             obj.put("clan", clan);
-
-            Log.d("email", email);
-            Log.d("name", name);
-            Log.d("social", socialType);
-            Log.d("id", id);
-            Log.d("clan", clan);
-            Log.d("language", language);
+            obj.put("country", country);
 
 
         } catch (JSONException e) {
@@ -322,12 +336,10 @@ public class InsertUserNameActivity extends Activity {
 
                         try {
                             responseCode = response.getInt("code");
-                            //Toast.makeText(JoinMemberBeginActivity.this, Integer.toString(responseCode), Toast.LENGTH_LONG).show();
-
-                            Log.d("responseCode", Integer.toString(responseCode));
 
                             if (responseCode == 200) {
-                                Toast.makeText(InsertUserNameActivity.this, "회원가입이 완료되었습니다", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(InsertUserNameActivity.this,
+                                        getResources().getString(R.string.join_insert_email_password_toast_finish), Toast.LENGTH_SHORT).show();
                                 loginRequest(email, id);
 
                                 System.out.println(response.toString());
@@ -348,7 +360,20 @@ public class InsertUserNameActivity extends Activity {
 
                         error.printStackTrace();
                     }
-                });
+                }) {
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
+
+                return params;
+
+            }
+
+        };
 
         // Add the request to the RequestQueue.
         queue.add(jsonObjectRequest);
@@ -358,10 +383,6 @@ public class InsertUserNameActivity extends Activity {
 
         String endPoint = "/login/friendly/" + email;
 
-        Log.d("Email", email);
-        Log.d("userId", id);
-
-        //Toast.makeText(JoinMemberBeginActivity.this, token, Toast.LENGTH_LONG).show();
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, GlobalUrl.BASE_URL + endPoint,
                 new Response.Listener<JSONObject>() {
@@ -377,8 +398,12 @@ public class InsertUserNameActivity extends Activity {
                             e.printStackTrace();
                         }
                         if (responseCode == 200) {
-                            Toast.makeText(InsertUserNameActivity.this, "로그인 되었습니다", Toast.LENGTH_LONG).show();
+                            Toast.makeText(InsertUserNameActivity.this,
+                                    getResources().getString(R.string.join_insert_email_password_txt_login_complete), Toast.LENGTH_LONG).show();
                             loadUserInformation(email);
+                            GlobalSharedPreference.setAppPreferences(InsertUserNameActivity.this, "email", email);
+                            GlobalSharedPreference.setAppPreferences(InsertUserNameActivity.this, "accountId", id);
+                            GlobalSharedPreference.setAppPreferences(InsertUserNameActivity.this, "loginType", "sns");
 
                         }
                     }
@@ -397,6 +422,8 @@ public class InsertUserNameActivity extends Activity {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("accountId", id);
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 
@@ -408,8 +435,6 @@ public class InsertUserNameActivity extends Activity {
                 Map<String, String> responseHeaders = response.headers;
                 String sid = responseHeaders.get("sessionID");
 
-
-                //Log.d("sid", sid);
                 setAppPreferences(InsertUserNameActivity.this, "sid", sid);
 
                 try {
@@ -441,7 +466,6 @@ public class InsertUserNameActivity extends Activity {
 
                         try {
                             responseCode = response.getInt("code");
-                            Log.d("email", email);
 
                             if (responseCode == 200) {
 
@@ -500,8 +524,6 @@ public class InsertUserNameActivity extends Activity {
 
                                 }
 
-                                Log.d("userId", userId);
-
                                 for(int i=0; i<SignInFlowActivityList.activityArrayList.size(); i++) {
                                     SignInFlowActivityList.activityArrayList.get(i).finish();
                                 }
@@ -536,8 +558,9 @@ public class InsertUserNameActivity extends Activity {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
-                String sid = GlobalSharedPreference.getAppPreferences(InsertUserNameActivity.this, "sid");
-                params.put("sessionId", sid);
+                params.put("sessionId", GlobalSharedPreference.getAppPreferences(InsertUserNameActivity.this, "sid"));
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 

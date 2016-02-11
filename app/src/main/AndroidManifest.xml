@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.likelab.likepet"
-    android:versionName="1.0.0"
-    android:versionCode="2"
+
+    android:versionName="1.0.1"
+    android:versionCode="4"
     >
 
     <uses-sdk
@@ -58,6 +59,27 @@
             </intent-filter>
         </receiver>
         <service android:name="com.google.android.gms.analytics.CampaignTrackingService" />
+
+        <activity
+            android:name="com.likelab.likepet.Intro"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:windowSoftInputMode="adjustResize"
+            android:screenOrientation="portrait"
+            >
+
+            <intent-filter>
+                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:host="main" android:scheme="likepet" />
+            </intent-filter>
+
+        </activity>
+
 
         <activity
             android:name="com.facebook.FacebookActivity"
@@ -282,17 +304,6 @@
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             >
-
-            <intent-filter>
-                <category android:name="android.intent.category.LAUNCHER" />
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:host="main" android:scheme="likepet" />
-            </intent-filter>
         </activity>
 
         <meta-data

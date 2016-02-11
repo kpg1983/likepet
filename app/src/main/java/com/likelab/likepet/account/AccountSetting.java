@@ -33,7 +33,6 @@ public class AccountSetting extends Activity{
     private Button btnLogout;
 
     private TextView txtEmail;
-    private static int REQ_LOGOUT = 5;
 
     private Tracker mTracker = AppController.getInstance().getDefaultTracker();
 
@@ -51,8 +50,6 @@ public class AccountSetting extends Activity{
         btnGoogle = (ImageButton)findViewById(R.id.account_setting_btn_google);
 
         txtEmail = (TextView)findViewById(R.id.account_setting_edit_email);
-
-        txtEmail.setText(GlobalSharedPreference.getAppPreferences(this, "email"));
 
         btnLogout =(Button)findViewById(R.id.account_btn_logout);
 
@@ -110,6 +107,9 @@ public class AccountSetting extends Activity{
                 GlobalSharedPreference.deleteAppPreferences(AccountSetting.this, "linkageFacebook");
                 GlobalSharedPreference.deleteAppPreferences(AccountSetting.this, "linkageTwitter");
                 GlobalSharedPreference.deleteAppPreferences(AccountSetting.this, "linkageGoogle");
+                GlobalSharedPreference.deleteAppPreferences(AccountSetting.this, "accountId");
+                GlobalSharedPreference.deleteAppPreferences(AccountSetting.this, "password");
+                GlobalSharedPreference.deleteAppPreferences(AccountSetting.this, "loginType");
 
                 GlobalSharedPreference.setAppPreferences(AccountSetting.this, "login", "logout");
 
@@ -163,5 +163,7 @@ public class AccountSetting extends Activity{
         String pageName = "Account";
         mTracker.setScreenName(pageName);
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+
+        txtEmail.setText(GlobalSharedPreference.getAppPreferences(this, "email"));
     }
 }

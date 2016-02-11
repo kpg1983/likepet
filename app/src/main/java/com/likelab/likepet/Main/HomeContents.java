@@ -52,32 +52,12 @@ public class HomeContents {
     String thumbnailUrlRight;
     String descriptionRight;
 
-    public HomeContents(int leftContents, int rightContents, String firstLeftTag, String secondLeftTag, String firstRightTag, String secondRightTag, int contentsType) {
+    String newStory;
+    String newStoryRight;
 
-        this.leftContents = leftContents;
-        this.rightContents = rightContents;
-
-        this.firstLeftTag = firstLeftTag;
-        this.firstRightTag = firstRightTag;
-
-        this.secondLeftTag = secondLeftTag;
-        this.secondRightTag = secondRightTag;
-
-        this.contentsType = contentsType;
-
-    }
-
-    public HomeContents(int leftContents, String firstLeftTag, String secondLeftTag, int contentsType) {
-
-        this.leftContents = leftContents;
-        this.firstLeftTag = firstLeftTag;
-        this.secondLeftTag = secondLeftTag;
-        this.contentsType = contentsType;
-
-    }
 
     public HomeContents(String pageId, String language, String status, String registryDate, String displayStartDate, String displayEndDate, String groupId,
-                        int feedCount, int readCount, String thumbnailType, String groupRegistryDate, String ownerName, String thumbnailUrl, String description) {
+                        int feedCount, int readCount, String thumbnailType, String groupRegistryDate, String ownerName, String thumbnailUrl, String description, String newStory) {
 
         this.pageId = pageId;
         this.language = language;
@@ -93,12 +73,14 @@ public class HomeContents {
         this.thumbnailUrl = thumbnailUrl;
         this.description = description;
         this.status = status;
+        this.newStory = newStory;
     }
 
     public HomeContents(String pageId, String language, String status, String registryDate, String displayStartDate, String displayEndDate, String groupId,
                         int feedCount, int readCount, String thumbnailType, String groupRegistryDate, String ownerName, String thumbnailUrl, String description,
                         String pageIdRight, String languageRight, String statusRight, String registryDateRight, String displayStartDateRight, String displayEndDateRight, String groupIdRight,
-                        int feedCountRight, int readCountRight, String thumbnailTypeRight, String groupRegistryDateRight, String ownerNameRight, String thumbnailUrlRight, String descriptionRight) {
+                        int feedCountRight, int readCountRight, String thumbnailTypeRight, String groupRegistryDateRight, String ownerNameRight, String thumbnailUrlRight, String descriptionRight,
+                        String newStory, String newStoryRight) {
 
         this.pageId = pageId;
         this.language = language;
@@ -114,6 +96,7 @@ public class HomeContents {
         this.thumbnailUrl = thumbnailUrl;
         this.description = description;
         this.status = status;
+        this.newStory = newStory;
 
         this.pageIdRight = pageIdRight;
         this.languageRight = languageRight;
@@ -129,6 +112,8 @@ public class HomeContents {
         this.ownerNameRight = ownerNameRight;
         this.thumbnailUrlRight = thumbnailUrlRight;
         this.descriptionRight = descriptionRight;
+        this.newStoryRight = newStoryRight;
+
 
 
     }

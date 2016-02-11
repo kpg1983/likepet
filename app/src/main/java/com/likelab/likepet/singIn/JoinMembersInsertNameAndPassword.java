@@ -8,7 +8,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -28,10 +27,12 @@ import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.likelab.likepet.Main.MainActivity;
+import com.likelab.likepet.MccTable;
+import com.likelab.likepet.R;
 import com.likelab.likepet.global.GlobalSharedPreference;
 import com.likelab.likepet.global.GlobalUrl;
-import com.likelab.likepet.Main.MainActivity;
-import com.likelab.likepet.R;
+import com.likelab.likepet.global.GlobalVariable;
 import com.likelab.likepet.volleryCustom.AppController;
 
 import org.json.JSONException;
@@ -63,6 +64,7 @@ public class JoinMembersInsertNameAndPassword extends Activity {
     private TextView txtEmailErrorMessage;
     private TextView txtPasswordErrorMessage;
     private TextView txtPasswordErrorMessageSpecialCharacter;
+    private TextView txtPasswordErrorMessageNoSpace;
 
     private final String detail_info_request_url = "http://54.169.212.108:8080";
 
@@ -86,11 +88,10 @@ public class JoinMembersInsertNameAndPassword extends Activity {
         clan = intent.getStringExtra("CLAN");
         name = intent.getStringExtra("NAME");
 
-        Log.d("clan", clan);
-
         txtEmailErrorMessage = (TextView)findViewById(R.id.join_member_txt_error_message_email);
         txtPasswordErrorMessage = (TextView)findViewById(R.id.join_member_txt_error_message_password);
         txtPasswordErrorMessageSpecialCharacter = (TextView)findViewById(R.id.join_member_txt_error_message_password_special_character);
+        txtPasswordErrorMessageNoSpace = (TextView)findViewById(R.id.join_member_txt_error_message_password_no_space);
 
         editEmail = (EditText)findViewById(R.id.join_member_edit_insert_email);
         editPassword = (EditText)findViewById(R.id.join_member_edit_insert_password);
@@ -123,9 +124,13 @@ public class JoinMembersInsertNameAndPassword extends Activity {
                 } else if(isPasswordOK == false) {
 
                     if(editPassword.getText().length() < 6) {
+
                         txtPasswordErrorMessage.setVisibility(View.VISIBLE);
                     } else if(!isPasswordValidate(editPassword.getText().toString())) {
                         txtPasswordErrorMessageSpecialCharacter.setVisibility(View.VISIBLE);
+
+                    } else if(editPassword.getText().toString().contains(" ")){
+                        txtPasswordErrorMessageNoSpace.setVisibility(View.VISIBLE);
                     }
 
                 }
@@ -168,11 +173,12 @@ public class JoinMembersInsertNameAndPassword extends Activity {
 
                 txtPasswordErrorMessage.setVisibility(View.INVISIBLE);
                 txtPasswordErrorMessageSpecialCharacter.setVisibility(View.INVISIBLE);
+                txtPasswordErrorMessageNoSpace.setVisibility(View.INVISIBLE);
 
                 String tempPassword = editPassword.getText().toString();
                 int passwordLength = tempPassword.length();
 
-                if(isPasswordValidate(editPassword.getText().toString()) && passwordLength > 5 && passwordLength < 21) {
+                if(isPasswordValidate(editPassword.getText().toString()) && passwordLength > 5 && passwordLength < 21 && !editPassword.getText().toString().contains(" ")) {
                     imgCheckPassword.setVisibility(View.VISIBLE);
                     isPasswordOK = true;
                 }
@@ -252,15 +258,24 @@ public class JoinMembersInsertNameAndPassword extends Activity {
                     public void onErrorResponse(VolleyError error) {
                         //Toast.makeText(JoinMemberBeginActivity.this, error.toString(), Toast.LENGTH_LONG).show();
                     }
-                });
+                }) {
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
+
+                return params;
+
+            }
+
+        };
 
         // Add the request to the RequestQueue.
         queue.add(stringRequest);
 
     }
-
-
-
 
     public void singInRequest(final String email, final String password) {
 
@@ -271,6 +286,7 @@ public class JoinMembersInsertNameAndPassword extends Activity {
         Locale mLocale = getResources().getConfiguration().locale;
         String deviceLanguage = mLocale.getLanguage();
         String language = null;
+
         if(deviceLanguage.contains("ko")) {
             language = "ko";
         } else if(deviceLanguage.contains("en")) {
@@ -279,8 +295,19 @@ public class JoinMembersInsertNameAndPassword extends Activity {
             language = "es";
         } else if(deviceLanguage.contains("ja")) {
             language = "ja";
+        } else if(deviceLanguage.contains("pt")) {
+            language = "pt";
         } else {
             language = "en";
+        }
+
+        String country;
+
+        if(GlobalVariable.mcc.equals("null")) {
+            country = GlobalVariable.countryCode;
+        } else {
+            int mcc = Integer.parseInt(GlobalSharedPreference.getAppPreferences(this, "mcc"));
+            country = MccTable.countryCodeForMcc(mcc);
         }
 
         PackageInfo pi = null;
@@ -306,6 +333,7 @@ public class JoinMembersInsertNameAndPassword extends Activity {
             obj.put("password", password);
             obj.put("name", name);
             obj.put("clan", clan);
+            obj.put("country", country);
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -345,7 +373,18 @@ public class JoinMembersInsertNameAndPassword extends Activity {
                     public void onErrorResponse(VolleyError error) {
                         //Toast.makeText(JoinMemberBeginActivity.this, error.toString(), Toast.LENGTH_LONG).show();
                     }
-                });
+                }){
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
+
+                return params;
+
+            }
+
+        };
 
         // Add the request to the RequestQueue.
         queue.add(jsonObjectRequest);
@@ -409,6 +448,8 @@ public class JoinMembersInsertNameAndPassword extends Activity {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 
@@ -420,8 +461,8 @@ public class JoinMembersInsertNameAndPassword extends Activity {
                 Map<String, String> responseHeaders = response.headers;
                 String sid = responseHeaders.get("sessionId");
 
+
                 if(sid != null) {
-                    Log.d("SID", sid);
                     GlobalSharedPreference.setAppPreferences(JoinMembersInsertNameAndPassword.this, "sid", sid);
 
                 }
@@ -550,6 +591,8 @@ public class JoinMembersInsertNameAndPassword extends Activity {
                 Map<String, String> params = new HashMap<String, String>();
                 String sid = GlobalSharedPreference.getAppPreferences(JoinMembersInsertNameAndPassword.this, "sid");
                 params.put("sessionId", sid);
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 

@@ -53,7 +53,6 @@
             android:id="@+id/join_member_begin_img_contents"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@drawable/member_img_01"
             android:scaleType="fitXY"
             />
 

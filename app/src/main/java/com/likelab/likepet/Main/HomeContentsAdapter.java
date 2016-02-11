@@ -183,12 +183,13 @@ public class HomeContentsAdapter extends BaseAdapter {
 
                     Intent intent = new Intent(context, HomeFeedActivity.class);
                     String tags = contentsArrayList.get(position).description;
+                    String newStory = contentsArrayList.get(position).newStory;
 
                     intent.putExtra("TAGS", tags);
-
                     intent.putExtra("GROUP_ID", groupId);
                     intent.putExtra("PAGE_ID", pageId);
                     intent.putExtra("FEED_COUNT", feedCount);
+                    intent.putExtra("NEW_STORY", newStory);
 
                     context.startActivity(intent);
                 }
@@ -236,9 +237,6 @@ public class HomeContentsAdapter extends BaseAdapter {
                     .placeholder(R.drawable.place_holder_960)
                     .centerCrop()
                     .into(viewHolderSquare.imgRightContents);
-
-            //viewHolderSquare.imgLeftContents.setImageUrl(contentsArrayList.get(position).thumbnailUrl, imageLoader);
-            //viewHolderSquare.imgRightContents.setImageUrl(contentsArrayList.get(position).thumbnailUrlRight, imageLoader);
 
 
             //#문자를 이용하여 태그의 갯수를 파악하고 리스트에 표시한다. 태그가 없는 경우는 #을 붙이지 않거나 아예 나타내지 않는다
@@ -301,15 +299,18 @@ public class HomeContentsAdapter extends BaseAdapter {
                     String groupId = contentsArrayList.get(position).groupId;
                     String pageId = contentsArrayList.get(position).pageId;
                     int feedCount = contentsArrayList.get(position).feedCount;
+                    String homeTag = contentsArrayList.get(position).description;
+                    String newStory = contentsArrayList.get(position).newStory;
+
 
                     Intent intent = new Intent(context, HomeFeedActivity.class);
 
-                    String homeTag = contentsArrayList.get(position).description;
 
                     intent.putExtra("TAGS", homeTag);
                     intent.putExtra("GROUP_ID", groupId);
                     intent.putExtra("PAGE_ID", pageId);
                     intent.putExtra("FEED_COUNT", feedCount);
+                    intent.putExtra("NEW_STORY", newStory);
 
                     context.startActivity(intent);
                 }
@@ -322,15 +323,17 @@ public class HomeContentsAdapter extends BaseAdapter {
                     String groupId = contentsArrayList.get(position).groupIdRight;
                     String pageId = contentsArrayList.get(position).pageIdRight;
                     int feedCount = contentsArrayList.get(position).feedCountRight;
+                    String homeTag = contentsArrayList.get(position).descriptionRight;
+                    String newStory = contentsArrayList.get(position).newStoryRight;
 
                     Intent intent = new Intent(context, HomeFeedActivity.class);
 
-                    String homeTag = contentsArrayList.get(position).descriptionRight;
 
                     intent.putExtra("TAGS", homeTag);
                     intent.putExtra("GROUP_ID", groupId);
                     intent.putExtra("PAGE_ID", pageId);
                     intent.putExtra("FEED_COUNT", feedCount);
+                    intent.putExtra("NEW_STORY", newStory);
 
                     context.startActivity(intent);
 

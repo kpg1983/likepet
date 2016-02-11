@@ -75,7 +75,7 @@
                 <RelativeLayout
                     android:id="@+id/update_current_version_container"
                     android:layout_width="match_parent"
-                    android:layout_height="65.66dp"
+                    android:layout_height="63.66dp"
                     android:layout_below="@id/update_img_contents"
                     android:layout_marginLeft="19.66dp"
                     android:layout_marginRight="19.66dp">
@@ -110,7 +110,7 @@
                 <RelativeLayout
                     android:id="@+id/update_current_latest_container"
                     android:layout_width="match_parent"
-                    android:layout_height="65.66dp"
+                    android:layout_height="63.66dp"
                     android:layout_below="@id/update_current_version_container"
                     android:layout_marginLeft="19.66dp"
                     android:layout_marginRight="19.66dp">
@@ -128,7 +128,6 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
-                        android:text="10.1.4"
                         android:textColor="#f7c243"
                         android:textSize="18.99dp"
 

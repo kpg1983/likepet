@@ -23,6 +23,7 @@ import com.likelab.likepet.CircleTransform;
 import com.likelab.likepet.R;
 import com.likelab.likepet.global.GlobalSharedPreference;
 import com.likelab.likepet.global.GlobalUrl;
+import com.likelab.likepet.global.GlobalVariable;
 import com.likelab.likepet.global.RecycleUtils;
 import com.likelab.likepet.volleryCustom.AppController;
 import com.likelab.likepet.yourPage.YourPageActivity;
@@ -158,34 +159,6 @@ public class FollowingContentsAdapter extends BaseAdapter{
                     into(imgLikeUserProfileImage);
         }
 
-        /*
-
-        //유저의 프로필 이미지 설정
-        imageLoader.get(contentsArrayList.get(position).userProfileImage, new ImageLoader.ImageListener() {
-            @Override
-            public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
-
-                if (response.getBitmap() != null) {
-                    //imgLikeUserProfileImage.startAnimation(AnimationUtils.loadAnimation(context, android.R.anim.fade_in));
-                    imgLikeUserProfileImage.setImageDrawable(new RoundedAvatarDrawable(response.getBitmap(), 1));
-                } else {
-                    if (contentsArrayList.get(position).clan.equals("0")) {
-                        imgLikeUserProfileImage.setImageResource(R.drawable.more_img_06_01_dog);
-                    } else if (contentsArrayList.get(position).clan.equals("1")) {
-                        imgLikeUserProfileImage.setImageResource(R.drawable.more_img_06_01_cat);
-                    } else if (contentsArrayList.get(position).clan.equals("2")) {
-                        imgLikeUserProfileImage.setImageResource(R.drawable.more_img_06_01_human);
-                    }
-                }
-
-            }
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
-        });
-        */
 
 
         //유저의 프로필 이미지를 클릭하면 상대방의 페이지로 이동한다.
@@ -250,7 +223,6 @@ public class FollowingContentsAdapter extends BaseAdapter{
                                 URL url = new URL(GlobalUrl.BASE_URL + endPoint + "?" + parameter);
 
                                 HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
-                                httpCon.setDoOutput(true);
                                 httpCon.setRequestProperty(
                                         "Content-Type", "application/x-www-form-urlencoded");
                                 httpCon.setRequestMethod("DELETE");
@@ -258,13 +230,14 @@ public class FollowingContentsAdapter extends BaseAdapter{
                                 if (GlobalSharedPreference.getAppPreferences(context, "login").equals("login")) {
                                     httpCon.setRequestProperty("sessionId", GlobalSharedPreference.getAppPreferences(context, "sid"));
                                 }
+
+                                httpCon.setRequestProperty("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
                                 //httpCon.setRequestProperty("followingUserId", contentsArrayList.get(position).userId);
 
                                 httpCon.connect();
 
                                 int responseCode = httpCon.getResponseCode();
-
-                                Log.d("responseCode", Integer.toString(responseCode));
 
                                 if (responseCode == 200) {
                                     //Toast.makeText(context, "팔로잉 삭제", Toast.LENGTH_SHORT).show();
@@ -345,6 +318,9 @@ public class FollowingContentsAdapter extends BaseAdapter{
                 Map<String, String> params = new HashMap<String, String>();
                 if (GlobalSharedPreference.getAppPreferences(context, "login").equals("login"))
                     params.put("sessionId", GlobalSharedPreference.getAppPreferences(context, "sid"));
+
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 

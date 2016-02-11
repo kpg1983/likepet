@@ -1,6 +1,8 @@
 <resources>
 
 
+    <string name="home_feed_txt_new_story_title">새로운 이야기</string>
+
     <string name="pull_to_refresh_pull_label">Pull to refresh...</string>
     <string name="pull_to_refresh_release_label">Release to refresh...</string>
     <string name="pull_to_refresh_refreshing_label">Loading...</string>
@@ -13,7 +15,7 @@
 
     <string name="mypage_following">팔로잉</string>
     <string name="mypage_follower">팔로워</string>
-    <string name="mypage_moment">순간들</string>
+    <string name="mypage_moment">이야기</string>
 
     <string name="mypage_name_likepet">라이크팻</string>
     <string name="mypage_no_member">귀요미 제보는\n회원 등록후\n가능하다옹</string>
@@ -40,6 +42,9 @@
     <string name="join_service_term_first_line">회원 가입을 하면 라이크팻의 서비스 이용약관</string>
     <string name="view_comment_no_best">아직 댓글이 없다옹\n배댓을 노린다면\n지금이 기회다냥</string>
     <string name="view_comment_like">좋아요</string>
+
+    <string name="update_txt_now">업데이트</string>
+    <string name="update_txt_later">나중에</string>
 
     <string name="view_delete_comment_question">정말로 댓글을 삭제하겠냐옹?</string>
     <string name="view_delete_comment_yes">삭제하겠다옹</string>
@@ -159,6 +164,8 @@
     <string name="join_insert_userName_btn_next">확인</string>
     <string name="join_insert_userName_txt_more_than_two_word">이름은 두 글자 이상 써라옹</string>
     <string name="join_insert_userName_txt_less_than_two_word">이름은 15글자 이내로 써라옹</string>
+    <string name="join_insert_userName_txt_overlap">중복된 이름이다옹, 다른 이름을 입력하라옹</string>
+    <string name="join_insert_userName_txt_space">공백이 포함될 수 없다옹</string>
 
     <string name="join_insert_email_password_title">회원 등록</string>
     <string name="join_insert_email_password_txt_email">이메일 주소를 알려달라옹</string>
@@ -171,7 +178,7 @@
     <string name="join_insert_email_password_toast_duplicate_email">중복된 이메일 주소다옹</string>
     <string name="join_insert_email_password_toast_finish">회원가입이 완료 되었다옹</string>
     <string name="join_insert_email_password_btn_finish">다음</string>
-    <string name="join_insert_email_password_txt_login_complete">로그인 되었습니다.</string>
+    <string name="join_insert_email_password_txt_login_complete">로그인 되었습니다</string>
 
 
     <string name="join_service_term_second_line">및 개인 정보의 수집 및 이용에 동의한 것이 된다옹</string>
@@ -210,16 +217,12 @@
     <string name="modify_password_toast_current">기존 비밀번호를 입력하라옹</string>
     <string name="modify_password_toast_new">기존 비밀번호를 입력하라옹</string>
 
-
-
     <string name="like_user_people">명</string>
-
 
     <string name="common_toast_finish_app">\'뒤로\'버튼을 한번 더 누르면 종료됩니다</string>
 
     <string name="service_term">http://www.likepet.me/termsandservices_ko.html</string>
     <string name="personal_info">http://www.likepet.me/privacy_ko.html</string>
-
 
     
     <string name="title_activity_activity_main">GPUImage Sample</string>

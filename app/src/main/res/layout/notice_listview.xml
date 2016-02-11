@@ -80,7 +80,6 @@
                     android:id="@+id/notice_img_contents"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/main_image"
                     android:scaleType="center"
                     android:layout_marginBottom="10dp"
                     android:visibility="gone"

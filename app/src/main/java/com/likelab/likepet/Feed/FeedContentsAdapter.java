@@ -30,6 +30,7 @@ import com.likelab.likepet.R;
 import com.likelab.likepet.RoundedCornerTransformation;
 import com.likelab.likepet.global.GlobalSharedPreference;
 import com.likelab.likepet.global.GlobalUrl;
+import com.likelab.likepet.global.GlobalVariable;
 import com.likelab.likepet.singIn.JoinMemberBeginActivity;
 import com.likelab.likepet.view.ViewActivity;
 import com.likelab.likepet.volleryCustom.AppController;
@@ -286,7 +287,7 @@ public class FeedContentsAdapter extends BaseAdapter{
             viewHolder.imgGifIcon.setVisibility(View.VISIBLE);
         } else {
             viewHolder.imgGifIcon.setVisibility(View.INVISIBLE);
-            viewHolder.imgGifIcon.setImageDrawable(null);
+            //viewHolder.imgGifIcon.setImageDrawable(null);
         }
 
         String likeCount = Integer.toString(contentsArrayList.get(position).likeCount);
@@ -613,6 +614,8 @@ public class FeedContentsAdapter extends BaseAdapter{
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("sessionId", GlobalSharedPreference.getAppPreferences(context, "sid"));
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 
@@ -671,6 +674,8 @@ public class FeedContentsAdapter extends BaseAdapter{
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("sessionId", GlobalSharedPreference.getAppPreferences(context, "sid"));
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 

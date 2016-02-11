@@ -22,6 +22,7 @@ import com.google.android.gms.analytics.Tracker;
 import com.likelab.likepet.global.GlobalSharedPreference;
 import com.likelab.likepet.global.GlobalUrl;
 import com.likelab.likepet.R;
+import com.likelab.likepet.global.GlobalVariable;
 import com.likelab.likepet.global.RecycleUtils;
 import com.likelab.likepet.volleryCustom.AppController;
 
@@ -48,7 +49,6 @@ public class FollowerUserListActivity extends Activity {
     private TextView txtNumberOfLike_3;
 
     private TextView txtTitle;
-
     private RequestQueue queue;
     String follow;
 
@@ -271,6 +271,9 @@ public class FollowerUserListActivity extends Activity {
                 if(GlobalSharedPreference.getAppPreferences(FollowerUserListActivity.this, "login").equals("login"))
                     params.put("sessionId", GlobalSharedPreference.getAppPreferences(FollowerUserListActivity.this, "sid"));
 
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
+
                 return params;
 
             }
@@ -385,6 +388,9 @@ public class FollowerUserListActivity extends Activity {
                 Map<String, String> params = new HashMap<String, String>();
                 if(GlobalSharedPreference.getAppPreferences(FollowerUserListActivity.this, "login").equals("login"))
                     params.put("sessionId", GlobalSharedPreference.getAppPreferences(FollowerUserListActivity.this, "sid"));
+
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 

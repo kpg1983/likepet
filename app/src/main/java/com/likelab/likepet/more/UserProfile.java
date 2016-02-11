@@ -12,7 +12,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,10 +36,11 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.likelab.likepet.R;
-import com.likelab.likepet.global.RoundedAvatarDrawable;
 import com.likelab.likepet.UploadContents;
 import com.likelab.likepet.global.GlobalSharedPreference;
 import com.likelab.likepet.global.GlobalUrl;
+import com.likelab.likepet.global.GlobalVariable;
+import com.likelab.likepet.global.RoundedAvatarDrawable;
 import com.likelab.likepet.volleryCustom.AppController;
 
 import org.json.JSONException;
@@ -173,12 +173,8 @@ public class UserProfile extends Activity {
             imgUserPhoto = (ImageView) findViewById(R.id.profile_img_user_photo_main);
 
             txtGender = (TextView) findViewById(R.id.profile_txt_gender);
-
             txtUserName = (TextView) findViewById(R.id.profile_txt_user_name);
-
             txtUserName.setText(GlobalSharedPreference.getAppPreferences(this, "name"));
-
-            Log.d("name", GlobalSharedPreference.getAppPreferences(this, "name"));
             imgClan = (ImageView) findViewById(R.id.profile_img_user_clan);
 
             final String clan = GlobalSharedPreference.getAppPreferences(this, "clan");
@@ -189,6 +185,12 @@ public class UserProfile extends Activity {
                 imgClan.setImageResource(R.drawable.mypage_img_01);
             } else if (clan.equals("2")) {
                 imgClan.setImageResource(R.drawable.mypage_img_03);
+            }
+
+            if(GlobalSharedPreference.getAppPreferences(this, "profileContainer").equals("checkOK")) {
+                guideContainer.setVisibility(View.GONE);
+            } else{
+                guideContainer.setVisibility(View.VISIBLE);
             }
 
             userPhotoContainer = (RelativeLayout) findViewById(R.id.profile_user_photo_container);
@@ -579,6 +581,8 @@ public class UserProfile extends Activity {
             @Override
             public void onClick(View v) {
                 guideContainer.setVisibility(View.GONE);
+                GlobalSharedPreference.setAppPreferences(UserProfile.this, "profileContainer", "checkOK");
+
             }
         });
 
@@ -607,7 +611,6 @@ public class UserProfile extends Activity {
             e.printStackTrace();
         }
 
-
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PUT, GlobalUrl.BASE_URL + endPoint, obj,
                 new Response.Listener<JSONObject>() {
 
@@ -622,7 +625,6 @@ public class UserProfile extends Activity {
 
                             if (responseCode == 200) {
                                 GlobalSharedPreference.setAppPreferences(UserProfile.this, "birthday", birthday);
-                                Log.d("birthday", GlobalSharedPreference.getAppPreferences(UserProfile.this, "birthday"));
 
                             }
 
@@ -641,6 +643,8 @@ public class UserProfile extends Activity {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("sessionId", GlobalSharedPreference.getAppPreferences(UserProfile.this, "sid"));
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 
@@ -696,6 +700,8 @@ public class UserProfile extends Activity {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("sessionId", GlobalSharedPreference.getAppPreferences(UserProfile.this, "sid"));
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 
@@ -751,6 +757,8 @@ public class UserProfile extends Activity {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("sessionId", GlobalSharedPreference.getAppPreferences(UserProfile.this, "sid"));
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 
@@ -857,27 +865,6 @@ public class UserProfile extends Activity {
                 if (resultCode == RESULT_OK) {
 
                     try {
-
-                        /*
-                        Uri selectedImage = imageData.getData();
-                        String[] filePathColumn = {MediaStore.Images.Media.DATA};
-
-                        Cursor cursor = getContentResolver().query(
-                                selectedImage, filePathColumn, null, null, null);
-                        cursor.moveToFirst();
-
-                        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                        String filePath = cursor.getString(columnIndex);
-                        cursor.close();
-
-                        this.selectedImage = BitmapFactory.decodeFile(filePath);
-                        this.filePath = filePath;
-
-                        imgUserPhoto.setImageDrawable(new RoundedAvatarDrawable(this.selectedImage, 1));
-
-                        Log.d("filePath", this.filePath);
-
-                        */
 
                         filePath = Environment.getExternalStorageDirectory() + "/temp.jpg";
 

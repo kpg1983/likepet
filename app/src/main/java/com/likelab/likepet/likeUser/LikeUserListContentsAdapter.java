@@ -3,7 +3,6 @@ package com.likelab.likepet.likeUser;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +22,7 @@ import com.likelab.likepet.CircleTransform;
 import com.likelab.likepet.R;
 import com.likelab.likepet.global.GlobalSharedPreference;
 import com.likelab.likepet.global.GlobalUrl;
+import com.likelab.likepet.global.GlobalVariable;
 import com.likelab.likepet.global.RecycleUtils;
 import com.likelab.likepet.volleryCustom.AppController;
 import com.likelab.likepet.yourPage.YourPageActivity;
@@ -119,12 +119,9 @@ public class LikeUserListContentsAdapter extends BaseAdapter {
 
             itemLayout = inflater.inflate(layout, null);
 
-
             viewHolder.imgLikeType = (ImageView)itemLayout.findViewById(R.id.like_user_img_like_type);
-
             viewHolder.txtLikeUserName = (TextView)itemLayout.findViewById(R.id.like_user_txt_name);
             viewHolder.imgClan = (ImageView)itemLayout.findViewById(R.id.like_user_img_clan);
-
 
             itemLayout.setTag(viewHolder);
 
@@ -170,30 +167,6 @@ public class LikeUserListContentsAdapter extends BaseAdapter {
                     into(imgLikeUserProfileImage);
         }
 
-        /*
-        imageLoader.get(contentsArrayList.get(position).profileImageUrl, new ImageLoader.ImageListener() {
-            @Override
-            public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
-                if (response.getBitmap() != null) {
-                    //imgLikeUserProfileImage.startAnimation(AnimationUtils.loadAnimation(context, android.R.anim.fade_in));
-                    imgLikeUserProfileImage.setImageDrawable(new RoundedAvatarDrawable(response.getBitmap(), 1));
-                } else {
-                    String clan = contentsArrayList.get(position).clan;
-                    if (clan.equals("0")) {
-                        imgLikeUserProfileImage.setImageResource(R.drawable.more_img_06_01_dog);
-                    } else if (clan.equals("1")) {
-                        imgLikeUserProfileImage.setImageResource(R.drawable.more_img_06_01_cat);
-                    } else
-                        imgLikeUserProfileImage.setImageResource(R.drawable.more_img_06_01_human);
-                }
-            }
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                //To change body of implemented methods use File | Settings | File Templates.
-            }
-        });
-        */
 
         viewHolder.txtLikeUserName.setText(contentsArrayList.get(position).userName);
 
@@ -244,9 +217,6 @@ public class LikeUserListContentsAdapter extends BaseAdapter {
             public void onClick(View v) {
                 if (contentsArrayList.get(position).myFriend.equals("1")) {
 
-
-                    Log.d("userId", contentsArrayList.get(position).userId);
-
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
@@ -257,13 +227,15 @@ public class LikeUserListContentsAdapter extends BaseAdapter {
                                 URL url = new URL(GlobalUrl.BASE_URL + endPoint + "?" + parameter);
 
                                 HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
-                                httpCon.setDoOutput(true);
+                                //httpCon.setDoOutput(true);
                                 httpCon.setRequestProperty(
                                         "Content-Type", "application/x-www-form-urlencoded");
                                 httpCon.setRequestMethod("DELETE");
                                 httpCon.setRequestProperty("charset", "utf-8");
                                 httpCon.setRequestProperty("sessionId", GlobalSharedPreference.getAppPreferences(context, "sid"));
                                 //httpCon.setRequestProperty("followingUserId", contentsArrayList.get(position).userId);
+                                httpCon.setRequestProperty("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
 
                                 httpCon.connect();
 
@@ -330,11 +302,7 @@ public class LikeUserListContentsAdapter extends BaseAdapter {
                         try {
                             responseCode = response.getInt("code");
 
-                            Log.d("LikeUser", Integer.toString(responseCode));
-
                             if (responseCode == 200) {
-
-                                //Toast.makeText(context, "팔로잉 추가", Toast.LENGTH_SHORT).show();
 
                             }
 
@@ -359,6 +327,8 @@ public class LikeUserListContentsAdapter extends BaseAdapter {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("sessionId", GlobalSharedPreference.getAppPreferences(context, "sid"));
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 

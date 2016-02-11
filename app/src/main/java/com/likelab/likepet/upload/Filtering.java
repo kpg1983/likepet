@@ -157,7 +157,11 @@ public class Filtering extends Activity {
         filterImageContainer_8 = (RelativeLayout)findViewById(R.id.filtering_filter_container_8);
         filterImageContainer_9 = (RelativeLayout)findViewById(R.id.filtering_filter_container_9);
 
+        //밝기 조절 버튼은 감추어 놓는다
         btnBrightness = (ImageButton) findViewById(R.id.filtering_btn_brightness);
+        btnBrightness.setVisibility(View.INVISIBLE);
+
+
         btnRate_1_1 = (ImageButton) findViewById(R.id.filtering_btn_rate_1_1);
         btnRotation = (ImageButton) findViewById(R.id.filtering_btn_rotation);
         btnRate_4_3 = (ImageButton) findViewById(R.id.filtering_btn_rate_4_3);
@@ -200,7 +204,7 @@ public class Filtering extends Activity {
         if (intent.getExtras().getString("ACTIVITY_NAME").equals("UploadPhotoActivity")) {
 
             rateFlag = intent.getExtras().getInt("RATE");
-            int titleBarHeight = intent.getExtras().getInt("TITLE_HEIGHT");
+
             boolean cameraFront = intent.getBooleanExtra("CAMERA_FRONT", false);
             int degree = intent.getIntExtra("DEGREE", 0);
 
@@ -210,25 +214,40 @@ public class Filtering extends Activity {
                 GlobalUploadBitmapImage.bitmap = imgRotate(cameraFront);
                 GlobalUploadBitmapImage.bitmap = reverse(GlobalUploadBitmapImage.bitmap);
 
+               for(int i=0; i<GlobalUploadBitmapImage.bitmapList.size(); i++) {
+                   GlobalUploadBitmapImage.bitmapList.set(i, reverse(GlobalUploadBitmapImage.bitmapList.get(i)));
+               }
+
            } else if(!cameraFront && degree == 0) {
                GlobalUploadBitmapImage.bitmap = imgRotate(cameraFront);
            }
 
-            bitmap = GlobalUploadBitmapImage.bitmap;
+            int titleBarHeight = intent.getExtras().getInt("TITLE_HEIGHT");
+
+
+            //                이미지 자르기 정사각형 또는 4:3
+            if (rateFlag == 1) {
+                btnRate_1_1.setVisibility(View.INVISIBLE);
+                btnRate_4_3.setVisibility(View.VISIBLE);
+                transparentBoxTop.setVisibility(View.VISIBLE);
+                transparentBoxBottom.setVisibility(View.VISIBLE);
+                filterRateFlag = 1;
+            }
 
             if (isThisGif) {
-                GlobalUploadBitmapImage.filteredBitmapList.removeAll(GlobalUploadBitmapImage.filteredBitmapList);
+                GlobalUploadBitmapImage.filteredBitmapList.clear();
                 GlobalUploadBitmapImage.filteredBitmapList.addAll(GlobalUploadBitmapImage.bitmapList);
+
+                btnRotation.setVisibility(View.GONE);
+
+                bitmap = GlobalUploadBitmapImage.bitmap;
             }else{
 
-//                이미지 자르기 정사각형 또는 4:3
-                if (rateFlag == 1) {
-                    btnRate_1_1.setVisibility(View.INVISIBLE);
-                    btnRate_4_3.setVisibility(View.VISIBLE);
-                    transparentBoxTop.setVisibility(View.VISIBLE);
-                    transparentBoxBottom.setVisibility(View.VISIBLE);
-                    filterRateFlag = 1;
-                }
+                GlobalUploadBitmapImage.bitmap = Bitmap.createBitmap(GlobalUploadBitmapImage.bitmap, 0, titleBarHeight,
+                      GlobalUploadBitmapImage.bitmap.getWidth(), GlobalUploadBitmapImage.bitmap.getWidth());
+
+                bitmap = GlobalUploadBitmapImage.bitmap;
+
             }
 
         } else if (intent.getExtras().getString("ACTIVITY_NAME").equals("UploadGalleryActivity")){
@@ -244,19 +263,16 @@ public class Filtering extends Activity {
             filterBitmap = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth() / 4, bitmap.getHeight() / 4, true);
             filterBitmap = imgRotate(filterBitmap);
         }else{
+            //filterBitmap = Bitmap.createScaledBitmap(bitmap, 0, 0, true);
+
             filterBitmap = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth() / 8, bitmap.getHeight() / 8, true);
         }
-        startThread();
+
 
         imageView.setImageBitmap(GlobalUploadBitmapImage.bitmap);
 
         //필터 이미지들
         imgFilterOriginal.setImageBitmap(filterBitmap);
-
-        //loadFilterImage.execute(new IFAmaroFilter(this), new IFBrannanFilter(this), new IFEarlybirdFilter(this),
-            //    new IFHefeFilter(this), new IFHudsonFilter(this), new IFInkwellFilter(this), new IFLomoFilter(this), new IFLordKelvinFilter(this));
-
-        //gpuImage.setImage(bitmap);
 
         gpuImage.setImage(filterBitmap);
         gpuImage.setFilter(filterArray[0]);
@@ -271,8 +287,13 @@ public class Filtering extends Activity {
         filterBitmap = gpuImage.getBitmapWithFilterApplied();
         imgFilter_4.setImageBitmap(filterBitmap);
 
+
+        startThread();
+
+
         if(isThisGif){
-            gifIndex = 0; gifCount = GlobalUploadBitmapImage.bitmapList.size();
+            gifIndex = 0;
+            gifCount = GlobalUploadBitmapImage.bitmapList.size();
 
             mTask = new TimerTask() {
                 @Override
@@ -303,15 +324,11 @@ public class Filtering extends Activity {
                     for (int i = 0; i < GlobalUploadBitmapImage.bitmapList.size(); i++) {
                         GlobalUploadBitmapImage.filteredBitmapList.set(i, GlobalUploadBitmapImage.bitmapList.get(i));
                     }
-//                    selectedFilterIndex = 0;
-//                    if (threadForGifFiltered.isAlive()){
-//                        threadForGifFiltered.interrupt();
-//                    }
-//                    threadForGifFiltered.start();
+
                 } else {
                     bitmap = GlobalUploadBitmapImage.bitmap;
                     imageView.setImageBitmap(bitmap);
-                    //imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+
                 }
             }
         });
@@ -328,8 +345,6 @@ public class Filtering extends Activity {
                     imageView.setImageBitmap(bitmap);
                 }
 
-                //imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-
             }
         });
 
@@ -343,7 +358,7 @@ public class Filtering extends Activity {
                     gpuImage.setFilter(filterArray[1]);
                     bitmap = gpuImage.getBitmapWithFilterApplied();
                     imageView.setImageBitmap(bitmap);
-                    //imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+
                 }
 
 
@@ -360,10 +375,8 @@ public class Filtering extends Activity {
                     gpuImage.setFilter(filterArray[2]);
                     bitmap = gpuImage.getBitmapWithFilterApplied();
                     imageView.setImageBitmap(bitmap);
-                    //imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+
                 }
-
-
 
             }
         });
@@ -374,13 +387,12 @@ public class Filtering extends Activity {
                 if (isThisGif) {
                     selectedFilterIndex = 4;
                     makeGifFilteringThread();
-                }else{
+                }else {
                     gpuImage.setFilter(filterArray[3]);
                     bitmap = gpuImage.getBitmapWithFilterApplied();
                     imageView.setImageBitmap(bitmap);
-                    //imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-                }
 
+                }
 
             }
         });
@@ -395,10 +407,8 @@ public class Filtering extends Activity {
                     gpuImage.setFilter(filterArray[4]);
                     bitmap = gpuImage.getBitmapWithFilterApplied();
                     imageView.setImageBitmap(bitmap);
-                    //imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+
                 }
-
-
 
             }
         });
@@ -413,7 +423,7 @@ public class Filtering extends Activity {
                     gpuImage.setFilter(filterArray[5]);
                     bitmap = gpuImage.getBitmapWithFilterApplied();
                     imageView.setImageBitmap(bitmap);
-                    //imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+
                 }
 
             }
@@ -429,7 +439,7 @@ public class Filtering extends Activity {
                     gpuImage.setFilter(filterArray[6]);
                     bitmap = gpuImage.getBitmapWithFilterApplied();
                     imageView.setImageBitmap(bitmap);
-                    //imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+
                 }
             }
         });
@@ -444,7 +454,7 @@ public class Filtering extends Activity {
                     gpuImage.setFilter(filterArray[7]);
                     bitmap = gpuImage.getBitmapWithFilterApplied();
                     imageView.setImageBitmap(bitmap);
-                    //imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+
                 }
             }
         });
@@ -489,30 +499,29 @@ public class Filtering extends Activity {
         TextView title = (TextView) findViewById(R.id.btn_filtering_title);
         title.setText(getResources().getString(R.string.filter_title_select_filter));
 
-//        btn_next.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                //사본에 저장하고 그리기 작업
-//                GlobalUploadBitmapImage.bitmapCopy = bitmap;
-//
-//                //사진을 4:3 비율로 자른다.
-//                if (filterRateFlag == 1 && rateFlag == 0) {
-//
-//                    GlobalUploadBitmapImage.bitmapCopy = Bitmap.createBitmap(GlobalUploadBitmapImage.bitmapCopy, 0, GlobalUploadBitmapImage.bitmapCopy.getWidth()/8,
-//                            GlobalUploadBitmapImage.bitmap.getWidth(), GlobalUploadBitmapImage.bitmap.getWidth() - GlobalUploadBitmapImage.bitmapCopy.getWidth()/4);
-//                }
-//
-//                Intent intent = new Intent(Filtering.this, InputContents.class);
-//
-//                intent.putExtra("MEDIA_TYPE", "image");
-//
-//                startActivity(intent);
-//            }
-//        });
         btn_next_container.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (isThisGif){
+
+                    //원본은 따로 보관하고 복사본에서 작업 수행
+                    //이전 페이지로 돌아왔을 경우 변형이 되지 않은 이미지를 나타내기 위함
+                    GlobalUploadBitmapImage.filteredBitmapListCopy.clear();
+                    GlobalUploadBitmapImage.filteredBitmapListCopy.addAll(GlobalUploadBitmapImage.filteredBitmapList);
+
+                    System.out.println("bitmapListSize: " + GlobalUploadBitmapImage.bitmapList.size());
+                    System.out.println("filteredListSize: " + GlobalUploadBitmapImage.filteredBitmapList.size());
+                    System.out.println("filteredCopyListSize: " + GlobalUploadBitmapImage.filteredBitmapListCopy.size());
+
+                    if(filterRateFlag == 1) {
+
+                        for(int i=0; i<GlobalUploadBitmapImage.filteredBitmapListCopy.size(); i++) {
+                            GlobalUploadBitmapImage.filteredBitmapListCopy.set(i, Bitmap.createBitmap(GlobalUploadBitmapImage.filteredBitmapListCopy.get(i), 0,
+                                    GlobalUploadBitmapImage.filteredBitmapListCopy.get(i).getWidth() / 8, GlobalUploadBitmapImage.filteredBitmapListCopy.get(i).getWidth(),
+                                    GlobalUploadBitmapImage.filteredBitmapListCopy.get(i).getWidth() - GlobalUploadBitmapImage.filteredBitmapListCopy.get(i).getWidth() / 4));
+                        }
+                    }
+
                     wentToInputContents = true;
                     Intent intent = new Intent(Filtering.this, InputContents.class);
                     String activityName = "UploadPhotoActivity";
@@ -653,30 +662,18 @@ public class Filtering extends Activity {
 
         threadForGifFiltered = new Thread("GIF Filtering Thread") {
             public void run() {
-//                Filtering.this.runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        progressDialog.show();
-//                    }
-//                });
 
                 if (selectedFilterIndex != 0){
-//                    ArrayList<Bitmap> tempFilteredBitmapList = new ArrayList<Bitmap>();
+
                     gpuImage.setFilter(filterArray[selectedFilterIndex - 1]);
                     for (int i = 0; i < GlobalUploadBitmapImage.bitmapList.size(); i++) {
                         gpuImage.setImage(GlobalUploadBitmapImage.bitmapList.get(i));
-//                        tempFilteredBitmapList.add(gpuImage.getBitmapWithFilterApplied());
+
                         GlobalUploadBitmapImage.filteredBitmapList.set(i, gpuImage.getBitmapWithFilterApplied());
                     }
 
-//                    GlobalUploadBitmapImage.filteredBitmapList = tempFilteredBitmapList;
                 }
-//                Filtering.this.runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        progressDialog.hide();
-//                    }
-//                });
+
             }
         };
         threadForGifFiltered.start();
@@ -720,11 +717,8 @@ public class Filtering extends Activity {
 
         int width = bitmap.getWidth();
         int height = bitmap.getHeight();
-
         Matrix matrix = new Matrix();
-
         matrix.postRotate(270);
-
 
         Bitmap resizedBitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, true);
 
@@ -751,18 +745,26 @@ public class Filtering extends Activity {
     @Override
     protected void onStop() {
         super.onStop();
+
+        if(!isThisGif) {
+            imageView.setImageDrawable(null);
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-//        if (wentToInputContents == true)
-//            if (isThisGif)
-//                if (mTimer != null) {
-//                    wentToInputContents = false;
-//                    mTimer.schedule(mTask, 0, 200);
-//                }
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        if(!isThisGif) {
+            imageView.setImageBitmap(GlobalUploadBitmapImage.bitmap);
+        }
     }
 
     @Override
@@ -771,6 +773,15 @@ public class Filtering extends Activity {
 
         if (mTimer != null)
             mTimer.cancel();
+
+        imageView.setImageDrawable(null);
+        imgFilter_2.setImageDrawable(null);
+        imgFilter_3.setImageDrawable(null);
+        imgFilter_4.setImageDrawable(null);
+        imgFilter_5.setImageDrawable(null);
+        imgFilter_6.setImageDrawable(null);
+        imgFilter_7.setImageDrawable(null);
+
 
         RecycleUtils.recursiveRecycle(imageView);
         RecycleUtils.recursiveRecycle(imgFilter_2);
@@ -785,7 +796,7 @@ public class Filtering extends Activity {
         RecycleUtils.recursiveRecycle(btnBrightness);
         RecycleUtils.recursiveRecycle(btnRate_1_1);
         RecycleUtils.recursiveRecycle(btnRate_4_3);
-        bitmap.recycle();
+        //bitmap.recycle();
 
     }
 
@@ -872,65 +883,5 @@ public class Filtering extends Activity {
 
     }
 
-
-    public Bitmap resizeBitmapImageFn( Bitmap bmpSource, int maxResolution){
-        int iWidth = bmpSource.getWidth();      //비트맵이미지의 넓이
-        int iHeight = bmpSource.getHeight();     //비트맵이미지의 높이
-        int newWidth = iWidth ;
-        int newHeight = iHeight ;
-        float rate = 0.0f;
-
-        //이미지의 가로 세로 비율에 맞게 조절
-        if(iWidth > iHeight ){
-            if(maxResolution < iWidth ){
-                rate = maxResolution / (float) iWidth ;
-                newHeight = (int) (iHeight * rate);
-                newWidth = maxResolution;
-            }
-        }else{
-            if(maxResolution < iHeight ){
-                rate = maxResolution / (float) iHeight ;
-                newWidth = (int) (iWidth * rate);
-                newHeight = maxResolution;
-            }
-        }
-
-        return Bitmap.createScaledBitmap(
-                bmpSource, newWidth, newHeight, true);
-    }
-
-    public static Bitmap cropBitmap(final Bitmap src, final int w, final int h,
-                                    final float horizontalCenterPercent, final float verticalCenterPercent) {
-        if (horizontalCenterPercent < 0 || horizontalCenterPercent > 1 || verticalCenterPercent < 0
-                || verticalCenterPercent > 1) {
-            throw new IllegalArgumentException(
-                    "horizontalCenterPercent and verticalCenterPercent must be between 0.0f and "
-                            + "1.0f, inclusive.");
-        }
-        final int srcWidth = src.getWidth();
-        final int srcHeight = src.getHeight();
-        // exit early if no resize/crop needed
-        if (w == srcWidth && h == srcHeight) {
-            return src;
-        }
-        final Matrix m = new Matrix();
-        final float scale = Math.max(
-                (float) w / srcWidth,
-                (float) h / srcHeight);
-        m.setScale(scale, scale);
-        final int srcCroppedW, srcCroppedH;
-        int srcX, srcY;
-        srcCroppedW = Math.round(w / scale);
-        srcCroppedH = Math.round(h / scale);
-        srcX = (int) (srcWidth * horizontalCenterPercent - srcCroppedW / 2);
-        srcY = (int) (srcHeight * verticalCenterPercent - srcCroppedH / 2);
-        // Nudge srcX and srcY to be within the bounds of src
-        srcX = Math.max(Math.min(srcX, srcWidth - srcCroppedW), 0);
-        srcY = Math.max(Math.min(srcY, srcHeight - srcCroppedH), 0);
-        final Bitmap cropped = Bitmap.createBitmap(src, srcX, srcY, srcCroppedW, srcCroppedH, m,
-                true /* filter */);
-
-        return cropped;
-    }
 
 }

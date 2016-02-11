@@ -29,6 +29,7 @@ import com.likelab.likepet.R;
 import com.likelab.likepet.RoundedCornerTransformation;
 import com.likelab.likepet.global.GlobalSharedPreference;
 import com.likelab.likepet.global.GlobalUrl;
+import com.likelab.likepet.global.GlobalVariable;
 import com.likelab.likepet.global.RecycleUtils;
 import com.likelab.likepet.singIn.JoinMemberBeginActivity;
 import com.likelab.likepet.view.ViewActivity;
@@ -309,40 +310,11 @@ public class HomeFeedContentsAdapter extends BaseAdapter{
                     into(userProfileImage);
         }
 
-        /*
-        imageLoader.get(contentsArrayList.get(position).profileImageUrl, new ImageLoader.ImageListener() {
-            @Override
-            public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
-
-                if (response.getBitmap() != null) {
-                    userProfileImage.startAnimation(AnimationUtils.loadAnimation(context, android.R.anim.fade_in));
-                    userProfileImage.setImageDrawable(new RoundedAvatarDrawable(response.getBitmap(), 1));
-                } else {
-                    String clan = contentsArrayList.get(position).clan;
-                    if (clan.equals("0")) {
-                        userProfileImage.setImageResource(R.drawable.more_img_06_01_dog);
-                    } else if (clan.equals("1")) {
-                        userProfileImage.setImageResource(R.drawable.more_img_06_01_cat);
-                    } else if (clan.equals("2")) {
-                        userProfileImage.setImageResource(R.drawable.more_img_06_01_human);
-                    }
-                }
-
-            }
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                //To change body of implemented methods use File | Settings | File Templates.
-            }
-        });
-        */
-
-
-        if(contentsArrayList.get(position).contentType.matches(".*gif.*")) {
+        if(contentsArrayList.get(position).contentType.contains("gif")) {
             viewHolder.imgGifIcon.setVisibility(View.VISIBLE);
         } else {
             viewHolder.imgGifIcon.setVisibility(View.INVISIBLE);
-            viewHolder.imgGifIcon.setImageDrawable(null);
+            //viewHolder.imgGifIcon.setImageDrawable(null);
         }
 
 
@@ -373,7 +345,6 @@ public class HomeFeedContentsAdapter extends BaseAdapter{
         }
 
         viewHolder.userName.setText(contentsArrayList.get(position).name);
-
         viewHolder.registerTime.setText(contentsArrayList.get(position).registryDate);
 
         int likeCount = contentsArrayList.get(position).likeCount;
@@ -447,266 +418,6 @@ public class HomeFeedContentsAdapter extends BaseAdapter{
             viewHolder.comment_container.setVisibility(View.GONE);
 
         }
-
-        /*
-        //베스트 댓글 숫자 확인 후 베스트 댓글 갯수만큼 리스트 화면에 뿌려준다
-        if(contentsArrayList.get(position).numberOfBestComment == 1) {
-
-            viewHolder.comment_container.setVisibility(View.VISIBLE);
-
-            //베스트 댓글 이미지 3개중 2개는 보이지 않게 처리
-            viewHolder.noCommentContainer_1.setVisibility(View.INVISIBLE);
-            viewHolder.noCommentContainer_2.setVisibility(View.VISIBLE);
-            viewHolder.noCommentContainer_3.setVisibility(View.VISIBLE);
-
-            viewHolder.imgNoCommentFirst.setImageBitmap(null);
-            viewHolder.imgNoCommentSecond.setImageResource(R.drawable.mypage_comment_no_comment_03);
-            viewHolder.imgNoCommentThird.setImageResource(R.drawable.mypage_comment_no_comment_01);
-
-            viewHolder.comment_image_1_n.setVisibility(View.VISIBLE);
-
-            Log.d("commentUrl", contentsArrayList.get(position).firstBestCommentUrl);
-
-            if(contentsArrayList.get(position).firstBestCommentUrl.contains("http")) {
-
-                imgBoxLineFirst.setVisibility(View.INVISIBLE);
-                imgBoxLineFirst.setImageBitmap(null);
-
-                comment_image_1.setVisibility(View.VISIBLE);
-                imageLoader.get(contentsArrayList.get(position).firstBestCommentUrl, new ImageLoader.ImageListener() {
-
-                    @Override
-                    public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
-                        if (response.getBitmap() != null) {
-                            comment_image_1.startAnimation(AnimationUtils.loadAnimation(context, android.R.anim.fade_in));
-                            comment_image_1.setImageDrawable(new RoundedAvatarDrawable(response.getBitmap(), 2));
-                        } else {
-                            comment_image_1.setImageResource(R.drawable.main_image);
-                        }
-                    }
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        //To change body of implemented methods use File | Settings | File Templates.
-                    }
-                });
-            } else {
-                comment_image_1.setVisibility(View.INVISIBLE);
-                comment_image_1.setImageBitmap(null);
-
-                imgBoxLineFirst.setVisibility(View.VISIBLE);
-                imgBoxLineFirst.setImageResource(R.drawable.img_boxline);
-                viewHolder.comment_text_1.setText(contentsArrayList.get(position).firstBestCommentDescription);
-
-
-            }
-        }
-        else if(contentsArrayList.get(position).numberOfBestComment == 2) {
-
-            viewHolder.comment_container.setVisibility(View.VISIBLE);
-
-
-            viewHolder.noCommentContainer_1.setVisibility(View.INVISIBLE);
-            viewHolder.noCommentContainer_2.setVisibility(View.INVISIBLE);
-            viewHolder.noCommentContainer_3.setVisibility(View.VISIBLE);
-
-            viewHolder.comment_image_1_n.setVisibility(View.VISIBLE);
-            viewHolder.comment_image_2_n.setVisibility(View.VISIBLE);
-
-            viewHolder.imgNoCommentFirst.setImageBitmap(null);
-            viewHolder.imgNoCommentSecond.setImageBitmap(null);
-            viewHolder.imgNoCommentThird.setImageResource(R.drawable.mypage_comment_no_comment_01);
-
-            if(contentsArrayList.get(position).firstBestCommentUrl.contains("http")) {
-
-                imgBoxLineFirst.setVisibility(View.INVISIBLE);
-                imgBoxLineFirst.setImageBitmap(null);
-
-                comment_image_1.setVisibility(View.VISIBLE);
-                imageLoader.get(contentsArrayList.get(position).firstBestCommentUrl, new ImageLoader.ImageListener() {
-
-                    @Override
-                    public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
-                        if (response.getBitmap() != null) {
-                            comment_image_1.startAnimation(AnimationUtils.loadAnimation(context, android.R.anim.fade_in));
-                            comment_image_1.setImageDrawable(new RoundedAvatarDrawable(response.getBitmap(), 2));
-                        } else {
-                            comment_image_1.setImageResource(R.drawable.main_image);
-                        }
-                    }
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        //To change body of implemented methods use File | Settings | File Templates.
-                    }
-                });
-            } else {
-                comment_image_1.setVisibility(View.INVISIBLE);
-                comment_image_1.setImageBitmap(null);
-
-                imgBoxLineFirst.setVisibility(View.VISIBLE);
-                imgBoxLineFirst.setImageResource(R.drawable.img_boxline);
-                viewHolder.comment_text_1.setText(contentsArrayList.get(position).firstBestCommentDescription);
-
-
-            }
-
-            if(contentsArrayList.get(position).secondBestCommentUrl.contains("http")) {
-
-
-                imgBoxLineFirst.setVisibility(View.INVISIBLE);
-                imgBoxLineFirst.setImageBitmap(null);
-
-                comment_image_2.setVisibility(View.VISIBLE);
-                imageLoader.get(contentsArrayList.get(position).secondBestCommentUrl, new ImageLoader.ImageListener() {
-                    @Override
-                    public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
-                        if (response.getBitmap() != null) {
-                            comment_image_2.startAnimation(AnimationUtils.loadAnimation(context, android.R.anim.fade_in));
-                            comment_image_2.setImageDrawable(new RoundedAvatarDrawable(response.getBitmap(), 2));
-                        } else {
-                            comment_image_2.setImageResource(R.drawable.main_image);
-                        }
-                    }
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        //To change body of implemented methods use File | Settings | File Templates.
-                    }
-                });
-            } else {
-                comment_image_2.setVisibility(View.INVISIBLE);
-                comment_image_2.setImageBitmap(null);
-
-                imgBoxLineSecond.setVisibility(View.VISIBLE);
-                imgBoxLineSecond.setImageResource(R.drawable.img_boxline);
-                viewHolder.comment_text_2.setText(contentsArrayList.get(position).secondBestCommentDescription);
-
-            }
-        }
-        else if(contentsArrayList.get(position).numberOfBestComment == 3) {
-
-            viewHolder.comment_container.setVisibility(View.VISIBLE);
-
-
-            viewHolder.noCommentContainer_1.setVisibility(View.INVISIBLE);
-            viewHolder.noCommentContainer_2.setVisibility(View.INVISIBLE);
-            viewHolder.noCommentContainer_3.setVisibility(View.INVISIBLE);
-
-            viewHolder.comment_image_1_n.setVisibility(View.VISIBLE);
-            viewHolder.comment_image_2_n.setVisibility(View.VISIBLE);
-            viewHolder.comment_image_3_n.setVisibility(View.VISIBLE);
-
-            viewHolder.imgNoCommentFirst.setImageBitmap(null);
-            viewHolder.imgNoCommentSecond.setImageBitmap(null);
-            viewHolder.imgNoCommentThird.setImageBitmap(null);
-
-
-            if(contentsArrayList.get(position).firstBestCommentUrl.contains("http")) {
-
-                comment_image_1.setVisibility(View.VISIBLE);
-
-                imgBoxLineFirst.setVisibility(View.INVISIBLE);
-                imgBoxLineFirst.setImageBitmap(null);
-
-                imageLoader.get(contentsArrayList.get(position).firstBestCommentUrl, new ImageLoader.ImageListener() {
-
-                    @Override
-                    public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
-                        if (response.getBitmap() != null) {
-                            comment_image_1.startAnimation(AnimationUtils.loadAnimation(context, android.R.anim.fade_in));
-                            comment_image_1.setImageDrawable(new RoundedAvatarDrawable(response.getBitmap(), 2));
-                        } else {
-                            comment_image_1.setImageResource(R.drawable.main_image);
-                        }
-                    }
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        //To change body of implemented methods use File | Settings | File Templates.
-                    }
-                });
-            } else {
-                comment_image_1.setVisibility(View.INVISIBLE);
-                comment_image_1.setImageBitmap(null);
-
-                imgBoxLineFirst.setVisibility(View.VISIBLE);
-                imgBoxLineFirst.setImageResource(R.drawable.img_boxline);
-                viewHolder.comment_text_1.setText(contentsArrayList.get(position).firstBestCommentDescription);
-
-            }
-
-            if(contentsArrayList.get(position).secondBestCommentUrl.contains("http")) {
-
-                comment_image_2.setVisibility(View.VISIBLE);
-
-                imgBoxLineSecond.setVisibility(View.INVISIBLE);
-                imgBoxLineSecond.setImageBitmap(null);
-
-                imageLoader.get(contentsArrayList.get(position).secondBestCommentUrl, new ImageLoader.ImageListener() {
-                    @Override
-                    public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
-                        if (response.getBitmap() != null) {
-                            comment_image_2.startAnimation(AnimationUtils.loadAnimation(context, android.R.anim.fade_in));
-                            comment_image_2.setImageDrawable(new RoundedAvatarDrawable(response.getBitmap(), 2));
-                        } else {
-                            comment_image_2.setImageResource(R.drawable.main_image);
-                        }
-                    }
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        //To change body of implemented methods use File | Settings | File Templates.
-                    }
-                });
-            } else {
-                comment_image_2.setVisibility(View.INVISIBLE);
-                comment_image_2.setImageBitmap(null);
-
-                imgBoxLineSecond.setVisibility(View.VISIBLE);
-                imgBoxLineSecond.setImageResource(R.drawable.img_boxline);
-                viewHolder.comment_text_2.setText(contentsArrayList.get(position).secondBestCommentDescription);
-
-            }
-
-            if(contentsArrayList.get(position).thirdBestCommentUrl.contains("http")) {
-
-                comment_image_3.setVisibility(View.VISIBLE);
-                imageLoader.get(contentsArrayList.get(position).thirdBestCommentUrl, new ImageLoader.ImageListener() {
-                    @Override
-                    public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
-                        if (response.getBitmap() != null) {
-                            comment_image_3.startAnimation(AnimationUtils.loadAnimation(context, android.R.anim.fade_in));
-                            comment_image_3.setImageDrawable(new RoundedAvatarDrawable(response.getBitmap(), 2));
-                        } else {
-                            comment_image_3.setImageResource(R.drawable.main_image);
-                        }
-                    }
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        //To change body of implemented methods use File | Settings | File Templates.
-                    }
-                });
-            } else {
-                comment_image_3.setVisibility(View.INVISIBLE);
-                comment_image_3.setImageBitmap(null);
-
-                imgBoxLineThird.setVisibility(View.VISIBLE);
-                imgBoxLineThird.setImageResource(R.drawable.img_boxline);
-                viewHolder.comment_text_3.setText(contentsArrayList.get(position).thirdBestCommentDescription);
-            }
-
-        }
-        else {
-            viewHolder.imgNoCommentFirst.setImageBitmap(null);
-            viewHolder.imgNoCommentSecond.setImageBitmap(null);
-            viewHolder.imgNoCommentThird.setImageBitmap(null);
-
-            viewHolder.comment_container.setVisibility(View.GONE);
-
-        }
-        */
 
         if (contentsArrayList.get(position).iLikeThis.equals("0")) {
             btn_like.setImageResource(R.drawable.mypage_btn_bottom_like_n);
@@ -837,8 +548,6 @@ public class HomeFeedContentsAdapter extends BaseAdapter{
         });
 
         //메모리 해제할 View를 추가
-
-
         mRecycleList.add(new WeakReference<View>(viewHolder.btn_play));
         mRecycleList.add(new WeakReference<View>(viewHolder.btn_share));
         mRecycleList.add(new WeakReference<View>(viewHolder.imgCommentBtn));
@@ -862,8 +571,6 @@ public class HomeFeedContentsAdapter extends BaseAdapter{
 
         String endPoint = "/contents/" + contentId +"/feel";
 
-        //Toast.makeText(JoinMemberBeginActivity.this, token, Toast.LENGTH_LONG).show();
-
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.DELETE, GlobalUrl.BASE_URL + endPoint,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -875,8 +582,6 @@ public class HomeFeedContentsAdapter extends BaseAdapter{
                             responseCode = response.getInt("code");
 
                             if (responseCode == 200) {
-
-                                //Toast.makeText(context, "좋아용 취소", Toast.LENGTH_SHORT).show();
 
                             }
 
@@ -901,6 +606,8 @@ public class HomeFeedContentsAdapter extends BaseAdapter{
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("sessionId", GlobalSharedPreference.getAppPreferences(context, "sid"));
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 
@@ -923,8 +630,6 @@ public class HomeFeedContentsAdapter extends BaseAdapter{
         }
         String endPoint = "/contents/" + contentId +"/feel";
 
-        //Toast.makeText(JoinMemberBeginActivity.this, token, Toast.LENGTH_LONG).show();
-
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, GlobalUrl.BASE_URL + endPoint, obj,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -936,8 +641,6 @@ public class HomeFeedContentsAdapter extends BaseAdapter{
                             responseCode = response.getInt("code");
 
                             if (responseCode == 200) {
-
-                                //Toast.makeText(context, "좋아용", Toast.LENGTH_SHORT).show();
 
                             }
 
@@ -962,6 +665,8 @@ public class HomeFeedContentsAdapter extends BaseAdapter{
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("sessionId", GlobalSharedPreference.getAppPreferences(context, "sid"));
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 

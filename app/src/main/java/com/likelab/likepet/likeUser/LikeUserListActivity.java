@@ -22,6 +22,7 @@ import com.google.android.gms.analytics.Tracker;
 import com.likelab.likepet.R;
 import com.likelab.likepet.global.GlobalSharedPreference;
 import com.likelab.likepet.global.GlobalUrl;
+import com.likelab.likepet.global.GlobalVariable;
 import com.likelab.likepet.global.RecycleUtils;
 import com.likelab.likepet.volleryCustom.AppController;
 
@@ -105,12 +106,6 @@ public class LikeUserListActivity extends Activity {
 
         final String contentId = intent.getStringExtra("CONTENT_ID");
 
-        contentEmotionRequest(contentId, currentPage);  //좋아요 사용자 리퀘스트
-
-        txtNumberOfLike_1.setText(Integer.toString(likeType_1));
-        txtNumberOfLike_2.setText(Integer.toString(likeType_2));
-        txtNumberOfLike_3.setText(Integer.toString(likeType_3));
-        txtNumberOfLike_4.setText(Integer.toString(likeType_4));
 
         adapter = new LikeUserListContentsAdapter(this, R.layout.like_user_listview, contentsArrayList);
         contentsList = (ListView)findViewById(R.id.like_user_list_view);
@@ -119,8 +114,14 @@ public class LikeUserListActivity extends Activity {
         footer = getLayoutInflater().inflate(R.layout.listview_load_footer, null, false);
         listViewLoaderContainer = (RelativeLayout)footer.findViewById(R.id.listview_load_indicator);
         contentsList.addFooterView(footer);
-
         contentsList.setAdapter(adapter);
+
+        contentEmotionRequest(contentId, currentPage);  //좋아요 사용자 리퀘스트
+
+        txtNumberOfLike_1.setText(Integer.toString(likeType_1));
+        txtNumberOfLike_2.setText(Integer.toString(likeType_2));
+        txtNumberOfLike_3.setText(Integer.toString(likeType_3));
+        txtNumberOfLike_4.setText(Integer.toString(likeType_4));
 
         cancelContainer.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -145,11 +146,12 @@ public class LikeUserListActivity extends Activity {
 
                     if (currentPage < maxPage) {
 
-                        listViewLoaderContainer.setVisibility(View.VISIBLE);
+                        if(adapterFlag == 1) {
+                            listViewLoaderContainer.setVisibility(View.VISIBLE);
+                        }
+
                         contentEmotionRequest(contentId, currentPage);
 
-                    } else {
-                        listViewLoaderContainer.setVisibility(View.GONE);
                     }
 
                 }
@@ -283,6 +285,9 @@ public class LikeUserListActivity extends Activity {
                 Map<String, String> params = new HashMap<String, String>();
                 if(GlobalSharedPreference.getAppPreferences(LikeUserListActivity.this, "login").equals("login"))
                     params.put("sessionId", GlobalSharedPreference.getAppPreferences(LikeUserListActivity.this, "sid"));
+
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 

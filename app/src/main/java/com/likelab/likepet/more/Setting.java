@@ -25,6 +25,7 @@ import com.google.android.gms.analytics.Tracker;
 import com.likelab.likepet.R;
 import com.likelab.likepet.global.GlobalSharedPreference;
 import com.likelab.likepet.global.GlobalUrl;
+import com.likelab.likepet.global.GlobalVariable;
 import com.likelab.likepet.volleryCustom.AppController;
 
 import org.json.JSONException;
@@ -89,14 +90,9 @@ public class Setting extends Activity {
 
         PackageInfo pi = null;
         try {
-
             pi = getPackageManager().getPackageInfo(getPackageName(), 0);
-
         } catch (PackageManager.NameNotFoundException e) {
-
-
             e.printStackTrace();
-
         }
 
         String version = pi.versionName;
@@ -255,52 +251,15 @@ public class Setting extends Activity {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        int responseCode=0;
 
                         try {
-                            responseCode = response.getInt("code");
 
-                            if (responseCode == 200) {
-                                JSONObject versionObj = response.getJSONObject("version");
-
-                                if(versionObj.has("version")) {
-                                    String versionId = versionObj.getString("versionId");
-                                    String version = versionObj.getString("version");
-                                    String versionImageUrl = versionObj.getString("versionImageUrl");
-                                    String registryDate = versionObj.getString("registryDate");
-                                    int updateCount = versionObj.getInt("updateCount");
-
-                                    String strMyUpdateCount = GlobalSharedPreference.getAppPreferences(Setting.this, "appVersionCode");
-                                    int myUpdateCount = Integer.parseInt(strMyUpdateCount);
-
-                                    oldVersion = GlobalSharedPreference.getAppPreferences(Setting.this, "appVersionName");
-                                    txtNewVersion.setText(oldVersion);
-
-                                    if(myUpdateCount < updateCount) {
-                                        imgNewVersion.setVisibility(View.VISIBLE);
-                                        txtNewVersion.setText(version);
-
-                                        oldVersion = GlobalSharedPreference.getAppPreferences(Setting.this, "appVersionName");
-                                        newVersion = version;
-                                        updateImageUrl = versionImageUrl;
-
-                                    }else  {
-
-                                    }
-
-                                } else {
-
-                                    oldVersion = GlobalSharedPreference.getAppPreferences(Setting.this, "appVersionName");
-                                    newVersion = null;
-                                    updateImageUrl = null;
-
-                                }
+                            newVersion = response.getString("ver_android");
+                            oldVersion = GlobalSharedPreference.getAppPreferences(Setting.this, "appVersionName");
+                            txtNewVersion.setText(newVersion);
 
 
-                            }
-
-                        }
-                        catch (JSONException e) {
+                        } catch (JSONException e) {
                             e.printStackTrace();
                         }
 
@@ -315,7 +274,19 @@ public class Setting extends Activity {
                     }
 
 
-                });
+                }){
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
+
+                return params;
+
+            }
+
+        };
         // Add the request to the RequestQueue.
         queue.add(jsonObjectRequest);
 
@@ -379,6 +350,8 @@ public class Setting extends Activity {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("sessionId", GlobalSharedPreference.getAppPreferences(Setting.this, "sid"));
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 

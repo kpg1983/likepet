@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -18,7 +19,6 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
-import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
@@ -30,16 +30,15 @@ import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.likelab.likepet.global.GlobalSharedPreference;
-import com.likelab.likepet.global.GlobalUrl;
 import com.likelab.likepet.LoginActivity;
 import com.likelab.likepet.Main.MainActivity;
 import com.likelab.likepet.R;
+import com.likelab.likepet.global.GlobalSharedPreference;
+import com.likelab.likepet.global.GlobalUrl;
 import com.likelab.likepet.volleryCustom.AppController;
 import com.twitter.sdk.android.Twitter;
 import com.twitter.sdk.android.core.Callback;
@@ -69,23 +68,13 @@ public class JoinMemberBeginActivity extends Activity implements GoogleApiClient
 
     private Button btnLogin;
 
-    private LoginButton btnLoginFacebook;
-
     private CallbackManager callbackManager;
 
     private RelativeLayout facebookLoginContainer;
     private RelativeLayout twitterLoginContainer;
     private RelativeLayout googleLoginContainer;
 
-    private static final int REQ_LOGIN = 4;
-
-    private static final int REQ_FACEBOOK_LOGIN = 1;
-    private static final int REQ_GOOGLE_LOGIN = 2;
-    private static final int REQ_TWITTER_LOGIN = 3;
-
-
-    private String CALLBACK_URL = "callback://tweeter";
-
+    private ImageView imgJoin;
 
     String id;
     String name;
@@ -98,7 +87,6 @@ public class JoinMemberBeginActivity extends Activity implements GoogleApiClient
     private RequestQueue queue;
     private String mFacebookAccessToken;
 
-    ImageLoader imageLoader = AppController.getInstance().getImageLoader();
     private Tracker mTracker = AppController.getInstance().getDefaultTracker();
 
     TwitterAuthClient twitterAuthClient = new TwitterAuthClient();
@@ -111,6 +99,8 @@ public class JoinMemberBeginActivity extends Activity implements GoogleApiClient
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.join_member_begin);
+
+        imgJoin = (ImageView)findViewById(R.id.join_member_begin_img_contents);
 
         queue = AppController.getInstance().getRequestQueue();
 
@@ -513,8 +503,6 @@ public class JoinMemberBeginActivity extends Activity implements GoogleApiClient
 
         String endPoint = "/login/friendly/" + email;
 
-        //Toast.makeText(JoinMemberBeginActivity.this, token, Toast.LENGTH_LONG).show();
-
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, GlobalUrl.BASE_URL + endPoint,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -532,6 +520,9 @@ public class JoinMemberBeginActivity extends Activity implements GoogleApiClient
                             Toast.makeText(JoinMemberBeginActivity.this, getResources().getString(R.string.join_insert_email_password_txt_login_complete),
                                     Toast.LENGTH_LONG).show();
                             loadUserInformation(email);
+                            GlobalSharedPreference.setAppPreferences(JoinMemberBeginActivity.this, "email", email);
+                            GlobalSharedPreference.setAppPreferences(JoinMemberBeginActivity.this, "accountId", id);
+                            GlobalSharedPreference.setAppPreferences(JoinMemberBeginActivity.this, "loginType", "sns");
                         }
                     }
 
@@ -560,10 +551,7 @@ public class JoinMemberBeginActivity extends Activity implements GoogleApiClient
                 Map<String, String> responseHeaders = response.headers;
                 String sid = responseHeaders.get("sessionID");
 
-
-                Log.d("SID", sid);
                 setAppPreferences(JoinMemberBeginActivity.this, "sid", sid);
-                System.out.println("sid:" + sid);
 
                 try {
                     String jsonString = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
@@ -735,12 +723,31 @@ public class JoinMemberBeginActivity extends Activity implements GoogleApiClient
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        //회원 가입 프로
+        setResult(0, new Intent());
+
+
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
 
         String pageName = "SignIn";
         mTracker.setScreenName(pageName);
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+
+        imgJoin.setImageResource(R.drawable.member_img_01);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        imgJoin.setImageDrawable(null);
     }
 
 

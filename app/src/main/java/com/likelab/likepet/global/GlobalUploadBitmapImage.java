@@ -2,6 +2,7 @@ package com.likelab.likepet.global;
 
 import android.graphics.Bitmap;
 
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -11,10 +12,12 @@ public class GlobalUploadBitmapImage {
     public static Bitmap bitmap;
     public static Bitmap bitmapCopy;
     public static Bitmap ThumbnailBitmap;
-    public static Bitmap userProfileImage;
+
+    public static ArrayList<File> fileList = new ArrayList<>();
 
     public static ArrayList<Bitmap> bitmapList = new ArrayList<Bitmap>();
     public static ArrayList<Bitmap> filteredBitmapList = new ArrayList<Bitmap>();
+    public static ArrayList<Bitmap> filteredBitmapListCopy = new ArrayList<Bitmap>();
     public static Bitmap[] bitmapArray = new Bitmap[8];
 
     public static void CreateThumbnail() {

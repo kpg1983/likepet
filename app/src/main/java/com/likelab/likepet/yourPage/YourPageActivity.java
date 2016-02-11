@@ -12,6 +12,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,13 +28,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
+import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.bumptech.glide.Glide;
 import com.likelab.likepet.CircleTransform;
 import com.likelab.likepet.R;
 import com.likelab.likepet.UploadContents;
@@ -42,6 +45,7 @@ import com.likelab.likepet.follow.FollowerUserListActivity;
 import com.likelab.likepet.follow.FollowingUserListActivity;
 import com.likelab.likepet.global.GlobalSharedPreference;
 import com.likelab.likepet.global.GlobalUrl;
+import com.likelab.likepet.global.GlobalVariable;
 import com.likelab.likepet.global.RecycleUtils;
 import com.likelab.likepet.global.RoundedAvatarDrawable;
 import com.likelab.likepet.more.UserProfile;
@@ -55,13 +59,16 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 /**
  * Created by kpg1983 on 2015-11-30.
@@ -136,6 +143,15 @@ public class YourPageActivity extends Activity {
     private View footer;
     private RelativeLayout listViewLoadIndicator;
 
+    boolean refreshLock = false;
+
+    static String momentsAgo;
+    static String minutesAgo;
+    static String hoursAgo;
+    static String daysAgo;
+    static String monthAgo;
+    static String yearsAgo;
+
     @Override
     protected void onCreate(Bundle savedStateInstance) {
         super.onCreate(savedStateInstance);
@@ -163,6 +179,7 @@ public class YourPageActivity extends Activity {
             @Override
             public void onRefresh() {
 
+                refreshLock = true;
                 listViewLoadIndicator.setVisibility(View.GONE);
 
                 currentPage = 0;
@@ -224,7 +241,8 @@ public class YourPageActivity extends Activity {
                                     httpCon.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
                                     httpCon.setRequestMethod("DELETE");
                                     httpCon.setRequestProperty("sessionId", GlobalSharedPreference.getAppPreferences(YourPageActivity.this, "sid"));
-
+                                    httpCon.setRequestProperty("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                                            GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
                                     int responseCode = httpCon.getResponseCode();
 
                                     if (responseCode == 200) {
@@ -326,15 +344,15 @@ public class YourPageActivity extends Activity {
 
                 int count = totalItemCount - visibleItemCount;
 
-                if (firstVisibleItem >= count && totalItemCount != 0 && lockListView == false) {
-
-                    if (adapterFlag == 1) {
-                        listViewLoadIndicator.setVisibility(View.VISIBLE);
-                    }
+                if (firstVisibleItem >= count && totalItemCount != 0 && lockListView == false && refreshLock == false) {
 
                     currentPage = currentPage + 1;
 
                     if (currentPage < maxPage) {
+
+                        if (adapterFlag == 1) {
+                            listViewLoadIndicator.setVisibility(View.VISIBLE);
+                        }
 
                         mypageRequest(userId, currentPage);
 
@@ -405,6 +423,15 @@ public class YourPageActivity extends Activity {
 
     private void initView() {
 
+
+        //시간을 며칠 전 식으로 변경하기 위험
+        momentsAgo = getResources().getString(R.string.now);
+        minutesAgo = getResources().getString(R.string.minute_ago);
+        hoursAgo = getResources().getString(R.string.hour_ago);
+        daysAgo = getResources().getString(R.string.day_ago);
+        monthAgo = getResources().getString(R.string.month_ago);
+        yearsAgo = getResources().getString(R.string.year_ago);
+
         overlay = (RelativeLayout)findViewById(R.id.mypage_overlay);
         lockListView = false;
         contentsArrayList = new ArrayList<YourPageContents>();
@@ -439,6 +466,7 @@ public class YourPageActivity extends Activity {
 
         contentsList = (ListView)findViewById(R.id.contents_list);
         contentsList.addHeaderView(header);
+        contentsList.addFooterView(footer);
     }
 
     private void inflateLayout(String name, String profileImageUrl, final String clan) {
@@ -507,7 +535,7 @@ public class YourPageActivity extends Activity {
         popupWindow.showAtLocation(layout, Gravity.CENTER, 0, 0);
 
         final ImageView profileImageExpansion = (ImageView)popupView.findViewById(R.id.view_img_comment_expansion);
-        Glide.with(this).load(profileImageUrl).override(960, 960).into(profileImageExpansion);
+        Picasso.with(this).load(profileImageUrl).resize(960, 960).into(profileImageExpansion);
 
         popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
             @Override
@@ -593,6 +621,9 @@ public class YourPageActivity extends Activity {
                 if(GlobalSharedPreference.getAppPreferences(YourPageActivity.this, "login").equals("login"))
                     params.put("sessionId", GlobalSharedPreference.getAppPreferences(YourPageActivity.this, "sid"));
 
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
+
                 return params;
 
             }
@@ -648,6 +679,8 @@ public class YourPageActivity extends Activity {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("sessionId", GlobalSharedPreference.getAppPreferences(YourPageActivity.this, "sid"));
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 
@@ -709,6 +742,7 @@ public class YourPageActivity extends Activity {
                                     String status = jsonArray.getJSONObject(i).getString("status");
                                     int reportCount = jsonArray.getJSONObject(i).getInt("reportCount");
 
+                                    //로그인 상태일 경우만 감정표현 유무를 표시한다
                                     if(GlobalSharedPreference.getAppPreferences(YourPageActivity.this, "login").equals("login")) {
                                         iLikeThis = jsonArray.getJSONObject(i).getString("ILikedThis");
 
@@ -733,17 +767,26 @@ public class YourPageActivity extends Activity {
                                         mediaHeight = Integer.parseInt(mediaSizeArr[1]);
                                     }
 
-                                    registryDate = registryDate.substring(0, registryDate.indexOf(" "));
-                                    registryDate = registryDate.replaceFirst("\\.", "년 ");
-                                    registryDate = registryDate.replaceFirst("\\.", "월 ");
-                                    registryDate = registryDate + "일";
+                                    Date date = null;
+                                    registryDate = registryDate.replaceAll("\\.", "-");
+                                    java.text.SimpleDateFormat format = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+
+                                    //날짜를 조금전, 방금전, 4일전 식으로 변환한다
+                                    try {
+                                        String localTime = convertUtcToLocal(registryDate);
+                                        date = format.parse(localTime);
+
+                                    } catch (ParseException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                    registryDate = formatTimeString(date);
 
 
                                     String contentUrl = jsonArray.getJSONObject(i).getString("contentUrl");
                                     int likeCount = jsonArray.getJSONObject(i).getInt("likeCount");
                                     int commentCount = jsonArray.getJSONObject(i).getInt("commentCount");
-
-                                    //ArrayList<CommentContents> commentArrayLists = new ArrayList<CommentContents>();
 
 
                                     //베스트 댓글이 없는 경우
@@ -794,12 +837,13 @@ public class YourPageActivity extends Activity {
                                         handler.postDelayed(new Runnable() {
                                             @Override
                                             public void run() {
-
+                                                adapter.notifyDataSetChanged();
                                             }
-                                        }, 2000);
+                                        }, 200);
 
-                                        adapter.notifyDataSetChanged();
                                         lockListView = false;
+                                        listViewLoadIndicator.setVisibility(View.GONE);
+                                        refreshLock = false;
                                     }
                                 });
 
@@ -807,7 +851,7 @@ public class YourPageActivity extends Activity {
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
-                                Toast.makeText(YourPageActivity.this, "JSONException", Toast.LENGTH_LONG).show();
+
                             }
                         }
                     }
@@ -826,7 +870,10 @@ public class YourPageActivity extends Activity {
                 Map<String, String> params = new HashMap<String, String>();
 
                 if(GlobalSharedPreference.getAppPreferences(YourPageActivity.this, "login").equals("login"))
-                    params.put("sessionId", sid);
+                    params.put("sessionId", GlobalSharedPreference.getAppPreferences(YourPageActivity.this, "sid"));
+
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 
@@ -876,6 +923,7 @@ public class YourPageActivity extends Activity {
 
                                 } else {
                                     noMomentContainer.setVisibility(View.GONE);
+                                    imgNoMoment.setImageDrawable(null);
                                 }
                                 String crossFollow;
 
@@ -906,6 +954,23 @@ public class YourPageActivity extends Activity {
                                 txtMoment.setText(Integer.toString(contentCount));
 
                             }
+                            else if(responseCode == 401) {
+
+                                if(GlobalSharedPreference.getAppPreferences(YourPageActivity.this, "loginType").equals("sns")) {
+
+                                    String accountId = GlobalSharedPreference.getAppPreferences(YourPageActivity.this, "accountId");
+                                    String email = GlobalSharedPreference.getAppPreferences(YourPageActivity.this, "email");
+
+                                    snsLoginRequest(email, accountId);
+
+                                } else if(GlobalSharedPreference.getAppPreferences(YourPageActivity.this, "loginType").equals("email")) {
+
+                                    String password = GlobalSharedPreference.getAppPreferences(YourPageActivity.this, "password");
+                                    String email = GlobalSharedPreference.getAppPreferences(YourPageActivity.this, "email");
+
+                                    emailLoginRequest(email, password);
+                                }
+                            }
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -923,7 +988,10 @@ public class YourPageActivity extends Activity {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
                 if(GlobalSharedPreference.getAppPreferences(YourPageActivity.this, "login").equals("login"))
-                    params.put("sessionId", sid);
+                    params.put("sessionId", GlobalSharedPreference.getAppPreferences(YourPageActivity.this, "sid"));
+
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 
@@ -933,6 +1001,276 @@ public class YourPageActivity extends Activity {
         queue.add(jsonObjectRequest);
     }
 
+
+    public void snsLoginRequest(final String email, final String id) {
+
+        String endPoint = "/login/friendly/" + email;
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, GlobalUrl.BASE_URL + endPoint,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        int responseCode=0;
+
+                        try {
+                            responseCode = response.getInt("code");
+
+                        }
+                        catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        if (responseCode == 200) {
+                            loadUserInformation(email);
+                            GlobalSharedPreference.setAppPreferences(YourPageActivity.this, "email", email);
+                            GlobalSharedPreference.setAppPreferences(YourPageActivity.this, "accountId", id);
+                            GlobalSharedPreference.setAppPreferences(YourPageActivity.this, "loginType", "sns");
+                        }
+                    }
+
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        //Toast.makeText(YourPageActivity.this, error.toString(), Toast.LENGTH_LONG).show();
+                        System.out.println(error.toString());
+                    }
+
+
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("accountId", id);
+
+                return params;
+
+            }
+
+            @Override
+            protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
+
+                Map<String, String> responseHeaders = response.headers;
+                String sid = responseHeaders.get("sessionID");
+
+                GlobalSharedPreference.setAppPreferences(YourPageActivity.this, "sid", sid);
+
+                try {
+                    String jsonString = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+                    return Response.success(new JSONObject(jsonString),HttpHeaderParser.parseCacheHeaders(response));
+                } catch (UnsupportedEncodingException e) {
+                    return Response.error(new ParseError(e));
+                } catch (JSONException je) {
+                    return Response.error(new ParseError(je));
+                }
+
+            }
+
+        };
+        // Add the request to the RequestQueue.
+        queue.add(jsonObjectRequest);
+
+    }
+
+    public void emailLoginRequest(final String email, final String password) {
+
+        String endPoint = "/login/" + email;
+
+        JSONObject obj = new JSONObject();
+
+        try {
+            obj.put("password", password);
+            obj.put("contentApi", true);
+        } catch(JSONException e) {
+            e.printStackTrace();
+        }
+
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, GlobalUrl.BASE_URL + endPoint, obj,
+                new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                        int responseCode=0;
+
+                        try {
+                            responseCode = response.getInt("code");
+                            Toast.makeText(YourPageActivity.this, Integer.toString(responseCode), Toast.LENGTH_LONG);
+
+                            if (responseCode == 200) {
+
+                                GlobalSharedPreference.setAppPreferences(YourPageActivity.this, "email", email);
+                                GlobalSharedPreference.setAppPreferences(YourPageActivity.this, "password", password);
+                                GlobalSharedPreference.setAppPreferences(YourPageActivity.this, "loginType", "email");
+                                loadUserInformation(email);
+
+
+                            } else if(responseCode == 401) {
+
+
+                            } else if(responseCode == 404) {
+
+                            }
+
+                        }
+                        catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        //Toast.makeText(JoinMemberBeginActivity.this, error.toString(), Toast.LENGTH_LONG).show();
+                    }
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
+
+                return params;
+
+            }
+
+            @Override
+            protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
+
+                Map<String, String> responseHeaders = response.headers;
+                String sid = responseHeaders.get("sessionId");
+
+                if(sid != null) {
+                    Log.d("SID", sid);
+                    GlobalSharedPreference.setAppPreferences(YourPageActivity.this, "sid", sid);
+
+                }
+                try {
+                    String jsonString = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+                    return Response.success(new JSONObject(jsonString),HttpHeaderParser.parseCacheHeaders(response));
+                } catch (UnsupportedEncodingException e) {
+                    return Response.error(new ParseError(e));
+                } catch (JSONException je) {
+                    return Response.error(new ParseError(je));
+                }
+
+            }
+
+        };
+        queue.add(jsonObjectRequest);
+    }
+
+
+    public void loadUserInformation(String email) {
+
+        String endPoint = "/users/user/" + email;
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, GlobalUrl.BASE_URL + endPoint,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        int responseCode=0;
+
+                        try {
+                            responseCode = response.getInt("code");
+
+                            if (responseCode == 200) {
+
+                                JSONObject jsonObject = response.getJSONObject("item");
+
+                                String userId = jsonObject.getString("userId");
+                                String name = jsonObject.getString("name");
+                                String email = jsonObject.getString("email");
+                                String gender = jsonObject.getString("sex");
+                                String clan = jsonObject.getString("clan");
+                                String status = jsonObject.getString("status");
+                                String parentUserId = jsonObject.getString("parentUserId");
+                                String profileImageUrl = jsonObject.getString("profileImageUrl");
+                                String national = jsonObject.getString("national");
+                                String ownerType = jsonObject.getString("ownerType");
+                                String birthday = jsonObject.getString("birthday");
+                                String registryDate = jsonObject.getString("registryDate");
+                                String modifyDate = jsonObject.getString("modifyDate");
+                                String termServiceDate = jsonObject.getString("termServiceDate");
+                                String privacyTermDate = jsonObject.getString("privacyTermDate");
+                                String withdrawReqDate = jsonObject.getString("withdrawReqDate");
+                                String withdrawDate = jsonObject.getString("withdrawDate");
+                                String mailAuthConfirmDate = jsonObject.getString("mailAuthConfirmDate");
+                                String lastLoginDate = jsonObject.getString("lastLoginDate");
+                                String mailAuth = jsonObject.getString("mailAuth");
+
+                                //로그인을 하면 서버로부터 사용자의 정보를 받아와 기기에 저장한다.
+                                GlobalSharedPreference.setAppPreferences(YourPageActivity.this, "userId", userId);
+                                GlobalSharedPreference.setAppPreferences(YourPageActivity.this, "name", name);
+                                GlobalSharedPreference.setAppPreferences(YourPageActivity.this, "email", email);
+                                GlobalSharedPreference.setAppPreferences(YourPageActivity.this, "gender", gender);
+                                GlobalSharedPreference.setAppPreferences(YourPageActivity.this, "clan", clan);
+                                GlobalSharedPreference.setAppPreferences(YourPageActivity.this, "status", status);
+                                GlobalSharedPreference.setAppPreferences(YourPageActivity.this, "parentUserId", parentUserId);
+                                GlobalSharedPreference.setAppPreferences(YourPageActivity.this, "profileImageUrl", profileImageUrl);
+                                GlobalSharedPreference.setAppPreferences(YourPageActivity.this, "national", national);
+                                GlobalSharedPreference.setAppPreferences(YourPageActivity.this, "ownerType", ownerType);
+                                GlobalSharedPreference.setAppPreferences(YourPageActivity.this, "birthday", birthday);
+                                GlobalSharedPreference.setAppPreferences(YourPageActivity.this, "registryDate", registryDate);
+                                GlobalSharedPreference.setAppPreferences(YourPageActivity.this, "modifyDate", modifyDate);
+                                GlobalSharedPreference.setAppPreferences(YourPageActivity.this, "termServiceDate", termServiceDate);
+                                GlobalSharedPreference.setAppPreferences(YourPageActivity.this, "privacyTermDate", privacyTermDate);
+                                GlobalSharedPreference.setAppPreferences(YourPageActivity.this, "withdrawReqDate", withdrawReqDate);
+                                GlobalSharedPreference.setAppPreferences(YourPageActivity.this, "withdrawDate", withdrawDate);
+                                GlobalSharedPreference.setAppPreferences(YourPageActivity.this, "mailAuthConfirmDate", mailAuthConfirmDate);
+                                GlobalSharedPreference.setAppPreferences(YourPageActivity.this, "lastLoginDate", lastLoginDate);
+                                GlobalSharedPreference.setAppPreferences(YourPageActivity.this, "mailAuth", mailAuth);
+                                GlobalSharedPreference.setAppPreferences(YourPageActivity.this, "useNotice", "1");
+                                GlobalSharedPreference.setAppPreferences(YourPageActivity.this, "useNoticeAddedFriend", "1");
+                                GlobalSharedPreference.setAppPreferences(YourPageActivity.this, "useNoticeReply", "1");
+                                GlobalSharedPreference.setAppPreferences(YourPageActivity.this, "useNoticeSystem", "1");
+
+                                GlobalSharedPreference.setAppPreferences(YourPageActivity.this, "login", "login");
+
+                                adapter.notifyDataSetInvalidated();
+                                contentsArrayList.clear();
+
+                                currentPage = 0;
+                                adapterFlag = 0;
+
+                                mypageRequest(YourPageActivity.this.userId, currentPage);
+                                myPageSummaryRequest(YourPageActivity.this.userId);
+
+                            }
+
+                        }
+                        catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        //Toast.makeText(YourPageActivity.this, error.toString(), Toast.LENGTH_LONG).show();
+                        System.out.println(error.toString());
+                    }
+
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                String sid = GlobalSharedPreference.getAppPreferences(YourPageActivity.this, "sid");
+                params.put("sessionId", sid);
+
+                return params;
+
+            }
+
+        };
+        // Add the request to the RequestQueue.
+        queue.add(jsonObjectRequest);
+
+    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -971,7 +1309,11 @@ public class YourPageActivity extends Activity {
                 //좋아요, 댓글 카운트가 변경된 경우
             } else if(resultCode == RESULT_MODIFY_CONTENT_SUMMARY){
                 int position = data.getExtras().getInt("POSITION");
-                contentsInfoRequest(position, contentsArrayList.get(position).contentsId);
+                try {
+                    contentsInfoRequest(position, contentsArrayList.get(position).contentsId);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
 
         }
@@ -1034,6 +1376,71 @@ public class YourPageActivity extends Activity {
                 e.printStackTrace();
             }
         }
+    }
+
+    private static class TIME_MAXIMUM {
+        public static final int SEC = 60;
+        public static final int MIN = 60;
+        public static final int HOUR = 24;
+        public static final int DAY = 30;
+        public static final int MONTH = 12;
+    }
+
+
+    public static String formatTimeString(Date tempDate) {
+
+        long curTime = System.currentTimeMillis();
+        long regTime = tempDate.getTime();
+        long diffTime = (curTime - regTime) / 1000;
+
+        String msg = null;
+        if (diffTime < TIME_MAXIMUM.SEC) {
+            // sec
+            msg = momentsAgo;
+        } else if ((diffTime /= TIME_MAXIMUM.SEC) < TIME_MAXIMUM.MIN) {
+            // min
+            msg = diffTime + minutesAgo;
+        } else if ((diffTime /= TIME_MAXIMUM.MIN) < TIME_MAXIMUM.HOUR) {
+            // hour
+            msg = (diffTime) + hoursAgo;
+        } else if ((diffTime /= TIME_MAXIMUM.HOUR) < TIME_MAXIMUM.DAY) {
+            // day
+            msg = (diffTime) + daysAgo;
+        } else if ((diffTime /= TIME_MAXIMUM.DAY) < TIME_MAXIMUM.MONTH) {
+            // day
+            msg = (diffTime) + monthAgo;
+        } else {
+            msg = (diffTime) + yearsAgo;
+        }
+
+        return msg;
+    }
+
+    //표준시간과 local 시간 변환
+    private static String convertUtcToLocal(String utcTime) {
+
+        String localTime = null;
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        try {
+            Date dateUtcTime = dateFormat.parse(utcTime);
+
+            long longUtcTime = dateUtcTime.getTime();
+
+            TimeZone timeZone = TimeZone.getDefault();
+            int offset = timeZone.getOffset(longUtcTime);
+            long longLocalTime = longUtcTime + offset;
+
+            Date dateLocalTime = new Date();
+            dateLocalTime.setTime(longLocalTime);
+
+            localTime = dateFormat.format(dateLocalTime);
+
+        } catch (ParseException e) {
+            e.printStackTrace();;
+        }
+
+        return localTime;
     }
 
 }

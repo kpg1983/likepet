@@ -21,6 +21,7 @@ import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.likelab.likepet.global.GlobalUrl;
 import com.likelab.likepet.R;
+import com.likelab.likepet.global.GlobalVariable;
 import com.likelab.likepet.global.RecycleUtils;
 import com.likelab.likepet.global.GlobalSharedPreference;
 import com.likelab.likepet.volleryCustom.AppController;
@@ -67,6 +68,7 @@ public class FollowingUserListActivity extends Activity {
     RelativeLayout listViewLoaderContainer;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,7 +110,7 @@ public class FollowingUserListActivity extends Activity {
             loadOtherFollowingRequest(userId, currentPage);
         }
 
-        txtTitle.setText(follow);
+        txtTitle.setText("Following");
 
         cancelContainer.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -270,6 +272,9 @@ public class FollowingUserListActivity extends Activity {
                 if(GlobalSharedPreference.getAppPreferences(FollowingUserListActivity.this, "login").equals("login"))
                     params.put("sessionId", GlobalSharedPreference.getAppPreferences(FollowingUserListActivity.this, "sid"));
 
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
+
                 return params;
 
             }
@@ -349,7 +354,6 @@ public class FollowingUserListActivity extends Activity {
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        Log.d("runOn", "1");
                                         adapter.notifyDataSetChanged();
                                         lockListView = false;
                                     }
@@ -378,6 +382,9 @@ public class FollowingUserListActivity extends Activity {
                 Map<String, String> params = new HashMap<String, String>();
                 if(GlobalSharedPreference.getAppPreferences(FollowingUserListActivity.this, "login").equals("login"))
                     params.put("sessionId", GlobalSharedPreference.getAppPreferences(FollowingUserListActivity.this, "sid"));
+
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 

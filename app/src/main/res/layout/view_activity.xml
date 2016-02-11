@@ -6,6 +6,8 @@
 
     >
 
+    <SurfaceView android:layout_width="0dp" android:layout_height="0dp"/>
+
     <RelativeLayout
         android:id="@+id/view_menu_tab"
         android:layout_width="match_parent"
@@ -31,7 +33,6 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_toRightOf="@id/view_img_user_profile"
-                android:text="곰순이와 여돌이"
                 android:textColor="#374246"
                 android:textSize="12dp"
                 android:textStyle="bold"

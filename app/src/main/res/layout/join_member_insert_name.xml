@@ -117,6 +117,17 @@
             android:visibility="invisible"
             />
 
+        <TextView
+            android:id="@+id/join_member_txt_error_message_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#f7c243"
+            android:text="@string/join_insert_userName_txt_space"
+            android:layout_below="@id/join_member_divider_line"
+            android:layout_marginTop="5dp"
+            android:visibility="invisible"
+            />
+
     </RelativeLayout>
 
     <RelativeLayout

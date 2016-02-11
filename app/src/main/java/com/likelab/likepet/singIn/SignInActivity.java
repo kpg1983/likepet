@@ -36,6 +36,7 @@ import com.likelab.likepet.global.GlobalUrl;
 import com.likelab.likepet.LoginActivity;
 import com.likelab.likepet.Main.MainActivity;
 import com.likelab.likepet.R;
+import com.likelab.likepet.global.GlobalVariable;
 import com.likelab.likepet.volleryCustom.AppController;
 
 import org.json.JSONException;
@@ -146,7 +147,6 @@ public class SignInActivity extends AppCompatActivity implements
             GoogleSignInAccount client = result.getSignInAccount();
 
             if(client != null) {
-                Log.d("email", client.getEmail());
 
                 checkEmailRequest("google", client.getEmail(), client.getId());
             }
@@ -311,7 +311,17 @@ public class SignInActivity extends AppCompatActivity implements
                     public void onErrorResponse(VolleyError error) {
                         //Toast.makeText(JoinMemberBeginActivity.this, error.toString(), Toast.LENGTH_LONG).show();
                     }
-                });
+                }){
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
+
+                return params;
+
+            }
+        };
 
         // Add the request to the RequestQueue.
         queue.add(stringRequest);
@@ -388,7 +398,18 @@ public class SignInActivity extends AppCompatActivity implements
                     public void onErrorResponse(VolleyError error) {
 
                     }
-                });
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
+
+                return params;
+
+            }
+        };
+
 
         // Add the request to the RequestQueue.
         queue.add(jsonObjectRequest);
@@ -436,6 +457,8 @@ public class SignInActivity extends AppCompatActivity implements
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("accountId", id);
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 
@@ -447,8 +470,6 @@ public class SignInActivity extends AppCompatActivity implements
                 Map<String, String> responseHeaders = response.headers;
                 String sid = responseHeaders.get("sessionID");
 
-
-                Log.d("SID", sid);
                 setAppPreferences(SignInActivity.this, "sid", sid);
                 System.out.println("sid:" + sid);
 

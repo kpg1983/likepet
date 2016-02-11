@@ -31,6 +31,7 @@ import com.likelab.likepet.R;
 import com.likelab.likepet.RoundedCornerTransformation;
 import com.likelab.likepet.global.GlobalSharedPreference;
 import com.likelab.likepet.global.GlobalUrl;
+import com.likelab.likepet.global.GlobalVariable;
 import com.likelab.likepet.global.RecycleUtils;
 import com.likelab.likepet.singIn.JoinMemberBeginActivity;
 import com.likelab.likepet.view.ViewActivity;
@@ -215,7 +216,7 @@ public class YourPageContentsAdapter extends BaseAdapter {
             viewHolder.imgGifICON.setVisibility(View.VISIBLE);
         } else {
             viewHolder.imgGifICON.setVisibility(View.INVISIBLE);
-            viewHolder.imgGifICON.setImageDrawable(null);
+            //viewHolder.imgGifICON.setImageDrawable(null);
         }
 
         if(contentsArrayList.get(position).status.equals("1") || contentsArrayList.get(position).reportCount > 10) {
@@ -589,6 +590,8 @@ public class YourPageContentsAdapter extends BaseAdapter {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("sessionId", GlobalSharedPreference.getAppPreferences(context, "sid"));
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 
@@ -625,8 +628,6 @@ public class YourPageContentsAdapter extends BaseAdapter {
 
                             if (responseCode == 200) {
 
-                                //Toast.makeText(context, "좋아용", Toast.LENGTH_SHORT).show();
-
                             }
 
                         } catch (JSONException e) {
@@ -649,6 +650,8 @@ public class YourPageContentsAdapter extends BaseAdapter {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("sessionId", GlobalSharedPreference.getAppPreferences(context, "sid"));
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 

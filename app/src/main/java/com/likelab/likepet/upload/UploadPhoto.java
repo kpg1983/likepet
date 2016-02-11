@@ -14,10 +14,12 @@ import android.hardware.Camera;
 import android.media.ExifInterface;
 import android.media.MediaRecorder;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -33,8 +35,8 @@ import android.widget.Toast;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.likelab.likepet.R;
-import com.likelab.likepet.global.RecycleUtils;
 import com.likelab.likepet.global.GlobalUploadBitmapImage;
+import com.likelab.likepet.global.RecycleUtils;
 import com.likelab.likepet.volleryCustom.AppController;
 
 import java.io.ByteArrayOutputStream;
@@ -374,8 +376,6 @@ public class UploadPhoto extends Fragment implements View.OnClickListener {
 
                 }
 
-                //getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-
             }
         });
 
@@ -643,6 +643,11 @@ public class UploadPhoto extends Fragment implements View.OnClickListener {
 
             mPicture = getPictureCallback();
             mPreview.refreshCamera(mCamera);
+
+            int width = mPreview.getPreviewWidth();
+            int height = mPreview.getPreviewHeight();
+
+            //cameraPreview.setLayoutParams(new RelativeLayout.LayoutParams(height, width));
         }
 
         //카메라 타이머 초기화
@@ -680,6 +685,7 @@ public class UploadPhoto extends Fragment implements View.OnClickListener {
         mPreview = new CameraPreview(myContext, mCamera);
         cameraPreview.addView(mPreview);
 
+
         //capture = (ImageButton) layout.findViewById(R.id.upload_photo_camera_button);
 
         switchCamera = (ImageButton) layout.findViewById(R.id.change_camera);
@@ -697,7 +703,21 @@ public class UploadPhoto extends Fragment implements View.OnClickListener {
 
                 mCamera = Camera.open(cameraId);
                 mPicture = getPictureCallback();
-                mPreview.refreshCamera(mCamera);
+                Thread thread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mPreview.refreshCamera(mCamera);
+                    }
+                });
+                thread.start();
+                int softKeyHeight = getSoftButtonsBarHeight();
+
+                Log.d("softKey", Integer.toString(softKeyHeight));
+                if(softKeyHeight >0) {
+                    int width = cameraPreview.getWidth();
+                    int height = (width / 9) * 16;
+                    //cameraPreview.setLayoutParams(new RelativeLayout.LayoutParams(width, 2500));
+                }
 
             }
         } else {
@@ -709,10 +729,33 @@ public class UploadPhoto extends Fragment implements View.OnClickListener {
 
                 mCamera = Camera.open(cameraId);
                 mPicture = getPictureCallback();
-                mPreview.refreshCamera(mCamera);
+
+                Thread thread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mPreview.refreshCamera(mCamera);
+                    }
+                });
+                thread.start();
             }
         }
 
+    }
+
+    private int getSoftButtonsBarHeight() {
+        // getRealMetrics is only available with API 17 and +
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            DisplayMetrics metrics = new DisplayMetrics();
+            getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+            int usableHeight = metrics.heightPixels;
+            getActivity().getWindowManager().getDefaultDisplay().getRealMetrics(metrics);
+            int realHeight = metrics.heightPixels;
+            if (realHeight > usableHeight)
+                return realHeight - usableHeight;
+            else
+                return 0;
+        }
+        return 0;
     }
 
 
@@ -731,7 +774,6 @@ public class UploadPhoto extends Fragment implements View.OnClickListener {
             @Override
             public void onPictureTaken(final byte[] data, Camera camera) {
                 //make a new picture file
-
 
                 Thread thread = new Thread(new Runnable() {
                     @Override
@@ -758,39 +800,18 @@ public class UploadPhoto extends Fragment implements View.OnClickListener {
                         Bitmap rotatedBitmap = GetRotatedBitmap(bitmap, degree);
 //                        Bitmap resizedBitmap = resizeBitmapImageFn(rotatedBitmap, 960);
 
-                        GlobalUploadBitmapImage.bitmap = cropBitmap(rotatedBitmap, 960, 960, 0.5f, 0.4f);
-//                        if (rateFlag == 1) {
-//                            GlobalUploadBitmapImage.bitmap = cropBitmap(resizedBitmap, 960, 720, 0.5f, 0.4f);
-//                        }else{
-//                            GlobalUploadBitmapImage.bitmap = cropBitmap(resizedBitmap, 960, 960, 0.5f, 0.4f);
-//                        }
+                        //GlobalUploadBitmapImage.bitmap = rotatedBitmap;
 
 
-//                        bmp = GlobalUploadBitmapImage.bitmap;
-//
-//
-//                        if (cameraFront) {
-//                            GlobalUploadBitmapImage.bitmap = imgRotate(cameraFront);
-//                        } else {
-//                            GlobalUploadBitmapImage.bitmap = imgRotate(cameraFront);
-//                        }
-//
-//                        bmp.recycle();
+                        //GlobalUploadBitmapImage.bitmap = Bitmap.createBitmap(rotatedBitmap, 0, uploadTitleBarContainer.getHeight(), 960, 960);
 
-//                        if (pictureFile.exists()) {
-//                            pictureFile.delete();
-//                        }
+                        GlobalUploadBitmapImage.bitmap = rotatedBitmap;
 
                         Intent intent = new Intent(getActivity(), Filtering.class);
 
                         String activityName = "UploadPhotoActivity";
 
                         int titleBarHeight = uploadTitleBarContainer.getHeight();
-
-                        Log.d("titleBar", Integer.toString(titleBarHeight));
-
-                        Log.d("width", Integer.toString(GlobalUploadBitmapImage.bitmap.getWidth()));
-                        Log.d("width", Integer.toString(GlobalUploadBitmapImage.bitmap.getHeight()));
 
                         intent.putExtra("ACTIVITY_NAME", activityName);
                         intent.putExtra("TITLE_HEIGHT", titleBarHeight);
@@ -802,7 +823,8 @@ public class UploadPhoto extends Fragment implements View.OnClickListener {
                         startActivity(intent);
 
                         //refresh camera to continue preview
-                        mPreview.refreshCamera(mCamera);
+                        //mPreview.refreshCamera(mCamera);
+
                     }
 
                 });
@@ -810,32 +832,6 @@ public class UploadPhoto extends Fragment implements View.OnClickListener {
             }
         };
         return picture;
-    }
-
-    public Bitmap resizeBitmapImageFn( Bitmap bmpSource, int maxResolution){
-        int iWidth = bmpSource.getWidth();      //비트맵이미지의 넓이
-        int iHeight = bmpSource.getHeight();     //비트맵이미지의 높이
-        int newWidth = iWidth ;
-        int newHeight = iHeight ;
-        float rate = 0.0f;
-
-        //이미지의 가로 세로 비율에 맞게 조절
-        if(iWidth > iHeight ){
-            if(maxResolution < iWidth ){
-                rate = maxResolution / (float) iWidth ;
-                newHeight = (int) (iHeight * rate);
-                newWidth = maxResolution;
-            }
-        }else{
-            if(maxResolution < iHeight ){
-                rate = maxResolution / (float) iHeight ;
-                newWidth = (int) (iWidth * rate);
-                newHeight = maxResolution;
-            }
-        }
-
-        return Bitmap.createScaledBitmap(
-                bmpSource, newWidth, newHeight, true);
     }
 
     public static Bitmap cropBitmap(final Bitmap src, final int w, final int h,
@@ -947,6 +943,7 @@ public class UploadPhoto extends Fragment implements View.OnClickListener {
         //and make a media file:
         mediaFile = new File(mediaStorageDir.getPath() + File.separator + "IMG_" + timeStamp + ".jpg");
 
+
         return mediaFile;
     }
 
@@ -1017,6 +1014,7 @@ public class UploadPhoto extends Fragment implements View.OnClickListener {
         if (type == MEDIA_TYPE_IMAGE){
             mediaFile = new File(mediaStorageDir.getPath() + File.separator +
                     "IMG_"+ timeStamp + ".jpg");
+            GlobalUploadBitmapImage.fileList.add(mediaFile);
         } else if(type == MEDIA_TYPE_VIDEO) {
             mediaFile = new File(mediaStorageDir.getPath() + File.separator +
                     "VID_"+ timeStamp + ".mp4");
@@ -1030,7 +1028,7 @@ public class UploadPhoto extends Fragment implements View.OnClickListener {
     @Override
     public void onPause() {
         super.onPause();
-           // if you are using MediaRecorder, release it first
+        // if you are using MediaRecorder, release it first
         releaseCamera();
 
     }
@@ -1263,6 +1261,7 @@ public class UploadPhoto extends Fragment implements View.OnClickListener {
         final Timer mTimer = new Timer();
         GlobalUploadBitmapImage.bitmapList.clear();
         GlobalUploadBitmapImage.filteredBitmapList.clear();
+        GlobalUploadBitmapImage.filteredBitmapListCopy.clear();
 
         mTask = new TimerTask() {
             @Override
@@ -1290,7 +1289,7 @@ public class UploadPhoto extends Fragment implements View.OnClickListener {
                             intent.putExtra("TITLE_HEIGHT", titleBarHeight);
                             intent.putExtra("MEDIA_TYPE", "gif");
                             intent.putExtra("RATE", rateFlag);
-                            //intent.putExtra("filePath", file)
+                            intent.putExtra("CAMERA_FRONT", cameraFront);
 
                             startActivity(intent);
                         }
@@ -1319,10 +1318,14 @@ public class UploadPhoto extends Fragment implements View.OnClickListener {
                             bmp = imgRotate(cameraFront);
                         }
 
+                        //흐음.... 이부분 차후에 다시 한 번 확인해 봐야 할듯
+                        //왜 /2를 해야 정확하게 나오는지 시간나면 한번 봐볼까!@!!
+
+                        bmp = Bitmap.createBitmap(bmp, 0, titleBarHeight / 2, bmp.getWidth(), bmp.getWidth());
                         if (rateFlag == 0) {
-                            bmp = Bitmap.createBitmap(bmp, 0, titleBarHeight, bmp.getWidth(), bmp.getWidth());
+                            //bmp = Bitmap.createBitmap(bmp, 0, titleBarHeight / 2, bmp.getWidth(), bmp.getWidth());
                         } else {
-                            bmp = Bitmap.createBitmap(bmp, 0, titleBarHeight + transBoxHeight, bmp.getWidth(), bmp.getWidth() - transBoxHeight);
+                            //bmp = Bitmap.createBitmap(bmp, 0,  (titleBarHeight + transBoxHeight) / 2, bmp.getWidth(), bmp.getWidth() - transBoxHeight);
                         }
 
 //                        bmp = Bitmap.createScaledBitmap(bmp, 512, 512, false);
@@ -1357,7 +1360,7 @@ public class UploadPhoto extends Fragment implements View.OnClickListener {
     private File getTempFile() {
         if (isSDCARDMOUNTED()) {
             File f = new File(Environment.getExternalStorageDirectory(), // 외장메모리 경로
-                     System.currentTimeMillis() + "_temp.gif");
+                    System.currentTimeMillis() + "_temp.gif");
 
             try {
                 f.createNewFile();      // 외장메모리에 temp.gif 파일 생성

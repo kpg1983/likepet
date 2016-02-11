@@ -14,7 +14,6 @@ import android.text.Editable;
 import android.text.SpannableStringBuilder;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -36,21 +35,22 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.koushikdutta.ion.Ion;
+import com.likelab.likepet.Main.MainActivity;
+import com.likelab.likepet.R;
 import com.likelab.likepet.global.ActivityList;
 import com.likelab.likepet.global.GlobalSharedPreference;
 import com.likelab.likepet.global.GlobalUploadBitmapImage;
 import com.likelab.likepet.global.GlobalUrl;
-import com.likelab.likepet.Main.MainActivity;
-import com.likelab.likepet.R;
+import com.likelab.likepet.global.GlobalVariable;
 import com.likelab.likepet.global.RecycleUtils;
 import com.likelab.likepet.utils.AnimatedGifEncoder;
 import com.likelab.likepet.volleryCustom.AppController;
 import com.likelab.likepet.volleryCustom.TinyDB;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -62,6 +62,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -102,13 +103,9 @@ public class InputContents extends Activity {
     EditText mEditText;
     String contentId;
 
-    ImageLoader imageLoader = AppController.getInstance().getImageLoader();
     RequestQueue queue = AppController.getInstance().getRequestQueue();
     private Tracker mTracker = AppController.getInstance().getDefaultTracker();
 
-    public static int REQ_MODIFY_CONTENTS = 1;
-    private static final int RESULT_LIKE = 5;
-    private static final int RESULT_MODIFY_CONTENT = 6;
 
     private static final String TEMP_PHOTO_FILE = "temp.jpg";
     Button btn_finish;
@@ -155,24 +152,20 @@ public class InputContents extends Activity {
             if( intent.getExtras().getString("MEDIA_TYPE").equals("image") ){
                 isThisImage = true;
                 mediaType = 0;
-//                videoViewContainer = (FrameLayout)findViewById(R.id.upload_videoView_container);
-//                videoViewContainer.setVisibility(View.INVISIBLE);
+
             }
             else if( intent.getExtras().getString("MEDIA_TYPE").equals("gif") ){
                 isThisGif = true;
                 mediaType = 1;
-//                videoViewContainer = (FrameLayout) findViewById(R.id.upload_videoView_container);
-//                videoViewContainer.setVisibility(View.INVISIBLE);
+
             }
             else if( intent.getExtras().getString("MEDIA_TYPE").equals("video") ){
                 isThisVideo = true;
                 mediaType = 2;
                 videoContentsFilePath = intent.getExtras().getString("VIDEO_CONTENTS_FILE_PATH");
-//                videoViewContainer = (FrameLayout) findViewById(R.id.upload_videoView_container);
+
 
                 videoThumbnail = ThumbnailUtils.createVideoThumbnail(videoContentsFilePath, MediaStore.Video.Thumbnails.MINI_KIND);
-
-
 
             }
         }
@@ -184,8 +177,6 @@ public class InputContents extends Activity {
         vg = (ViewGroup) findViewById(R.id.input_relative);
 
         layout = (RelativeLayout) findViewById(R.id.upload_keyboard_tag_container);
-
-        LayoutInflater inflater = ((LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE));
 
         final Intent intent = getIntent();
 
@@ -210,8 +201,6 @@ public class InputContents extends Activity {
 
         int count = 0;
 
-        Log.d("listSize", Integer.toString(tagList.size()));
-
 
         //테그를 설정한다
         if (tagList.size() != 0) {
@@ -221,7 +210,6 @@ public class InputContents extends Activity {
                     break;
                 }
                 txtRecommendTag[i].setText("#" + tagList.get(i));
-                Log.d("TAGS", tagList.get(i));
                 count++;
             }
         }
@@ -238,8 +226,6 @@ public class InputContents extends Activity {
         scrollView = (ScrollView) findViewById(R.id.input_scrollview);
         btn_finish = (Button) findViewById(R.id.btn_contents_input_finish);
 
-
-        final InputMethodManager keyboard = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 
         layCancel = (RelativeLayout) findViewById(R.id.input_contents_cancel_container);
         numberOfText = (TextView) findViewById(R.id.input_text_count);
@@ -267,27 +253,11 @@ public class InputContents extends Activity {
             //사진
             if(contentType == 1) {
 
-                imageLoader.get(imageUrl, new ImageLoader.ImageListener() {
-
-                    @Override
-                    public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
-                        if (response.getBitmap() != null) {
-                            imgContents.setImageBitmap(response.getBitmap());
-
-                        } else {
-                            imgContents.setImageResource(R.drawable.main_image);
-                        }
-                    }
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        //To change body of implemented methods use File | Settings | File Templates.
-                    }
-                });
+                Picasso.with(this).load(imageUrl).placeholder(R.drawable.place_holder_960).into(imgContents);
 
                 //gif
             } else if(contentType == 3) {
-                //Ion.with(this).load(imageUrl).intoImageView(imgContents);
+
                 Ion.with(this).load(imageUrl).intoImageView(imgContents);
 
                 //비디오
@@ -308,7 +278,6 @@ public class InputContents extends Activity {
             mEditText.setText(description);
 
 
-
             //업로드 모드
         }else{
             if ( isThisImage ) {
@@ -319,18 +288,19 @@ public class InputContents extends Activity {
 
                 imgContents.setVisibility(View.VISIBLE);
 
-                gifIndex = 0; gifCount = GlobalUploadBitmapImage.bitmapList.size();
+                gifIndex = 0;
+                gifCount = 6;
 
                 mTask = new TimerTask() {
                     @Override
                     public void run() {
-                        gifIndex = gifIndex % (gifCount-1);
+                        gifIndex = gifIndex % (gifCount);
 
                         InputContents.this.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                if (GlobalUploadBitmapImage.filteredBitmapList.size() > 0)
-                                    imgContents.setImageBitmap(GlobalUploadBitmapImage.filteredBitmapList.get(gifIndex));
+                                if (GlobalUploadBitmapImage.filteredBitmapListCopy.size() > 0 && gifIndex != gifCount)
+                                    imgContents.setImageBitmap(GlobalUploadBitmapImage.filteredBitmapListCopy.get(gifIndex));
                             }
                         });
                         gifIndex++;
@@ -342,12 +312,6 @@ public class InputContents extends Activity {
 
                 mediaType = 1;
 
-                try {
-                    generateGifFile(new Callback());
-
-                } catch (Exception e) {
-
-                }
             }
             else if ( isThisVideo ){
 
@@ -387,6 +351,25 @@ public class InputContents extends Activity {
 
         mEditText.addTextChangedListener(mTextEditorWatcher);
 
+        mEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus == true) {
+
+                    scrollView.postDelayed(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            scrollView.smoothScrollBy(0, 800);
+                        }
+
+                    }, 100);
+
+                }
+            }
+        });
+
+        /*
         mEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -396,12 +379,16 @@ public class InputContents extends Activity {
                     scrollView.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            scrollView.smoothScrollBy(0, scrollView.getBottom());
+                            //scrollView.smoothScrollBy(0, scrollView.getBottom());
+
+                            scrollView.fullScroll(View.FOCUS_DOWN);
                         }
-                    }, 100);
+                    }, 2000);
                 }
             }
         });
+
+        */
 
         imgContents.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -426,6 +413,7 @@ public class InputContents extends Activity {
                         String description = mEditText.getText().toString();
                         modifyContentsRequest(contentId, description);
 
+                        //업로드
                     } else {
                         if (isThisImage) {
                             //getTempUri();
@@ -440,6 +428,12 @@ public class InputContents extends Activity {
 
                             isUploadButtonTouched = true;
 
+                            try {
+                                generateGifFile(new Callback());
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
 
                         } else if (isThisVideo) {
                             mediaType = 2;
@@ -451,7 +445,6 @@ public class InputContents extends Activity {
                         //나중에 이유 파악을 한번 해보자꾸나...
                         //사진만 업로드
                         if (description.equals("null")) {
-                            //Toast.makeText(InputContents.this, "filePath" + filePath, Toast.LENGTH_SHORT).show();
 
                         }
                         //사진과 글 다 업로드
@@ -525,13 +518,7 @@ public class InputContents extends Activity {
 
                 }
             }
-            // do something with result here!
-//            runOnUiThread(new Runnable() {
-//                @Override
-//                public void run() {
-//                    Ion.with(InputContents.this).load(filePath).intoImageView(imgContents);
-//                }
-//            });
+
         }
     }
 
@@ -549,9 +536,12 @@ public class InputContents extends Activity {
                 encoder.setQuality(10);
                 encoder.start(baos);
 
-                int length = GlobalUploadBitmapImage.filteredBitmapList.size();
-                for (int i = 0; i < length; i++) {
-                    encoder.addFrame(GlobalUploadBitmapImage.filteredBitmapList.get(i));
+                int length = GlobalUploadBitmapImage.filteredBitmapListCopy.size();
+
+                System.out.println("length: " + length);
+
+                for (int i = 0; i < 6; i++) {
+                    encoder.addFrame(GlobalUploadBitmapImage.filteredBitmapListCopy.get(i));
                 }
 
                 encoder.finish();
@@ -631,8 +621,6 @@ public class InputContents extends Activity {
             e.printStackTrace();
         }
 
-        Log.d("url", GlobalUrl.BASE_URL + endPoint);
-
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PUT, GlobalUrl.BASE_URL + endPoint, obj,
                 new Response.Listener<JSONObject>() {
 
@@ -678,6 +666,8 @@ public class InputContents extends Activity {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("sessionId", GlobalSharedPreference.getAppPreferences(InputContents.this, "sid"));
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
 
                 return params;
             }
@@ -706,6 +696,8 @@ public class InputContents extends Activity {
         }
     }
 
+
+
     /**
      * 임시 저장 파일의 경로를 반환
      */
@@ -723,9 +715,11 @@ public class InputContents extends Activity {
             if(mediaType == 0 ){
                 f = new File(Environment.getExternalStorageDirectory(), // 외장메모리 경로
                         System.currentTimeMillis() + TEMP_PHOTO_FILE);
+                GlobalUploadBitmapImage.fileList.add(f);
             }else if (mediaType == 1){
                 f = new File(Environment.getExternalStorageDirectory(), // 외장메모리 경로
                         System.currentTimeMillis() + "_temp.gif");
+                GlobalUploadBitmapImage.fileList.add(f);
             }else{
                 f = new File(Environment.getExternalStorageDirectory(), // 외장메모리 경로
                         System.currentTimeMillis() + "_temp.mp4");
@@ -756,12 +750,16 @@ public class InputContents extends Activity {
     //사진과 글 모두 업로드 시 사용
     public void upload(String description) throws Exception {
 
+        Locale mLocale = getResources().getConfiguration().locale;
+        String deviceLanguage = mLocale.getLanguage();
+
         String url = GlobalUrl.BASE_URL + "/contents/content";
         final MultipartUploadRequest request =
                 new MultipartUploadRequest(InputContents.this, "custom-upload-id", url);
 
         request.addHeader("sessionId", GlobalSharedPreference.getAppPreferences(InputContents.this, "sid"));
         request.addParameter("descriptions", description);
+        request.addParameter("language", deviceLanguage);
         //사진
         if(mediaType == 0) {
             request.addFileToUpload(filePath, "upfile", "temp.jpeg", "image/jpeg");
@@ -775,8 +773,6 @@ public class InputContents extends Activity {
             request.addFileToUpload(videoContentsFilePath, "upfile", "temp.mp4", "video/mp4");
         }
 
-
-        request.setCustomUserAgent("UploadServiceDemo/1.0");
         request.setMaxRetries(1);
 
         try {
@@ -902,6 +898,13 @@ public class InputContents extends Activity {
             }
         }
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        mEditText.clearFocus();
     }
 
 }

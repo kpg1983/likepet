@@ -3,7 +3,6 @@ package com.likelab.likepet.notification;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -19,9 +18,10 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.likelab.likepet.R;
 import com.likelab.likepet.global.GlobalSharedPreference;
 import com.likelab.likepet.global.GlobalUrl;
-import com.likelab.likepet.R;
+import com.likelab.likepet.global.GlobalVariable;
 import com.likelab.likepet.global.RecycleUtils;
 import com.likelab.likepet.view.ViewActivity;
 import com.likelab.likepet.volleryCustom.AppController;
@@ -31,10 +31,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 /**
  * Created by kpg1983 on 2015-11-06.
@@ -66,6 +68,9 @@ public class AlarmActivity extends Activity {
 
     private boolean lockListView;   //리스트뷰가 갱신되는 동안 재요청을 방지 하기 위한 변수
 
+    View footer;
+    RelativeLayout listViewLoadIndicator;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,6 +100,9 @@ public class AlarmActivity extends Activity {
 
         adapter = new AlarmContentsAdapter(this, R.layout.alarm_list_view, contentsArrayList);
         contentsList = (ListView)findViewById(R.id.alarm_list_view);
+        footer = getLayoutInflater().inflate(R.layout.listview_load_footer, null, false);
+        listViewLoadIndicator = (RelativeLayout)footer.findViewById(R.id.listview_load_indicator);
+        contentsList.addFooterView(footer);
 
         contentsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -122,7 +130,10 @@ public class AlarmActivity extends Activity {
 
                     if (currentPage < maxPage) {
 
-                        Log.d("currentPage", Integer.toString(currentPage));
+                        if (adapterFlag == 1) {
+                            listViewLoadIndicator.setVisibility(View.VISIBLE);
+
+                        }
 
                         alarmRequest(currentPage);
 
@@ -179,8 +190,6 @@ public class AlarmActivity extends Activity {
 
                                 JSONArray items = notice.getJSONArray("items");
 
-                                System.out.println("Alarm Items: " + items.length());
-
                                 for(int i=0; i<items.length(); i++) {
                                     itemCount++;    //알림 갯수 카운트
 
@@ -199,14 +208,17 @@ public class AlarmActivity extends Activity {
                                     registryDate = registryDate.replaceAll("\\.", "-");
                                     java.text.SimpleDateFormat format = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-                                    java.util.Date date = null;
+                                    Date date = null;
 
                                     //날짜를 조금전, 방금전, 4일전 식으로 변환한다
                                     try {
-                                        date = format.parse(registryDate);
+                                        String localTime = convertUtcToLocal(registryDate);
+                                        date = format.parse(localTime);
+
                                     } catch (ParseException e) {
                                         e.printStackTrace();
                                     }
+
                                     registryDate = formatTimeString(date);
 
 
@@ -241,6 +253,7 @@ public class AlarmActivity extends Activity {
                                         }
 
                                         lockListView = false;
+                                        listViewLoadIndicator.setVisibility(View.GONE);
                                     }
                                 });
 
@@ -268,8 +281,9 @@ public class AlarmActivity extends Activity {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
 
-                    params.put("sessionId", GlobalSharedPreference.getAppPreferences(AlarmActivity.this, "sid"));
-
+                params.put("sessionId", GlobalSharedPreference.getAppPreferences(AlarmActivity.this, "sid"));
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 
@@ -310,6 +324,7 @@ public class AlarmActivity extends Activity {
                                 String status = item.getString("status");
                                 String profileImageUrl = item.getString("profileImageUrl");
                                 String iLikeThis = item.getString("ILikedThis");
+                                String clan = item.getString("clan");
 
 
 
@@ -345,6 +360,7 @@ public class AlarmActivity extends Activity {
                                 intent.putExtra("USER_ID", userId);
                                 intent.putExtra("REPORT_COUNT", reportCount);
                                 intent.putExtra("STATUS", status);
+                                intent.putExtra("CLAN", clan);
 
                                 startActivity(intent);
 
@@ -374,6 +390,8 @@ public class AlarmActivity extends Activity {
                 Map<String, String> params = new HashMap<String, String>();
 
                 params.put("sessionId", GlobalSharedPreference.getAppPreferences(AlarmActivity.this, "sid"));
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
 
 
                 return params;
@@ -430,5 +448,33 @@ public class AlarmActivity extends Activity {
         }
 
         return msg;
+    }
+
+    //표준시간과 local 시간 변환
+    private static String convertUtcToLocal(String utcTime) {
+
+        String localTime = null;
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        try {
+            Date dateUtcTime = dateFormat.parse(utcTime);
+
+            long longUtcTime = dateUtcTime.getTime();
+
+            TimeZone timeZone = TimeZone.getDefault();
+            int offset = timeZone.getOffset(longUtcTime);
+            long longLocalTime = longUtcTime + offset;
+
+            Date dateLocalTime = new Date();
+            dateLocalTime.setTime(longLocalTime);
+
+            localTime = dateFormat.format(dateLocalTime);
+
+        } catch (ParseException e) {
+            e.printStackTrace();;
+        }
+
+        return localTime;
     }
 }

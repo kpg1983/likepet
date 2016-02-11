@@ -33,7 +33,7 @@ public class BackPressCloseHandler {
 
     public void showGuide() {
         toast = Toast.makeText(activity,
-                GlobalCommentCount.backKeyPressed, Toast.LENGTH_SHORT);
+                GlobalVariable.backKeyPressed, Toast.LENGTH_SHORT);
         toast.show();
     }
 }

@@ -4,29 +4,24 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.likelab.likepet.global.ActivityList;
 import com.likelab.likepet.R;
-import com.likelab.likepet.global.RecycleUtils;
+import com.likelab.likepet.global.ActivityList;
 import com.likelab.likepet.global.GlobalUploadBitmapImage;
+import com.likelab.likepet.global.RecycleUtils;
 
 /**
  * Created by kpg1983 on 2015-09-23.
  */
 public class Upload extends AppCompatActivity implements View.OnClickListener{
 
-    private int numPages = 2;
-
     public final static int fragment_page_1 = 0;
     public final static int fragment_page_2 = 1;
-
-    private static int REQ_UPLOAD_CONTENTS = 0;
 
     private static ViewPager pager;
 
@@ -51,8 +46,6 @@ public class Upload extends AppCompatActivity implements View.OnClickListener{
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         ActivityList.activityArrayList.add(this);
-
-        Log.d("UPload ActivityList", Integer.toString(ActivityList.activityArrayList.size()));
 
         ImageView btn_cancel_upload = (ImageView)findViewById(R.id.btn_upload_cancel);
         final ImageView btn_next = (ImageView)findViewById(R.id.btn_upload_next);
@@ -148,8 +141,20 @@ public class Upload extends AppCompatActivity implements View.OnClickListener{
     protected void onDestroy() {
         super.onDestroy();
 
+
+        for (int i=0; i<GlobalUploadBitmapImage.fileList.size(); i++) {
+            if(GlobalUploadBitmapImage.fileList.get(i).exists()) {
+                GlobalUploadBitmapImage.fileList.get(i).delete();
+            }
+        }
+
+        GlobalUploadBitmapImage.fileList.clear();
+
+
         //GlobalUploadBitmapImage.filteredBitmapList.clear();
-        GlobalUploadBitmapImage.bitmapList.clear();
+        //GlobalUploadBitmapImage.bitmapList.clear();
+        //GlobalUploadBitmapImage.filteredBitmapListCopy.clear();
+        //GlobalUploadBitmapImage.filteredBitmapList.clear();
 
         for (int i=0; i<GlobalUploadBitmapImage.bitmapArray.length; i++) {
             GlobalUploadBitmapImage.bitmapArray[i] = null;
@@ -208,8 +213,6 @@ public class Upload extends AppCompatActivity implements View.OnClickListener{
                 tabMovie.setVisibility(View.VISIBLE);
                 break;
             }
-
-
 
         }
 

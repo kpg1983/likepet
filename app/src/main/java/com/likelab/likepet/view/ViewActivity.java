@@ -9,7 +9,6 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -29,8 +28,6 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
-import android.view.ViewTreeObserver;
-import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -70,6 +67,7 @@ import com.likelab.likepet.R;
 import com.likelab.likepet.UploadContents;
 import com.likelab.likepet.global.GlobalSharedPreference;
 import com.likelab.likepet.global.GlobalUrl;
+import com.likelab.likepet.global.GlobalVariable;
 import com.likelab.likepet.global.RecycleUtils;
 import com.likelab.likepet.likeUser.LikeUserListActivity;
 import com.likelab.likepet.likeUser.LikeUserListContents;
@@ -91,10 +89,12 @@ import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 /**
  * Created by kpg1983 on 2015-10-12.
@@ -248,12 +248,14 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
         //리퀘스트가 완료되면 전체 댓글들이 호출된다.
         loadBestCommentRequest(contentId);
 
+        Log.d("contentId", contentId);
+
 
         //감정표현 리퀘스트 요청
         //로그인이 되어 있는 상태에서만 콘텐츠에 대한 감정 표현 유무가 표시된다.
-        if (GlobalSharedPreference.getAppPreferences(ViewActivity.this, "login").equals("login")) {
+        //if (GlobalSharedPreference.getAppPreferences(ViewActivity.this, "login").equals("login")) {
             contentEmotionUserListRequest(contentId);
-        }
+       // }
 
 
         //페이지 더 불러오기 표시 listview footer
@@ -295,35 +297,19 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
 
         final InputMethodManager keyboard = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 
+
+
         editComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 if (GlobalSharedPreference.getAppPreferences(ViewActivity.this, "login").equals("login")) {
-                    final Window mRootWindow;
-                    View mRootView;
 
-                    mRootWindow = getWindow();
-                    mRootView = mRootWindow.getDecorView().findViewById(android.R.id.content);
-                    mRootView.getViewTreeObserver().addOnGlobalLayoutListener(
-                            new ViewTreeObserver.OnGlobalLayoutListener() {
-                                public void onGlobalLayout() {
-                                    Rect r = new Rect();
-                                    View view = mRootWindow.getDecorView();
-                                    view.getWindowVisibleDisplayFrame(r);
-                                    // r.left, r.top, r.right, r.bottom
-
-                                    //키보드가 보일때
-                                    if (keyboard.isAcceptingText()) {
-                                    }
-                                    //키보드가 활성화 되지 않았을때
-                                    else {
-
-                                        //contentsListView.scrollBy(0, 50);
-                                    }
-                                }
-                            });
                 } else {
+                    InputMethodManager imm= (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(editComment.getWindowToken(), 0);
+                    editComment.clearFocus();
+
                     loginPopupRequest(v);
                 }
             }
@@ -435,36 +421,33 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                final Window mRootWindow;
-                View mRootView;
-
-                mRootWindow = getWindow();
-                mRootView = mRootWindow.getDecorView().findViewById(android.R.id.content);
-                mRootView.getViewTreeObserver().addOnGlobalLayoutListener(
-                        new ViewTreeObserver.OnGlobalLayoutListener() {
-                            public void onGlobalLayout() {
-                                Rect r = new Rect();
-                                View view = mRootWindow.getDecorView();
-                                view.getWindowVisibleDisplayFrame(r);
-                                // r.left, r.top, r.right, r.bottom
-
-                                //키보드가 보일때
-                                if (keyboard.isAcceptingText()) {
-                                    //contentsListView.scrollBy(0, 50);
-
-                                }
-                                //키보드가 활성화 되지 않았을때
-                                else {
-                                }
-                            }
-                        });
-
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(editComment.getWindowToken(), 0);
                 editComment.clearFocus();
 
             }
         });
+
+        //이미지 및 gif 컨텐츠를 클릭하면 키보드를 감춘다
+        if(mContentType == 1 || mContentType == 3) {
+
+            imgMainContents.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(editComment.getWindowToken(), 0);
+                    editComment.clearFocus();
+                }
+            });
+            gifMainContents.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(editComment.getWindowToken(), 0);
+                    editComment.clearFocus();
+                }
+            });
+        }
 
 
         btnLike.setOnClickListener(new View.OnClickListener() {
@@ -686,7 +669,7 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
             viewMainImageContainerPhoto = (RelativeLayout) header.findViewById(R.id.view_photo_img_contents_container);
 
         } else {
-            header = (RelativeLayout) getLayoutInflater().inflate(R.layout.view_listview_header, null, false);
+            header = (RelativeLayout) getLayoutInflater().inflate(R.layout.view_listview_header_video, null, false);
             videoContents = (RelativeLayout) header.findViewById(R.id.video_video_view_container);
 
         }
@@ -710,6 +693,10 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
         editComment.setOnClickListener(this);
         editComment.setOnFocusChangeListener(this);
         btnMoreLike.setOnClickListener(this);
+
+        for(int i=0; i<5; i++) {
+            imgLikeUser[i].setOnClickListener(this);
+        }
 
         contentsListView = (ListView) findViewById(R.id.view_comments_list);
         contentsArrayList = new ArrayList<ViewContents>();
@@ -747,7 +734,6 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
             btnLike.setImageResource(R.drawable.mypage_btn_bottom_like_s);
             btnLike.setScaleType(ImageView.ScaleType.FIT_XY);
         }
-
 
 
         //게시글 유저의 프로필 이미지 설정
@@ -867,10 +853,10 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
 
         //댓글 버튼을 누르고 view 페이지로 들어온 경우 키보드를 나타낸다
         if (intent.hasExtra("IS_COMMENT_PRESSED")) {
-            //Toast.makeText(ViewActivity.this, "댓글버튼", Toast.LENGTH_SHORT).show();
+
 
             String isCommentPressed = intent.getStringExtra("IS_COMMENT_PRESSED");
-            if(isCommentPressed.equals("ok")) {
+            if(isCommentPressed.equals("ok") && GlobalSharedPreference.getAppPreferences(ViewActivity.this, "login").equals("login")) {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -1229,7 +1215,12 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
             }
 
             //감정표현 유저 리스트 페이지로 이동
-            case R.id.view_btn_moreLike: {
+            case R.id.view_btn_moreLike:
+            case R.id.view_img_likeUserProfile_1:
+            case R.id.view_img_likeUserProfile_2:
+            case R.id.view_img_likeUserProfile_3:
+            case R.id.view_img_likeUserProfile_4:
+            case R.id.view_img_likeUserProfile_5: {
 
                 Intent intent = new Intent(ViewActivity.this, LikeUserListActivity.class);
                 intent.putExtra("LIKE_USERS", likeArrayList);
@@ -1238,6 +1229,7 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
             }
+
         }
     }
 
@@ -1432,6 +1424,8 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
                 if (GlobalSharedPreference.getAppPreferences(ViewActivity.this, "login").equals("login")) {
                     params.put("sessionId", sid);
                 }
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 
@@ -1493,6 +1487,8 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
                 if (GlobalSharedPreference.getAppPreferences(ViewActivity.this, "login").equals("login")) {
                     params.put("sessionId", sid);
                 }
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 
@@ -1549,6 +1545,9 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
                 Map<String, String> params = new HashMap<String, String>();
                 if (GlobalSharedPreference.getAppPreferences(ViewActivity.this, "login").equals("login"))
                     params.put("sessionId", sid);
+
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 
@@ -1620,6 +1619,8 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("sessionId", GlobalSharedPreference.getAppPreferences(ViewActivity.this, "sid"));
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 
@@ -1672,6 +1673,9 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
                 Map<String, String> params = new HashMap<String, String>();
                 if (GlobalSharedPreference.getAppPreferences(ViewActivity.this, "login").equals("login"))
                     params.put("sessionId", sid);
+
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 
@@ -1730,6 +1734,9 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
                 Map<String, String> params = new HashMap<String, String>();
                 if (GlobalSharedPreference.getAppPreferences(ViewActivity.this, "login").equals("login"))
                     params.put("sessionId", GlobalSharedPreference.getAppPreferences(ViewActivity.this, "sid"));
+
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 
@@ -1801,6 +1808,9 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
                 if (GlobalSharedPreference.getAppPreferences(ViewActivity.this, "login").equals("login"))
                     params.put("sessionId", GlobalSharedPreference.getAppPreferences(ViewActivity.this, "sid"));
 
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
+
                 return params;
 
             }
@@ -1836,7 +1846,14 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
                                     String clan = users.getJSONObject(i).getString("clan");
                                     String profileImageUrl = users.getJSONObject(i).getString("profileImageUrl");
                                     int likeType = users.getJSONObject(i).getInt("likeType");
-                                    String myFriend = users.getJSONObject(i).getString("myFriend");
+
+                                    String myFriend;
+
+                                    if(GlobalSharedPreference.getAppPreferences(ViewActivity.this, "login").equals("login")) {
+                                        myFriend = users.getJSONObject(i).getString("myFriend");
+                                    } else {
+                                        myFriend = "0";
+                                    }
 
                                     LikeUserListContents contents = new LikeUserListContents(userId, name, gender, clan, profileImageUrl, likeType, myFriend);
                                     likeArrayList.add(contents);
@@ -1866,6 +1883,9 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
                 Map<String, String> params = new HashMap<String, String>();
                 if (GlobalSharedPreference.getAppPreferences(ViewActivity.this, "login").equals("login"))
                     params.put("sessionId", GlobalSharedPreference.getAppPreferences(ViewActivity.this, "sid"));
+
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 
@@ -1908,17 +1928,20 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
                                     String contentType = best.getJSONObject(i).getString("contentType");
                                     String registryDate = best.getJSONObject(i).getString("registryDate");
 
+                                    Date date = null;
                                     registryDate = registryDate.replaceAll("\\.", "-");
                                     java.text.SimpleDateFormat format = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-                                    Date date = null;
 
                                     //날짜를 조금전, 방금전, 4일전 식으로 변환한다
                                     try {
-                                        date = format.parse(registryDate);
+                                        String localTime = convertUtcToLocal(registryDate);
+                                        date = format.parse(localTime);
+
                                     } catch (ParseException e) {
                                         e.printStackTrace();
                                     }
+
                                     registryDate = formatTimeString(date);
 
                                     int likeCount = best.getJSONObject(i).getInt("likeCount");
@@ -1996,6 +2019,9 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
                 if (GlobalSharedPreference.getAppPreferences(ViewActivity.this, "login").equals("login"))
                     params.put("sessionId", GlobalSharedPreference.getAppPreferences(ViewActivity.this, "sid"));
 
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
+
                 return params;
 
             }
@@ -2051,7 +2077,15 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
                                     String profileImageUrl = best.getJSONObject(i).getString("profileImageUrl");
                                     String gender = best.getJSONObject(i).getString("sex");
                                     String clan = best.getJSONObject(i).getString("clan");
-                                    String iLikeThis = best.getJSONObject(i).getString("ILikedThis");
+
+                                    String iLikeThis;
+
+                                    //로그인 되어 있는 경우, 댓글에 좋아요를 했는지 유무를 표시한다. 빨간색으로
+                                    if (GlobalSharedPreference.getAppPreferences(ViewActivity.this, "login").equals("login")) {
+                                        iLikeThis = best.getJSONObject(i).getString("ILikedThis");
+                                    } else {
+                                        iLikeThis = "0";
+                                    }
                                     String userId = best.getJSONObject(i).getString("userId");
                                     int bestCommentFlag = i + 1;    //베스트 코멘트 앞에 숫자를 붙여준다.  프로필 이미지에 장식을 붙여주기 위해서, 1: 골드, 2: 실버, 3: 브론즈 나머지 댓글들은 전부 0이다
 
@@ -2087,6 +2121,9 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
                 Map<String, String> params = new HashMap<String, String>();
                 if (GlobalSharedPreference.getAppPreferences(ViewActivity.this, "login").equals("login"))
                     params.put("sessionId", GlobalSharedPreference.getAppPreferences(ViewActivity.this, "sid"));
+
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 
@@ -2135,8 +2172,6 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         return msg;
-
-
     }
 
     //글만 업로드
@@ -2148,6 +2183,9 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
 
 
         request.addHeader("sessionId", sid);
+        request.addHeader("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
+
         request.addParameter("descriptions", comment);
         request.setCustomUserAgent("UploadServiceDemo/1.0");
         request.setMaxRetries(1);
@@ -2176,6 +2214,8 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
 
         request.addFileToUpload(filePath, "upfile", "temp.jpg", "image/jpeg");
         request.addHeader("sessionId", sid);
+        request.addHeader("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
         request.addParameter("descriptions", comment);
         request.setCustomUserAgent("UploadServiceDemo/1.0");
         request.setMaxRetries(1);
@@ -2449,7 +2489,6 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
 
-
         //게시물에 감정표현을 한 유저의 수만큼 회전하며 프로필 이미지를 표시한다
         for (int i = 0; i < likeUserCount; i++) {
 
@@ -2500,6 +2539,10 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
         popupWindow.setFocusable(true);
         popupWindow.setOutsideTouchable(true);
         popupWindow.setBackgroundDrawable(new BitmapDrawable());
+
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(editComment.getWindowToken(), 0);
+        editComment.clearFocus();
 
         popupWindow.showAtLocation(layout, Gravity.CENTER, 0, 0);
 
@@ -2819,6 +2862,34 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
         }
+    }
+
+    //표준시간과 local 시간 변환
+    private static String convertUtcToLocal(String utcTime) {
+
+        String localTime = null;
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        try {
+            Date dateUtcTime = dateFormat.parse(utcTime);
+
+            long longUtcTime = dateUtcTime.getTime();
+
+            TimeZone timeZone = TimeZone.getDefault();
+            int offset = timeZone.getOffset(longUtcTime);
+            long longLocalTime = longUtcTime + offset;
+
+            Date dateLocalTime = new Date();
+            dateLocalTime.setTime(longLocalTime);
+
+            localTime = dateFormat.format(dateLocalTime);
+
+        } catch (ParseException e) {
+            e.printStackTrace();;
+        }
+
+        return localTime;
     }
 
 }

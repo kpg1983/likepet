@@ -20,16 +20,21 @@ import com.google.android.gms.analytics.Tracker;
 import com.likelab.likepet.global.GlobalSharedPreference;
 import com.likelab.likepet.global.GlobalUrl;
 import com.likelab.likepet.R;
+import com.likelab.likepet.global.GlobalVariable;
 import com.likelab.likepet.volleryCustom.AppController;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 /**
  * Created by kpg1983 on 2015-10-29.
@@ -55,15 +60,6 @@ public class Notice extends Activity {
         btnCancel = (ImageButton)findViewById(R.id.notice_btn_cancel);
 
         contentsArrayList = new ArrayList<NoticeContents>();
-
-        /*
-        for(int i=0; i<7; i++) {
-            NoticeContents noticeContents = new NoticeContents("2015 라이크팻 정식 론칭 행사를 진행합니다.", "너무나 귀찮으니 여러분들의 많은 무관심 부탁드립니다." +
-                    " 집에 있는게 제일 편해요. 집에 가고 싶어. 오지마 제발", R.drawable.main_image, "2015/11/11");
-            contentsArrayList.add(noticeContents);
-        }
-
-        */
 
         noticeRequest();
 
@@ -99,10 +95,6 @@ public class Notice extends Activity {
     public void noticeRequest() {
 
         String endPoint = "/notice?filter=1";
-
-        //Toast.makeText(JoinMemberBeginActivity.this, token, Toast.LENGTH_LONG).show();
-
-        JSONObject obj = new JSONObject();
 
         Locale mLocale = getResources().getConfiguration().locale;
         String deviceLanguage = mLocale.getLanguage();
@@ -144,8 +136,14 @@ public class Notice extends Activity {
                                     String noticeType = items.getJSONObject(i).getString("noticeType");
                                     String registryDate = items.getJSONObject(i).getString("registryDate");
 
-                                    registryDate = registryDate.substring(0, registryDate.indexOf(" "));
-                                    registryDate = registryDate.replaceAll("\\.", "/");
+
+                                    registryDate = registryDate.replaceAll("\\.", "-");
+
+                                    //날짜를 조금전, 방금전, 4일전 식으로 변환한다
+                                    String localTime = convertUtcToLocal(registryDate);
+                                    //localTime = localTime.replaceFirst("-", ".");
+                                    registryDate = localTime.substring(0, localTime.indexOf(" "));
+                                    registryDate = registryDate.replaceAll("-", "/");
 
                                     String userId = items.getJSONObject(i).getString("userId");
                                     String writerName = items.getJSONObject(i).getString("writerName");
@@ -183,6 +181,8 @@ public class Notice extends Activity {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("sessionId", GlobalSharedPreference.getAppPreferences(Notice.this, "sid"));
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 
@@ -201,5 +201,32 @@ public class Notice extends Activity {
         String pageName = "Notice";
         mTracker.setScreenName(pageName);
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+    }
+
+    //표준시간과 local 시간 변환
+    private static String convertUtcToLocal(String utcTime) {
+
+        String localTime = null;
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        try {
+            Date dateUtcTime = dateFormat.parse(utcTime);
+
+            long longUtcTime = dateUtcTime.getTime();
+
+            TimeZone timeZone = TimeZone.getDefault();
+            int offset = timeZone.getOffset(longUtcTime);
+            long longLocalTime = longUtcTime + offset;
+
+            Date dateLocalTime = new Date();
+            dateLocalTime.setTime(longLocalTime);
+
+            localTime = dateFormat.format(dateLocalTime);
+
+        } catch (ParseException e) {
+            e.printStackTrace();;
+        }
+
+        return localTime;
     }
 }

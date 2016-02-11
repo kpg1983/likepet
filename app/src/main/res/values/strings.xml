@@ -1,4 +1,5 @@
 <resources>
+    <string name="home_feed_txt_new_story_title">New Stories</string>
 
     <string name="pull_to_refresh_pull_label">Pull to refresh...</string>
     <string name="pull_to_refresh_release_label">Release to refresh...</string>
@@ -12,9 +13,12 @@
 
     <string name="facebook_app_id" translatable="false">415621798623683</string>
 
+    <string name="update_txt_now">Update now</string>
+    <string name="update_txt_later">Later</string>
+
     <string name="mypage_following">Following</string>
     <string name="mypage_follower">Follower</string>
-    <string name="mypage_moment">Moments</string>
+    <string name="mypage_moment">Stories</string>
 
     <string name="mypage_name_likepet">LikePet</string>
     <string name="mypage_no_member">You may\naccess after\nsign up.</string>
@@ -155,6 +159,9 @@
     <string name="join_insert_userName_txt_less_than_two_word">Maximum 15 letters</string>
     <string name="join_incorrect_facebook_email">You should agree the email policy on settings.</string>
     <string name="join_incorrect_twitter_email">You should agree the email policy on settings.</string>
+    <string name="join_insert_userName_txt_overlap">This name has been registered.</string>
+    <string name="join_insert_userName_txt_space">You can not use space characters</string>
+
 
     <string name="join_insert_email_password_title">Sign up</string>
     <string name="join_insert_email_password_txt_email">What\'s your email?</string>

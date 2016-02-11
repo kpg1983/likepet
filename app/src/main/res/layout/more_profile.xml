@@ -98,7 +98,7 @@
                 android:layout_alignParentRight="true"
                 android:clickable="true">
 
-                <ImageButton
+                <ImageView
                     android:id="@+id/profile_btn_guide_cancel"
                     android:layout_width="12dp"
                     android:layout_height="12.33dp"
