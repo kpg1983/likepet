@@ -8,6 +8,8 @@ import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.os.Build;
 import android.telephony.TelephonyManager;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
@@ -21,7 +23,11 @@ import com.likelab.likepet.global.GlobalVariable;
 import com.twitter.sdk.android.Twitter;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
 
+import java.util.ArrayList;
+
 import io.fabric.sdk.android.Fabric;
+import kr.co.fingerpush.android.GCMFingerPushManager;
+import kr.co.fingerpush.android.NetworkUtility;
 
 public class AppController extends Application {
 
@@ -107,6 +113,34 @@ public class AppController extends Application {
 		GlobalVariable.appVersion = version;
 		GlobalVariable.deviceName = Build.DEVICE;
 		GlobalVariable.deviceOS = Build.VERSION.RELEASE;
+
+		//[리스너를 사용한 경우]
+		GCMFingerPushManager.getInstance(this).setDevice(new NetworkUtility.NetworkDataListener() {
+
+			@Override
+			public void onError(String code, String errorMessage) {
+				// TODO Auto-generated method stub
+				Log.e("", "code ::: " + code);
+				Toast.makeText(AppController.this, errorMessage, Toast.LENGTH_SHORT).show();
+			}
+
+			@Override
+			public void onComplete(String code, String resultMessage,
+								   ArrayList<?> DataList, Integer TotalArticleCount,
+								   Integer CurrentPageNo) {
+				// TODO Auto-generated method stub
+				Log.e("", "code ::: "+code);
+				Toast.makeText(AppController.this, resultMessage, Toast.LENGTH_SHORT).show();
+			}
+
+			@Override
+			public void onCancel() {
+				// TODO Auto-generated method stub
+
+			}
+		});
+
+
 
 	}
 

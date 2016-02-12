@@ -29,6 +29,22 @@
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
+    <permission android:name="com.likelab.likepet.permission.C2D_MESSAGE" android:protectionLevel="signature" />
+    <uses-permission android:name="com.likelab.likepet.permission.C2D_MESSAGE"/>
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS"/>
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD"/>
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.GET_TASKS" />
+
+
+
+
+
+
 
     <application
         android:allowBackup="true"
@@ -39,6 +55,23 @@
         android:largeHeap="true"
         android:name="com.likelab.likepet.volleryCustom.AppController"
         >
+
+        <service android:name=".GCMIntentService" />
+
+        <service android:permission="android.permission.SYSTEM_ALERT_WINDOW" android:enabled="true" android:name=".GCMAlertService">
+            <intent-filter>
+                <action android:name="com.likelab.likepet.gcm"/>
+            </intent-filter>
+        </service>
+
+        <receiver android:permission="com.google.android.c2dm.permission.SEND" android:name="com.google.android.gcm.GCMBroadcastReceiver">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+            </intent-filter>
+        </receiver>
+
+
 
         <receiver android:name="com.google.android.gms.analytics.AnalyticsReceiver"
             android:enabled="true">
@@ -88,6 +121,22 @@
             android:launchMode="standard"
             android:screenOrientation="portrait"
             />
+
+
+        <activity
+            android:name=".PushAlertActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:screenOrientation="portrait"
+            >
+        </activity>
+
+
+        <activity
+            android:name=".IntroActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:screenOrientation="portrait"
+            >
+            </activity>
 
         <activity
             android:name="com.likelab.likepet.upload.Filtering"

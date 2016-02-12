@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item 
+        android:state_pressed="true" 
+        android:drawable="@mipmap/toggle_on"
+        /><!-- pressed image -->
+    <item 
+        android:state_selected="true"
+        android:drawable="@mipmap/toggle_on"
+        /><!-- selected image -->
+    <item 
+        android:state_checked="true"
+        android:drawable="@mipmap/toggle_on"
+        /><!-- checked image -->    
+        
+        
+        
+        
+        
+	<item 
+        android:state_pressed="false" 
+        android:drawable="@mipmap/toggle_off"
+        /><!-- pressed image -->
+    <item 
+        android:state_selected="false"
+        android:drawable="@mipmap/toggle_off"
+        /><!-- selected image -->   
+    <item 
+        android:state_checked="false"
+        android:drawable="@mipmap/toggle_off"
+        /><!-- checked image -->   
+    <item  
+        android:drawable="@mipmap/toggle_off"
+        /><!-- default image -->
+</selector>
