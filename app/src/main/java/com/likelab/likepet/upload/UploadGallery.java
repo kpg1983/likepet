@@ -359,6 +359,7 @@ public class UploadGallery extends Fragment implements AdapterView.OnItemClickLi
         Bitmap  orgImage = BitmapFactory.decodeFile(imagePath, bmOptions);
 
         return orgImage;
+
     }
 
     public void onItemClick(AdapterView<?> parent, View v, int position, long id) {

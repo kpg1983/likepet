@@ -289,15 +289,10 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 }
 
-                sendRefreshFlag = false;
+                //sendRefreshFlag = false;
             }
 
         });
-
-
-        final InputMethodManager keyboard = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-
-
 
         editComment.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -450,6 +445,7 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
         }
 
 
+        //감정표현 버튼을 누르면 감정표현 아이콘 과 휴지통이 나온다
         btnLike.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -495,7 +491,6 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
                                 popupWindow.dismiss();
                                 clickLike();    //감정 표현 아이콘 셋팅, 좋아요  + 1
                                 //좋아요  + 셋팅
-
                                 registryEmotionRequest(contentId, 0, position);
 
                             }
@@ -1748,6 +1743,30 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    public void emotionPushRequest() {
+
+        /*
+        PushVO push = new PushVO();
+        //FingerpushDao fingerpushDao = new FingerpushDao();
+
+        push.setCallUrl("https://www.fingerpush.com/rest/sts/v1/setSTSpush.jsp");
+        push.setAppKey("883K0QEC2NPRO1BAPPPND44N61OYQXYL");                     // 발급받은 Appkey
+        push.setAppSecret("jc5tQelzEySbTzocniKwAiS7LjwVGOxH");                 // 발급받은 AppSecret
+        push.setCustomerKey("qsWBbNpFVOEx");
+
+        push.setIdentity(userId);
+        push.setMsg("당신의 이야기를 좋아합니다");
+
+*/
+
+        String url = "https://www.fingerpush.com/rest/sts/v1/setSTSpush.jsp";
+
+        //List <Ba
+
+
+
+    }
+
     //감정표현 등록 리퀘스트
     public void registryEmotionRequest(final String contentId, final int likeType, final int position) {
 
@@ -1785,6 +1804,10 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
                                 likeIntent.putExtra("LIKE_COUNT", likeCount);
 
                                 setResult(RESULT_MODIFY_CONTENT_SUMMARY, likeIntent);
+
+                                emotionPushRequest();
+
+
 
                             }
 
