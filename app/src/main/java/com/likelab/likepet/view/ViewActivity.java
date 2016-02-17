@@ -45,10 +45,13 @@ import android.widget.Toast;
 import com.alexbbb.uploadservice.MultipartUploadRequest;
 import com.alexbbb.uploadservice.UploadServiceBroadcastReceiver;
 import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
+import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.exoplayer.AspectRatioFrameLayout;
@@ -61,6 +64,7 @@ import com.google.android.exoplayer.metadata.TxxxMetadata;
 import com.google.android.exoplayer.util.Util;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.koushikdutta.async.http.BasicNameValuePair;
 import com.koushikdutta.ion.Ion;
 import com.likelab.likepet.CircleTransform;
 import com.likelab.likepet.R;
@@ -83,16 +87,26 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
@@ -244,18 +258,6 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
         //컨텐츠 읽음 카운트를 1개 증가 시킨다.
         readContentsRequest(contentId);
 
-        //베스트 코멘트를 호출
-        //리퀘스트가 완료되면 전체 댓글들이 호출된다.
-        loadBestCommentRequest(contentId);
-
-        Log.d("contentId", contentId);
-
-
-        //감정표현 리퀘스트 요청
-        //로그인이 되어 있는 상태에서만 콘텐츠에 대한 감정 표현 유무가 표시된다.
-        //if (GlobalSharedPreference.getAppPreferences(ViewActivity.this, "login").equals("login")) {
-            contentEmotionUserListRequest(contentId);
-       // }
 
 
         //페이지 더 불러오기 표시 listview footer
@@ -294,21 +296,6 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
 
         });
 
-        editComment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                if (GlobalSharedPreference.getAppPreferences(ViewActivity.this, "login").equals("login")) {
-
-                } else {
-                    InputMethodManager imm= (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(editComment.getWindowToken(), 0);
-                    editComment.clearFocus();
-
-                    loginPopupRequest(v);
-                }
-            }
-        });
 
         contentsListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
@@ -316,96 +303,92 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
 
                 final int position = tempPosition - 1;
 
-                if (GlobalSharedPreference.getAppPreferences(ViewActivity.this, "login").equals("login")) {
 
-                    final PopupWindow popupWindow = new PopupWindow();
-                    LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                    final View popupView;
+                final PopupWindow popupWindow = new PopupWindow();
+                LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                final View popupView;
+
+                overlay.setVisibility(View.VISIBLE);
+
+                RelativeLayout deleteConfirmContainer = null;
+                RelativeLayout deleteCancelContainer = null;
+
+                RelativeLayout reportConfirmContainer = null;
+                RelativeLayout reportCancelContainer = null;
+
+                //나의 댓글일 경우, 삭제하기 기능
+                if (contentsArrayList.get(position).userId.equals(GlobalSharedPreference.getAppPreferences(ViewActivity.this, "userId"))) {
+                    popupView = inflater.inflate(R.layout.comment_delete_popup_window, null);
+
+                    deleteConfirmContainer = (RelativeLayout) popupView.findViewById(R.id.comment_delete_confirm_container);
+                    deleteCancelContainer = (RelativeLayout) popupView.findViewById(R.id.comment_delete_cancel_container);
+
+
+                    deleteConfirmContainer.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            deleteCommentRequest(contentsArrayList.get(position).contentId, contentsArrayList.get(position).commentId, position);
+                            popupWindow.dismiss();
+                        }
+                    });
+
+                    deleteCancelContainer.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            popupWindow.dismiss();
+                        }
+                    });
+
+                    popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+                        @Override
+                        public void onDismiss() {
+                            overlay.setVisibility(View.INVISIBLE);
+                        }
+                    });
+
+                    //상대방 댓글일 경우 신고하기
+                } else {
+                    popupView = inflater.inflate(R.layout.comment_report_popup_window, null);
+
+                    reportConfirmContainer = (RelativeLayout) popupView.findViewById(R.id.comment_report_confirm_container);
+                    reportCancelContainer = (RelativeLayout) popupView.findViewById(R.id.comment_report_cancel_container);
 
                     overlay.setVisibility(View.VISIBLE);
 
-                    RelativeLayout deleteConfirmContainer = null;
-                    RelativeLayout deleteCancelContainer = null;
+                    reportConfirmContainer.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
 
-                    RelativeLayout reportConfirmContainer = null;
-                    RelativeLayout reportCancelContainer = null;
+                            reportCommentRequest(contentsArrayList.get(position).contentId, contentsArrayList.get(position).commentId);
+                            popupWindow.dismiss();
+                        }
+                    });
 
-                    //나의 댓글일 경우, 삭제하기 기능
-                    if (contentsArrayList.get(position).userId.equals(GlobalSharedPreference.getAppPreferences(ViewActivity.this, "userId"))) {
-                        popupView = inflater.inflate(R.layout.comment_delete_popup_window, null);
+                    reportCancelContainer.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            popupWindow.dismiss();
+                        }
+                    });
 
-                        deleteConfirmContainer = (RelativeLayout) popupView.findViewById(R.id.comment_delete_confirm_container);
-                        deleteCancelContainer = (RelativeLayout) popupView.findViewById(R.id.comment_delete_cancel_container);
-
-
-                        deleteConfirmContainer.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                deleteCommentRequest(contentsArrayList.get(position).contentId, contentsArrayList.get(position).commentId, position);
-                                popupWindow.dismiss();
-                            }
-                        });
-
-                        deleteCancelContainer.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                popupWindow.dismiss();
-                            }
-                        });
-
-                        popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
-                            @Override
-                            public void onDismiss() {
-                                overlay.setVisibility(View.INVISIBLE);
-                            }
-                        });
-
-                        //상대방 댓글일 경우 신고하기
-                    } else {
-                        popupView = inflater.inflate(R.layout.comment_report_popup_window, null);
-
-                        reportConfirmContainer = (RelativeLayout) popupView.findViewById(R.id.comment_report_confirm_container);
-                        reportCancelContainer = (RelativeLayout) popupView.findViewById(R.id.comment_report_cancel_container);
-
-                        overlay.setVisibility(View.VISIBLE);
-
-                        reportConfirmContainer.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-
-                                reportCommentRequest(contentsArrayList.get(position).contentId, contentsArrayList.get(position).commentId);
-                                popupWindow.dismiss();
-                            }
-                        });
-
-                        reportCancelContainer.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                popupWindow.dismiss();
-                            }
-                        });
-
-                        popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
-                            @Override
-                            public void onDismiss() {
-                                overlay.setVisibility(View.INVISIBLE);
-                            }
-                        });
-                    }
-
-                    popupWindow.setContentView(popupView);
-                    popupWindow.setWindowLayoutMode(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                    popupWindow.setTouchable(true);
-                    popupWindow.setFocusable(true);
-                    popupWindow.setOutsideTouchable(true);
-                    popupWindow.setBackgroundDrawable(new BitmapDrawable());
-
-                    //팝업 윈도우 위치 조정
-                    popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
-
-                } else {
-                    loginPopupRequest(view);
+                    popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+                        @Override
+                        public void onDismiss() {
+                            overlay.setVisibility(View.INVISIBLE);
+                        }
+                    });
                 }
+
+                popupWindow.setContentView(popupView);
+                popupWindow.setWindowLayoutMode(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                popupWindow.setTouchable(true);
+                popupWindow.setFocusable(true);
+                popupWindow.setOutsideTouchable(true);
+                popupWindow.setBackgroundDrawable(new BitmapDrawable());
+
+                //팝업 윈도우 위치 조정
+                popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+
 
                 return false;
             }
@@ -424,7 +407,7 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
         });
 
         //이미지 및 gif 컨텐츠를 클릭하면 키보드를 감춘다
-        if(mContentType == 1 || mContentType == 3) {
+        if (mContentType == 1 || mContentType == 3) {
 
             imgMainContents.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -450,97 +433,94 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onClick(View v) {
 
-                if (GlobalSharedPreference.getAppPreferences(ViewActivity.this, "login").equals("login")) {
 
-                    final PopupWindow popupWindow = new PopupWindow(v);
-                    LayoutInflater inflater = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                    View popupView;
+                final PopupWindow popupWindow = new PopupWindow(v);
+                LayoutInflater inflater = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                View popupView;
 
-                    if (likeFlag == 0) {
-                        popupView = inflater.inflate(R.layout.like_btn_popup_window_layout, null);
-                    } else {
-                        popupView = inflater.inflate(R.layout.like_cancel_btn_popup_window, null);
-                    }
-
-                    popupWindow.setContentView(popupView);
-                    popupWindow.setWindowLayoutMode(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                    popupWindow.setTouchable(true);
-                    popupWindow.setFocusable(true);
-                    popupWindow.setOutsideTouchable(true);
-                    popupWindow.setBackgroundDrawable(new BitmapDrawable());
-
-                    int[] location = new int[2];
-                    v.getLocationOnScreen(location);
-                    //팝업 윈도우 위치 조정
-                    popupWindow.showAtLocation(v, Gravity.NO_GRAVITY, location[0], location[1] - popupWindow.getHeight() - 200);
-
-                    ImageButton btn_like_1 = (ImageButton) popupView.findViewById(R.id.btn_like_1);
-                    ImageButton btn_like_2 = (ImageButton) popupView.findViewById(R.id.btn_like_2);
-                    ImageButton btn_like_3 = (ImageButton) popupView.findViewById(R.id.btn_like_3);
-                    ImageButton btn_like_4 = (ImageButton) popupView.findViewById(R.id.btn_like_4);
-
-                    ImageButton btn_cancel_like = (ImageButton) popupView.findViewById(R.id.btn_like_cancel);
-
-
-                    if (likeFlag == 0) {
-
-                        //좋아요 캐릭터를 클릭하면 좋아요 버튼이 빨간색으로 바뀐다.
-                        btn_like_1.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                popupWindow.dismiss();
-                                clickLike();    //감정 표현 아이콘 셋팅, 좋아요  + 1
-                                //좋아요  + 셋팅
-                                registryEmotionRequest(contentId, 0, position);
-
-                            }
-                        });
-                        btn_like_2.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                popupWindow.dismiss();
-                                clickLike();
-                                registryEmotionRequest(contentId, 1, position);
-
-                            }
-                        });
-                        btn_like_3.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                popupWindow.dismiss();
-                                clickLike();
-                                registryEmotionRequest(contentId, 2, position);
-
-                            }
-                        });
-                        btn_like_4.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                popupWindow.dismiss();
-                                clickLike();
-                                registryEmotionRequest(contentId, 3, position);
-
-                            }
-                        });
-                    } else {
-                        btn_cancel_like.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                popupWindow.dismiss();
-
-                                likeFlag = 0;
-                                btnLike.setImageResource(R.drawable.mypage_btn_bottom_like_n);
-                                numberOfLike = numberOfLike - 1;
-                                txtNumberOfLike.setText(Integer.toString(numberOfLike));
-                                deleteEmotionRequest(contentId, position);
-
-                            }
-                        });
-                    }
-
+                if (likeFlag == 0) {
+                    popupView = inflater.inflate(R.layout.like_btn_popup_window_layout, null);
                 } else {
-                    loginPopupRequest(v);
+                    popupView = inflater.inflate(R.layout.like_cancel_btn_popup_window, null);
                 }
+
+                popupWindow.setContentView(popupView);
+                popupWindow.setWindowLayoutMode(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                popupWindow.setTouchable(true);
+                popupWindow.setFocusable(true);
+                popupWindow.setOutsideTouchable(true);
+                popupWindow.setBackgroundDrawable(new BitmapDrawable());
+
+                int[] location = new int[2];
+                v.getLocationOnScreen(location);
+                //팝업 윈도우 위치 조정
+                popupWindow.showAtLocation(v, Gravity.NO_GRAVITY, location[0], location[1] - popupWindow.getHeight() - 200);
+
+                ImageButton btn_like_1 = (ImageButton) popupView.findViewById(R.id.btn_like_1);
+                ImageButton btn_like_2 = (ImageButton) popupView.findViewById(R.id.btn_like_2);
+                ImageButton btn_like_3 = (ImageButton) popupView.findViewById(R.id.btn_like_3);
+                ImageButton btn_like_4 = (ImageButton) popupView.findViewById(R.id.btn_like_4);
+
+                ImageButton btn_cancel_like = (ImageButton) popupView.findViewById(R.id.btn_like_cancel);
+
+
+                if (likeFlag == 0) {
+
+                    //좋아요 캐릭터를 클릭하면 좋아요 버튼이 빨간색으로 바뀐다.
+                    btn_like_1.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            popupWindow.dismiss();
+                            clickLike();    //감정 표현 아이콘 셋팅, 좋아요  + 1
+                            //좋아요  + 셋팅
+                            registryEmotionRequest(contentId, 0, position);
+
+                        }
+                    });
+                    btn_like_2.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            popupWindow.dismiss();
+                            clickLike();
+                            registryEmotionRequest(contentId, 1, position);
+
+                        }
+                    });
+                    btn_like_3.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            popupWindow.dismiss();
+                            clickLike();
+                            registryEmotionRequest(contentId, 2, position);
+
+                        }
+                    });
+                    btn_like_4.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            popupWindow.dismiss();
+                            clickLike();
+                            registryEmotionRequest(contentId, 3, position);
+
+                        }
+                    });
+                } else {
+                    btn_cancel_like.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            popupWindow.dismiss();
+
+                            likeFlag = 0;
+                            btnLike.setImageResource(R.drawable.mypage_btn_bottom_like_n);
+                            numberOfLike = numberOfLike - 1;
+                            txtNumberOfLike.setText(Integer.toString(numberOfLike));
+                            deleteEmotionRequest(contentId, position);
+
+                        }
+                    });
+                }
+
+
             }
         });
 
@@ -589,14 +569,14 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
                 String action = intent.getAction();
                 if (action.equals(Intent.ACTION_SCREEN_OFF)) {
                     screenOff = true;
-                    if(player != null && player.getPlayerControl().isPlaying()) {
+                    if (player != null && player.getPlayerControl().isPlaying()) {
                         player.getPlayerControl().pause();
                         mCurrentPosition = player.getCurrentPosition();
                     }
 
                 } else if (action.equals(Intent.ACTION_SCREEN_ON)) {
                     screenOff = false;
-                } else if(action.equals(Intent.ACTION_USER_PRESENT)) {
+                } else if (action.equals(Intent.ACTION_USER_PRESENT)) {
                     onResume();
                 }
             }
@@ -689,7 +669,7 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
         editComment.setOnFocusChangeListener(this);
         btnMoreLike.setOnClickListener(this);
 
-        for(int i=0; i<5; i++) {
+        for (int i = 0; i < 5; i++) {
             imgLikeUser[i].setOnClickListener(this);
         }
 
@@ -719,7 +699,6 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
         String clan = intent.getExtras().getString("CLAN");
 
 
-
         //감정표현 등록 유무 확인 후 하트 색깔을 다르게 표시한다
         likeFlag = Integer.parseInt(iLikeThis);
         if (likeFlag == 0) {
@@ -733,17 +712,17 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
 
         //게시글 유저의 프로필 이미지 설정
         //유저가 설정한 이미지가 없는 경우 종족에 따른 기본 이미지 셋팅팅
-        if(clan.equals("0")) {
+        if (clan.equals("0")) {
             Picasso.with(this)
                     .load(profileImageUrl).placeholder(R.drawable.feed_profile_noimage_01)
                     .resize(200, 200)
                     .transform(new CircleTransform()).into(imgUserProfile);
-        } else if(clan.equals("1")) {
+        } else if (clan.equals("1")) {
             Picasso.with(this)
                     .load(profileImageUrl).placeholder(R.drawable.feed_profile_noimage_02)
                     .resize(200, 200)
                     .transform(new CircleTransform()).into(imgUserProfile);
-        } else if(clan.equals("2")) {
+        } else if (clan.equals("2")) {
             Picasso.with(this)
                     .load(profileImageUrl).placeholder(R.drawable.feed_profile_noimage_03)
                     .resize(200, 200)
@@ -851,7 +830,7 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
 
 
             String isCommentPressed = intent.getStringExtra("IS_COMMENT_PRESSED");
-            if(isCommentPressed.equals("ok") && GlobalSharedPreference.getAppPreferences(ViewActivity.this, "login").equals("login")) {
+            if (isCommentPressed.equals("ok")) {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -938,21 +917,19 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
 
                 //edit text를 터치했을때 로그인 상태가 아니면 회원 가입 팝업을 띄운다.
                 case R.id.view_edit_comment: {
-                    if (GlobalSharedPreference.getAppPreferences(ViewActivity.this, "login").equals("login")) {
-                        contentsListView.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (contentsListView.getLastVisiblePosition() == contentsListView.getCount()) {
-                                    contentsListView.smoothScrollToPosition(contentsListView.getCount());
-                                }
-                                contentsListView.smoothScrollToPosition(contentsListView.getCount());
 
+                    contentsListView.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (contentsListView.getLastVisiblePosition() == contentsListView.getCount()) {
+                                contentsListView.smoothScrollToPosition(contentsListView.getCount());
                             }
-                        }, 100);
-                        break;
-                    } else {
-                        loginPopupRequest(v);
-                    }
+                            contentsListView.smoothScrollToPosition(contentsListView.getCount());
+
+                        }
+                    }, 100);
+                    break;
+
                 }
             }
         }
@@ -1074,13 +1051,10 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
                         @Override
                         public void onClick(View v) {
 
-                            if (GlobalSharedPreference.getAppPreferences(ViewActivity.this, "login").equals("login")) {
-                                bookmarkContentsRequest(contentId);
-                                popupWindow.dismiss();
-                                overlay.setVisibility(View.INVISIBLE);
-                            } else {
-                                loginPopupRequest(v);
-                            }
+                            bookmarkContentsRequest(contentId);
+                            popupWindow.dismiss();
+                            overlay.setVisibility(View.INVISIBLE);
+
                         }
                     });
 
@@ -1089,13 +1063,10 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
                         @Override
                         public void onClick(View v) {
 
-                            if (GlobalSharedPreference.getAppPreferences(ViewActivity.this, "login").equals("login")) {
-                                reportContentRequest(contentId);
-                                popupWindow.dismiss();
-                                overlay.setVisibility(View.INVISIBLE);
-                            } else {
-                                loginPopupRequest(v);
-                            }
+                            reportContentRequest(contentId);
+                            popupWindow.dismiss();
+                            overlay.setVisibility(View.INVISIBLE);
+
                         }
                     });
 
@@ -1104,13 +1075,10 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
                     share.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            if (GlobalSharedPreference.getAppPreferences(ViewActivity.this, "login").equals("login")) {
-                                shareContents(ViewActivity.this, "Here comes LikePet http://www.likelab.co.kr/share.php");
-                                overlay.setVisibility(View.INVISIBLE);
-                                popupWindow.dismiss();
-                            } else {
-                                loginPopupRequest(v);
-                            }
+                            shareContents(ViewActivity.this, "Here comes LikePet http://www.likelab.co.kr/share.php");
+                            overlay.setVisibility(View.INVISIBLE);
+                            popupWindow.dismiss();
+
                         }
                     });
                 }
@@ -1121,24 +1089,20 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
 
                 //이미지 댓글을 위한 버튼 이벤트
                 //갤러리를 오픈한 후  정사각형 모양으로 crop 한다
-                if (GlobalSharedPreference.getAppPreferences(ViewActivity.this, "login").equals("login")) {
+                Intent intent = new Intent(
+                        Intent.ACTION_PICK,      // 또는 ACTION_PICK
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                intent.setType("image/*");              // 모든 이미지
+                intent.putExtra("crop", "true");        // Crop기능 활성화\
+                intent.putExtra("aspectX", 1); //이걸 삭제한다
+                intent.putExtra("aspectY", 1); //이걸 삭제한다
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, getTempUri());     // 임시파일 생성
+                intent.putExtra("outputFormat",         // 포맷방식
+                        Bitmap.CompressFormat.JPEG.toString());
 
-                    Intent intent = new Intent(
-                            Intent.ACTION_PICK,      // 또는 ACTION_PICK
-                            MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    intent.setType("image/*");              // 모든 이미지
-                    intent.putExtra("crop", "true");        // Crop기능 활성화\
-                    intent.putExtra("aspectX", 1); //이걸 삭제한다
-                    intent.putExtra("aspectY", 1); //이걸 삭제한다
-                    intent.putExtra(MediaStore.EXTRA_OUTPUT, getTempUri());     // 임시파일 생성
-                    intent.putExtra("outputFormat",         // 포맷방식
-                            Bitmap.CompressFormat.JPEG.toString());
+                startActivityForResult(intent, REQ_CODE_PICK_IMAGE);
 
-                    startActivityForResult(intent, REQ_CODE_PICK_IMAGE);
 
-                } else {
-                    loginPopupRequest(v);
-                }
                 break;
             }
 
@@ -1188,7 +1152,6 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
                     Thread thread = new Thread(runnable);
                     thread.start();
                     selectedImage = null;
-
 
 
                     //사진만 있을 경우
@@ -1365,17 +1328,365 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    //댓글 좋아요 이벤트
+    //감정표현 좋아요 이벤트
     private void clickLike() {
         likeFlag = 1;
         btnLike.setImageResource(R.drawable.mypage_btn_bottom_like_s);
         numberOfLike = numberOfLike + 1;
         txtNumberOfLike.setText(Integer.toString(numberOfLike));
+
+        Toast.makeText(getApplicationContext(), "좋아", Toast.LENGTH_SHORT).show();
+
+        final String urlString = "https://www.fingerpush.com/rest/sts/v1/setSTSpush.jsp";
+
+
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+
+                    try {
+                        URL url = new URL(urlString);
+
+                        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                        connection.setRequestMethod("POST");
+                        connection.setDoInput(true);
+                        connection.setDoOutput(true);
+
+                        List<BasicNameValuePair> nameValuePairs = new ArrayList<BasicNameValuePair>(2);
+                        nameValuePairs.add(new BasicNameValuePair("appkey", "883K0QEC2NPRO1BAPPPND44N61OYQXYL"));
+                        nameValuePairs.add(new BasicNameValuePair("appsecret", "jc5tQelzEySbTzocniKwAiS7LjwVGOxH"));
+                        nameValuePairs.add(new BasicNameValuePair("customerkey", "qsWBbNpFVOEx"));
+                        nameValuePairs.add(new BasicNameValuePair("identity", userId));
+                        nameValuePairs.add(new BasicNameValuePair("msg", "당신의 이야기를 좋아합니다"));
+
+                        OutputStream outputStream = connection.getOutputStream();
+                        BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
+                        bufferedWriter.write(getURLQuery(nameValuePairs));
+                        bufferedWriter.flush();
+                        bufferedWriter.close();
+                        outputStream.close();
+
+                        connection.connect();
+
+
+                        StringBuilder responseStringBuilder = new StringBuilder();
+                        if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                            for (; ; ) {
+                                String stringLine = bufferedReader.readLine();
+                                if (stringLine == null) break;
+                                responseStringBuilder.append(stringLine + '\n');
+                            }
+                            bufferedReader.close();
+                        }
+
+                        connection.disconnect();
+
+                    }catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            thread.start();
+
+
+
+    }
+
+    private String getURLQuery(List<BasicNameValuePair> params){
+        StringBuilder stringBuilder = new StringBuilder();
+        boolean first = true;
+
+        for (BasicNameValuePair pair : params)
+        {
+            if (first)
+                first = false;
+            else
+                stringBuilder.append("&");
+
+            try {
+                stringBuilder.append(URLEncoder.encode(pair.getName(), "UTF-8"));
+                stringBuilder.append("=");
+                stringBuilder.append(URLEncoder.encode(pair.getValue(), "UTF-8"));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return stringBuilder.toString();
+    }
+
+    public void snsLoginRequest(final String email, final String id) {
+
+        String endPoint = "/login/friendly/" + email;
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, GlobalUrl.BASE_URL + endPoint,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        int responseCode=0;
+
+                        try {
+                            responseCode = response.getInt("code");
+
+                        }
+                        catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        if (responseCode == 200) {
+                            loadUserInformation(email);
+                            GlobalSharedPreference.setAppPreferences(ViewActivity.this, "email", email);
+                            GlobalSharedPreference.setAppPreferences(ViewActivity.this, "accountId", id);
+                            GlobalSharedPreference.setAppPreferences(ViewActivity.this, "loginType", "sns");
+                        }
+                    }
+
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        //Toast.makeText(ViewActivity.this, error.toString(), Toast.LENGTH_LONG).show();
+                        System.out.println(error.toString());
+                    }
+
+
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("accountId", id);
+
+                return params;
+
+            }
+
+            @Override
+            protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
+
+                Map<String, String> responseHeaders = response.headers;
+                String sid = responseHeaders.get("sessionID");
+
+                GlobalSharedPreference.setAppPreferences(ViewActivity.this, "sid", sid);
+
+                try {
+                    String jsonString = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+                    return Response.success(new JSONObject(jsonString),HttpHeaderParser.parseCacheHeaders(response));
+                } catch (UnsupportedEncodingException e) {
+                    return Response.error(new ParseError(e));
+                } catch (JSONException je) {
+                    return Response.error(new ParseError(je));
+                }
+
+            }
+
+        };
+        // Add the request to the RequestQueue.
+        queue.add(jsonObjectRequest);
+
+    }
+
+    public void emailLoginRequest(final String email, final String password) {
+
+        String endPoint = "/login/" + email;
+
+        JSONObject obj = new JSONObject();
+
+        try {
+            obj.put("password", password);
+            obj.put("contentApi", true);
+        } catch(JSONException e) {
+            e.printStackTrace();
+        }
+
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, GlobalUrl.BASE_URL + endPoint, obj,
+                new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                        int responseCode=0;
+
+                        try {
+                            responseCode = response.getInt("code");
+                            Toast.makeText(ViewActivity.this, Integer.toString(responseCode), Toast.LENGTH_LONG);
+
+                            if (responseCode == 200) {
+
+                                GlobalSharedPreference.setAppPreferences(ViewActivity.this, "email", email);
+                                GlobalSharedPreference.setAppPreferences(ViewActivity.this, "password", password);
+                                GlobalSharedPreference.setAppPreferences(ViewActivity.this, "loginType", "email");
+                                loadUserInformation(email);
+
+
+                            } else if(responseCode == 401) {
+
+
+                            } else if(responseCode == 404) {
+
+                            }
+
+                        }
+                        catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        //Toast.makeText(JoinMemberBeginActivity.this, error.toString(), Toast.LENGTH_LONG).show();
+                    }
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
+
+                return params;
+
+            }
+
+            @Override
+            protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
+
+                Map<String, String> responseHeaders = response.headers;
+                String sid = responseHeaders.get("sessionId");
+
+                if(sid != null) {
+                    Log.d("SID", sid);
+                    GlobalSharedPreference.setAppPreferences(ViewActivity.this, "sid", sid);
+
+                }
+                try {
+                    String jsonString = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+                    return Response.success(new JSONObject(jsonString),HttpHeaderParser.parseCacheHeaders(response));
+                } catch (UnsupportedEncodingException e) {
+                    return Response.error(new ParseError(e));
+                } catch (JSONException je) {
+                    return Response.error(new ParseError(je));
+                }
+
+            }
+
+        };
+        queue.add(jsonObjectRequest);
     }
 
 
+    public void loadUserInformation(String email) {
+
+        String endPoint = "/users/user/" + email;
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, GlobalUrl.BASE_URL + endPoint,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        int responseCode=0;
+
+                        try {
+                            responseCode = response.getInt("code");
+
+                            if (responseCode == 200) {
+
+                                JSONObject jsonObject = response.getJSONObject("item");
+
+                                String userId = jsonObject.getString("userId");
+                                String name = jsonObject.getString("name");
+                                String email = jsonObject.getString("email");
+                                String gender = jsonObject.getString("sex");
+                                String clan = jsonObject.getString("clan");
+                                String status = jsonObject.getString("status");
+                                String parentUserId = jsonObject.getString("parentUserId");
+                                String profileImageUrl = jsonObject.getString("profileImageUrl");
+                                String national = jsonObject.getString("national");
+                                String ownerType = jsonObject.getString("ownerType");
+                                String birthday = jsonObject.getString("birthday");
+                                String registryDate = jsonObject.getString("registryDate");
+                                String modifyDate = jsonObject.getString("modifyDate");
+                                String termServiceDate = jsonObject.getString("termServiceDate");
+                                String privacyTermDate = jsonObject.getString("privacyTermDate");
+                                String withdrawReqDate = jsonObject.getString("withdrawReqDate");
+                                String withdrawDate = jsonObject.getString("withdrawDate");
+                                String mailAuthConfirmDate = jsonObject.getString("mailAuthConfirmDate");
+                                String lastLoginDate = jsonObject.getString("lastLoginDate");
+                                String mailAuth = jsonObject.getString("mailAuth");
+
+                                //로그인을 하면 서버로부터 사용자의 정보를 받아와 기기에 저장한다.
+                                GlobalSharedPreference.setAppPreferences(ViewActivity.this, "userId", userId);
+                                GlobalSharedPreference.setAppPreferences(ViewActivity.this, "name", name);
+                                GlobalSharedPreference.setAppPreferences(ViewActivity.this, "email", email);
+                                GlobalSharedPreference.setAppPreferences(ViewActivity.this, "gender", gender);
+                                GlobalSharedPreference.setAppPreferences(ViewActivity.this, "clan", clan);
+                                GlobalSharedPreference.setAppPreferences(ViewActivity.this, "status", status);
+                                GlobalSharedPreference.setAppPreferences(ViewActivity.this, "parentUserId", parentUserId);
+                                GlobalSharedPreference.setAppPreferences(ViewActivity.this, "profileImageUrl", profileImageUrl);
+                                GlobalSharedPreference.setAppPreferences(ViewActivity.this, "national", national);
+                                GlobalSharedPreference.setAppPreferences(ViewActivity.this, "ownerType", ownerType);
+                                GlobalSharedPreference.setAppPreferences(ViewActivity.this, "birthday", birthday);
+                                GlobalSharedPreference.setAppPreferences(ViewActivity.this, "registryDate", registryDate);
+                                GlobalSharedPreference.setAppPreferences(ViewActivity.this, "modifyDate", modifyDate);
+                                GlobalSharedPreference.setAppPreferences(ViewActivity.this, "termServiceDate", termServiceDate);
+                                GlobalSharedPreference.setAppPreferences(ViewActivity.this, "privacyTermDate", privacyTermDate);
+                                GlobalSharedPreference.setAppPreferences(ViewActivity.this, "withdrawReqDate", withdrawReqDate);
+                                GlobalSharedPreference.setAppPreferences(ViewActivity.this, "withdrawDate", withdrawDate);
+                                GlobalSharedPreference.setAppPreferences(ViewActivity.this, "mailAuthConfirmDate", mailAuthConfirmDate);
+                                GlobalSharedPreference.setAppPreferences(ViewActivity.this, "lastLoginDate", lastLoginDate);
+                                GlobalSharedPreference.setAppPreferences(ViewActivity.this, "mailAuth", mailAuth);
+                                GlobalSharedPreference.setAppPreferences(ViewActivity.this, "useNotice", "1");
+                                GlobalSharedPreference.setAppPreferences(ViewActivity.this, "useNoticeAddedFriend", "1");
+                                GlobalSharedPreference.setAppPreferences(ViewActivity.this, "useNoticeReply", "1");
+                                GlobalSharedPreference.setAppPreferences(ViewActivity.this, "useNoticeSystem", "1");
+
+                                GlobalSharedPreference.setAppPreferences(ViewActivity.this, "login", "login");
+
+                                adapter.notifyDataSetInvalidated();
+                                contentsArrayList.clear();
+
+                                currentPage = 0;
+                                adapterFlag = 0;
+
+                                readContentsRequest(contentId);
+
+                            }
+
+                        }
+                        catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        //Toast.makeText(ViewActivity.this, error.toString(), Toast.LENGTH_LONG).show();
+                        System.out.println(error.toString());
+                    }
+
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                String sid = GlobalSharedPreference.getAppPreferences(ViewActivity.this, "sid");
+                params.put("sessionId", sid);
+
+                return params;
+
+            }
+
+        };
+        // Add the request to the RequestQueue.
+        queue.add(jsonObjectRequest);
+
+    }
+
     //컨텐츠 읽음 리퀘스트
-    public void readContentsRequest(String contentId) {
+    public void readContentsRequest(final String contentId) {
 
         String endPoint = "/contents/" + contentId + "/read";
 
@@ -1394,8 +1705,30 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
                             //성공을 하더라도 클라이언트에서 별다른 처리가 필요 없다
                             if (responseCode == 200) {
 
+                                //베스트 코멘트를 호출
+                                //리퀘스트가 완료되면 전체 댓글들이 호출된다.
+                                loadBestCommentRequest(contentId);
+
+                                Log.d("contentId", contentId);
+
+                                contentEmotionUserListRequest(contentId);
+
                             } else if (responseCode == 401) {
 
+                                if(GlobalSharedPreference.getAppPreferences(ViewActivity.this, "loginType").equals("sns")) {
+
+                                    String accountId = GlobalSharedPreference.getAppPreferences(ViewActivity.this, "accountId");
+                                    String email = GlobalSharedPreference.getAppPreferences(ViewActivity.this, "email");
+
+                                    snsLoginRequest(email, accountId);
+
+                                } else if(GlobalSharedPreference.getAppPreferences(ViewActivity.this, "loginType").equals("email")) {
+
+                                    String password = GlobalSharedPreference.getAppPreferences(ViewActivity.this, "password");
+                                    String email = GlobalSharedPreference.getAppPreferences(ViewActivity.this, "email");
+
+                                    emailLoginRequest(email, password);
+                                }
 
                             } else if (responseCode == 500) {
 
@@ -1417,10 +1750,10 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
                 if (GlobalSharedPreference.getAppPreferences(ViewActivity.this, "login").equals("login")) {
-                    params.put("sessionId", sid);
+                    params.put("sessionId", GlobalSharedPreference.getAppPreferences(getApplicationContext(), "sid"));
                 }
                 params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
-                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc + ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 
@@ -1480,10 +1813,10 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
                 if (GlobalSharedPreference.getAppPreferences(ViewActivity.this, "login").equals("login")) {
-                    params.put("sessionId", sid);
+                    params.put("sessionId", GlobalSharedPreference.getAppPreferences(getApplicationContext(), "sid"));
                 }
                 params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
-                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc + ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 
@@ -1539,10 +1872,10 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
                 if (GlobalSharedPreference.getAppPreferences(ViewActivity.this, "login").equals("login"))
-                    params.put("sessionId", sid);
+                    params.put("sessionId", GlobalSharedPreference.getAppPreferences(getApplicationContext(), "sid"));
 
                 params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
-                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc + ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 
@@ -1615,7 +1948,7 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("sessionId", GlobalSharedPreference.getAppPreferences(ViewActivity.this, "sid"));
                 params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
-                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc + ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 
@@ -1667,10 +2000,10 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
                 if (GlobalSharedPreference.getAppPreferences(ViewActivity.this, "login").equals("login"))
-                    params.put("sessionId", sid);
+                    params.put("sessionId", GlobalSharedPreference.getAppPreferences(getApplicationContext(), "sid"));
 
                 params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
-                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc + ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 
@@ -1731,7 +2064,7 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
                     params.put("sessionId", GlobalSharedPreference.getAppPreferences(ViewActivity.this, "sid"));
 
                 params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
-                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc + ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 
@@ -1762,7 +2095,6 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
         String url = "https://www.fingerpush.com/rest/sts/v1/setSTSpush.jsp";
 
         //List <Ba
-
 
 
     }
@@ -1808,7 +2140,6 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
                                 emotionPushRequest();
 
 
-
                             }
 
                         } catch (JSONException e) {
@@ -1832,7 +2163,7 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
                     params.put("sessionId", GlobalSharedPreference.getAppPreferences(ViewActivity.this, "sid"));
 
                 params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
-                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc + ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 
@@ -1872,7 +2203,7 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
 
                                     String myFriend;
 
-                                    if(GlobalSharedPreference.getAppPreferences(ViewActivity.this, "login").equals("login")) {
+                                    if (GlobalSharedPreference.getAppPreferences(ViewActivity.this, "login").equals("login")) {
                                         myFriend = users.getJSONObject(i).getString("myFriend");
                                     } else {
                                         myFriend = "0";
@@ -1908,7 +2239,7 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
                     params.put("sessionId", GlobalSharedPreference.getAppPreferences(ViewActivity.this, "sid"));
 
                 params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
-                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc + ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 
@@ -2043,7 +2374,7 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
                     params.put("sessionId", GlobalSharedPreference.getAppPreferences(ViewActivity.this, "sid"));
 
                 params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
-                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc + ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 
@@ -2146,7 +2477,7 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
                     params.put("sessionId", GlobalSharedPreference.getAppPreferences(ViewActivity.this, "sid"));
 
                 params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
-                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
+                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc + ";" + GlobalVariable.countryCode + ")");
 
                 return params;
 
@@ -2205,9 +2536,9 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
                 new MultipartUploadRequest(ViewActivity.this, "custom-upload-id", url);
 
 
-        request.addHeader("sessionId", sid);
+        request.addHeader("sessionId", GlobalSharedPreference.getAppPreferences(getApplicationContext(), "sid"));
         request.addHeader("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
-                GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
+                GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc + ";" + GlobalVariable.countryCode + ")");
 
         request.addParameter("descriptions", comment);
         request.setCustomUserAgent("UploadServiceDemo/1.0");
@@ -2236,9 +2567,9 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
                 new MultipartUploadRequest(ViewActivity.this, "custom-upload-id", url);
 
         request.addFileToUpload(filePath, "upfile", "temp.jpg", "image/jpeg");
-        request.addHeader("sessionId", sid);
+        request.addHeader("sessionId", GlobalSharedPreference.getAppPreferences(getApplicationContext(), "sid"));
         request.addHeader("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
-                GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
+                GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc + ";" + GlobalVariable.countryCode + ")");
         request.addParameter("descriptions", comment);
         request.setCustomUserAgent("UploadServiceDemo/1.0");
         request.setMaxRetries(1);
@@ -2523,17 +2854,17 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
 
                 //유저의 프로필 이미지를 셋팅한다.
                 //유저가 설정한 프로필 이미지가 없다면 종족에 따른 기본 이미지를 표시한다.
-                if(likeArrayList.get(j).clan.equals("0")) {
+                if (likeArrayList.get(j).clan.equals("0")) {
                     Picasso.with(ViewActivity.this)
                             .load(likeArrayList.get(j).profileImageUrl).placeholder(R.drawable.feed_profile_noimage_01)
                             .resize(90, 90)
                             .transform(new CircleTransform()).into(imgLikeUser[j]);
-                } else if(likeArrayList.get(j).clan.equals("1")) {
+                } else if (likeArrayList.get(j).clan.equals("1")) {
                     Picasso.with(ViewActivity.this)
                             .load(likeArrayList.get(j).profileImageUrl).placeholder(R.drawable.feed_profile_noimage_02)
                             .resize(90, 90)
                             .transform(new CircleTransform()).into(imgLikeUser[j]);
-                } else if(likeArrayList.get(j).clan.equals("2")) {
+                } else if (likeArrayList.get(j).clan.equals("2")) {
                     Picasso.with(ViewActivity.this)
                             .load(likeArrayList.get(j).profileImageUrl).placeholder(R.drawable.feed_profile_noimage_03)
                             .resize(90, 90)
@@ -2696,7 +3027,7 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
                     mCurrentPosition = player.getCurrentPosition();
                 }
             }
-        } else if(mContentType == 3) {
+        } else if (mContentType == 3) {
             gifMainContents.setImageDrawable(null);
         } else {
             imgMainContents.setImageDrawable(null);
@@ -2710,13 +3041,13 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
     protected void onStart() {
         super.onStart();
 
-        if(mContentType == 3) {
+        if (mContentType == 3) {
             Ion.with(this).load(imageURL).intoImageView(gifMainContents);
-        } else if(mContentType == 1) {
+        } else if (mContentType == 1) {
             Picasso.with(this).load(imageURL).into(imgMainContents);
         }
 
-        if(contentsArrayList.size() == 0) {
+        if (contentsArrayList.size() == 0) {
             imgNoComment.setImageResource(R.drawable.view_img_no_comment_image);
         } else {
             imgNoComment.setImageDrawable(null);
@@ -2875,15 +3206,16 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
             if (mContentType == 2) {
                 if (state == TelephonyManager.CALL_STATE_IDLE) {
                     try {
-                        player.seekTo(mCurrentPosition);
-                    }catch (Exception e) {
+                        if(player != null)
+                            player.seekTo(mCurrentPosition);
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                     //mVideoView.start();
                 } else if (state == TelephonyManager.CALL_STATE_RINGING) {
 
                     try {
-                        if (player.getPlayerControl().isPlaying()) {
+                        if (player != null && player.getPlayerControl().isPlaying()) {
                             player.getPlayerControl().pause();
                             mCurrentPosition = player.getCurrentPosition();
 
@@ -2919,7 +3251,8 @@ public class ViewActivity extends AppCompatActivity implements View.OnClickListe
             localTime = dateFormat.format(dateLocalTime);
 
         } catch (ParseException e) {
-            e.printStackTrace();;
+            e.printStackTrace();
+            ;
         }
 
         return localTime;

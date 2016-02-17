@@ -60,7 +60,6 @@ import com.likelab.likepet.global.GlobalVariable;
 import com.likelab.likepet.global.RecycleUtils;
 import com.likelab.likepet.global.RoundedAvatarDrawable;
 import com.likelab.likepet.more.UserProfile;
-import com.likelab.likepet.singIn.JoinMemberBeginActivity;
 import com.likelab.likepet.view.ViewActivity;
 import com.likelab.likepet.volleryCustom.AppController;
 import com.squareup.picasso.Picasso;
@@ -199,29 +198,13 @@ public class MyPageMoment extends Fragment implements CommentBtnClickListener{
                 listViewLoadIndicator.setVisibility(View.GONE);
                 refreshLock = true;
 
-                if (GlobalSharedPreference.getAppPreferences(getActivity(), "login").equals("login")) {
-
-                    currentPage = 0;
-                    adapter.notifyDataSetInvalidated();
-                    contentsArrayList.clear();
-                    adapterFlag = 0;
-                    mypageRequest(currentPage);
-                    myPageSummaryRequest();
-
-                } else {
-                    mSwipeRefresh.setRefreshing(false);
-                    refreshLock = false;
-                }
-            }
-        });
-
-        //회원가입 버튼 이벤트
-        btnJoin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), JoinMemberBeginActivity.class);
-                startActivityForResult(intent, REQ_LOGIN);
-
+                currentPage = 0;
+                adapter.notifyDataSetInvalidated();
+                contentsArrayList.clear();
+                adapterFlag = 0;
+                mypageRequest(currentPage);
+                myPageSummaryRequest();
+                
             }
         });
 
@@ -230,12 +213,9 @@ public class MyPageMoment extends Fragment implements CommentBtnClickListener{
             @Override
             public void onClick(View v) {
 
-                if (GlobalSharedPreference.getAppPreferences(getActivity(), "login").equals("login")) {
-                    Intent intent = new Intent(getActivity(), BookmarkActivity.class);
-                    startActivity(intent);
-                } else {
+                Intent intent = new Intent(getActivity(), BookmarkActivity.class);
+                startActivity(intent);
 
-                }
             }
         });
 
@@ -247,12 +227,11 @@ public class MyPageMoment extends Fragment implements CommentBtnClickListener{
                 String follow = "following";
 
 
-                if(GlobalSharedPreference.getAppPreferences(getActivity(), "login").equals("login")) {
-                    Intent intent = new Intent(getActivity(), FollowingUserListActivity.class);
-                    intent.putExtra("FOLLOW", follow);
-                    intent.putExtra("PAGE", "MY_PAGE");
-                    startActivity(intent);
-                }
+                Intent intent = new Intent(getActivity(), FollowingUserListActivity.class);
+                intent.putExtra("FOLLOW", follow);
+                intent.putExtra("PAGE", "MY_PAGE");
+                startActivity(intent);
+
             }
         });
 
@@ -263,15 +242,12 @@ public class MyPageMoment extends Fragment implements CommentBtnClickListener{
             public void onClick(View v) {
                 String follow = "follower";
 
-                if (GlobalSharedPreference.getAppPreferences(getActivity(), "login").equals("login")) {
-                    Intent intent = new Intent(getActivity(), FollowerUserListActivity.class);
-                    intent.putExtra("FOLLOW", follow);
-                    intent.putExtra("PAGE", "MY_PAGE");
-                    startActivity(intent);
-                }
+                Intent intent = new Intent(getActivity(), FollowerUserListActivity.class);
+                intent.putExtra("FOLLOW", follow);
+                intent.putExtra("PAGE", "MY_PAGE");
+                startActivity(intent);
             }
         });
-
 
 
         //유저의 프로필 설정
@@ -279,12 +255,9 @@ public class MyPageMoment extends Fragment implements CommentBtnClickListener{
             @Override
             public void onClick(View v) {
 
-                if (GlobalSharedPreference.getAppPreferences(getActivity(), "login").equals("login")) {
-                    Intent intent = new Intent(getActivity(), UserProfile.class);
-                    startActivity(intent);
-                } else {
+                Intent intent = new Intent(getActivity(), UserProfile.class);
+                startActivity(intent);
 
-                }
             }
         });
 
@@ -300,25 +273,22 @@ public class MyPageMoment extends Fragment implements CommentBtnClickListener{
 
         //카메라 버튼 클릭시 프로필 이미지 선택 화면으로 전환한다
        btn_camera.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+           @Override
+           public void onClick(View v) {
 
-                if (GlobalSharedPreference.getAppPreferences(getActivity(), "login").equals("login")) {
-                    Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    intent.setType("image/*");              // 모든 이미지
-                    intent.putExtra("crop", "true");        // Crop기능 활성화
-                    intent.putExtra("aspectX", 1);
-                    intent.putExtra("aspectY", 1);
-                    intent.putExtra(MediaStore.EXTRA_OUTPUT, getTempUri());     // 임시파일 생성
-                    intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
+               Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+               intent.setType("image/*");              // 모든 이미지
+               intent.putExtra("crop", "true");        // Crop기능 활성화
+               intent.putExtra("aspectX", 1);
+               intent.putExtra("aspectY", 1);
+               intent.putExtra(MediaStore.EXTRA_OUTPUT, getTempUri());     // 임시파일 생성
+               intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
 
-                    startActivityForResult(intent, REQ_CODE_PICK_IMAGE);
+               startActivityForResult(intent, REQ_CODE_PICK_IMAGE);
 
-                } else {
 
-                }
-            }
-        });
+           }
+       });
 
         adapter.setCommentBtnClickListener(this);
 
@@ -488,58 +458,37 @@ public class MyPageMoment extends Fragment implements CommentBtnClickListener{
 
         //유저가 로그인 상태일때 프로필 이미지를 표시한다.
         //로그 아웃 상태일때는 기본 이미지를 교시한다.
-        if(GlobalSharedPreference.getAppPreferences(getActivity(), "login").equals("login")) {
 
+        String profileImageUrl = GlobalSharedPreference.getAppPreferences(getContext(), "profileImageUrl");
 
-            String profileImageUrl = GlobalSharedPreference.getAppPreferences(getContext(), "profileImageUrl");
-
-            //유저의 프로필 이미지를 셋팅한다.
-            //유저가 설정한 프로필 이미지가 없다면 종족에 따른 기본 이미지를 표시한다.
-            if(clan.equals("0")) {
-                Picasso.with(getContext())
-                        .load(profileImageUrl).placeholder(R.drawable.feed_profile_noimage_01)
-                        .resize(90, 90)
-                        .transform(new CircleTransform()).into(mainProfileImage);
-            } else if(clan.equals("1")) {
-                Picasso.with(getContext())
-                        .load(profileImageUrl).placeholder(R.drawable.feed_profile_noimage_02)
-                        .resize(90, 90)
-                        .transform(new CircleTransform()).into(mainProfileImage);
-            } else if(clan.equals("2")) {
-                Picasso.with(getContext())
-                        .load(profileImageUrl).placeholder(R.drawable.feed_profile_noimage_03)
-                        .resize(90, 90)
-                        .transform(new CircleTransform()).into(mainProfileImage);
-            }
-        } else {
-            mainProfileImage.setImageResource(R.drawable.more_img_profile_human);
+        //유저의 프로필 이미지를 셋팅한다.
+        //유저가 설정한 프로필 이미지가 없다면 종족에 따른 기본 이미지를 표시한다.
+        if (clan.equals("0")) {
+            Picasso.with(getContext())
+                    .load(profileImageUrl).placeholder(R.drawable.feed_profile_noimage_01)
+                    .resize(90, 90)
+                    .transform(new CircleTransform()).into(mainProfileImage);
+        } else if (clan.equals("1")) {
+            Picasso.with(getContext())
+                    .load(profileImageUrl).placeholder(R.drawable.feed_profile_noimage_02)
+                    .resize(90, 90)
+                    .transform(new CircleTransform()).into(mainProfileImage);
+        } else if (clan.equals("2")) {
+            Picasso.with(getContext())
+                    .load(profileImageUrl).placeholder(R.drawable.feed_profile_noimage_03)
+                    .resize(90, 90)
+                    .transform(new CircleTransform()).into(mainProfileImage);
         }
 
         //로그 아웃 상태이면 회원가입 페이지를 노출한다.
         imgJoin = (ImageView)header.findViewById(R.id.mypage_img_join);
 
         //로그인 상태이면 유저의 마이페이지 정보를 노출한다
-        if(GlobalSharedPreference.getAppPreferences(getActivity(), "login").equals("login")) {
-            mypageRequest(currentPage);
-            loginContainer.setVisibility(View.GONE);
-            imgJoin.setImageBitmap(null);
 
-        }
-        //로그 아웃 상태일 경우 초기 기본 정보를 노출한다.
-        else if(GlobalSharedPreference.getAppPreferences(getActivity(), "login").equals("logout")) {
+        mypageRequest(currentPage);
+        loginContainer.setVisibility(View.GONE);
+        imgJoin.setImageBitmap(null);
 
-            contentsList.setAdapter(adapter);
-            loginContainer.setVisibility(View.VISIBLE);
-            imgJoin.setImageResource(R.drawable.membership_img_01);
-
-            txtMoment.setText("0");
-            txtFollower.setText("0");
-            txtFollowing.setText("0");
-            btn_camera.setVisibility(View.INVISIBLE);
-            imgClan.setImageResource(R.drawable.mypage_img_03);
-            profileName.setText(getResources().getString(R.string.mypage_name_likepet));
-
-        }
 
     }
 
@@ -1457,12 +1406,8 @@ public class MyPageMoment extends Fragment implements CommentBtnClickListener{
         //currentPage = 0;
         //adapterFlag = 0;
 
-        if(GlobalSharedPreference.getAppPreferences(getActivity(), "login").equals("login"))
-            myPageSummaryRequest();
+        myPageSummaryRequest();
 
-        else {
-            imgJoin.setImageResource(R.drawable.membership_img_01);
-        }
 
         String pageName = "Mypage";
         mTracker.setScreenName(pageName);

@@ -432,107 +432,100 @@ public class HomeFeedContentsAdapter extends BaseAdapter{
             @Override
             public void onClick(View v) {
 
-                if (GlobalSharedPreference.getAppPreferences(context, "login").equals("login")) {
+                final PopupWindow popupWindow = new PopupWindow(v);
+                LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                View popupView;
 
-                    final PopupWindow popupWindow = new PopupWindow(v);
-                    LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                    View popupView;
-
-                    if (contentsArrayList.get(position).iLikeThis.equals("0")) {
-                        popupView = inflater.inflate(R.layout.like_btn_popup_window_layout, null);
-                    } else {
-                        popupView = inflater.inflate(R.layout.like_cancel_btn_popup_window, null);
-                    }
-
-                    popupWindow.setContentView(popupView);
-                    popupWindow.setWindowLayoutMode(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                    popupWindow.setTouchable(true);
-                    popupWindow.setFocusable(true);
-                    popupWindow.setOutsideTouchable(true);
-                    popupWindow.setBackgroundDrawable(new BitmapDrawable());
-
-
-                    int[] location = new int[2];
-                    v.getLocationOnScreen(location);
-                    //팝업 윈도우 위치 조정
-                    popupWindow.showAtLocation(v, Gravity.NO_GRAVITY, location[0], location[1] - popupWindow.getHeight() - 200);
-
-                    ImageButton btn_like_1 = (ImageButton) popupView.findViewById(R.id.btn_like_1);
-                    ImageButton btn_like_2 = (ImageButton) popupView.findViewById(R.id.btn_like_2);
-                    ImageButton btn_like_3 = (ImageButton) popupView.findViewById(R.id.btn_like_3);
-                    ImageButton btn_like_4 = (ImageButton) popupView.findViewById(R.id.btn_like_4);
-
-                    ImageButton btn_cancel_like = (ImageButton) popupView.findViewById(R.id.btn_like_cancel);
-
-
-                    if (contentsArrayList.get(position).iLikeThis.equals("0")) {
-                        //좋아요 캐릭터를 클릭하면 좋아요 버튼이 빨간색으로 바뀐다.
-                        btn_like_1.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                popupWindow.dismiss();
-                                contentsArrayList.get(position).iLikeThis = "1";
-                                btn_like.setImageResource(R.drawable.mypage_btn_bottom_like_s);
-                                registryEmotionRequest(contentsArrayList.get(position).contentId, 0);
-                                contentsArrayList.get(position).likeCount = contentsArrayList.get(position).likeCount + 1;
-                                numberOfLike.setText(Integer.toString(contentsArrayList.get(position).likeCount));
-
-                            }
-                        });
-                        btn_like_2.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                popupWindow.dismiss();
-                                contentsArrayList.get(position).iLikeThis = "1";
-                                btn_like.setImageResource(R.drawable.mypage_btn_bottom_like_s);
-                                registryEmotionRequest(contentsArrayList.get(position).contentId, 1);
-                                contentsArrayList.get(position).likeCount = contentsArrayList.get(position).likeCount + 1;
-                                numberOfLike.setText(Integer.toString(contentsArrayList.get(position).likeCount));
-
-                            }
-                        });
-                        btn_like_3.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                popupWindow.dismiss();
-                                contentsArrayList.get(position).iLikeThis = "1";
-                                btn_like.setImageResource(R.drawable.mypage_btn_bottom_like_s);
-                                registryEmotionRequest(contentsArrayList.get(position).contentId, 2);
-                                contentsArrayList.get(position).likeCount = contentsArrayList.get(position).likeCount + 1;
-                                numberOfLike.setText(Integer.toString(contentsArrayList.get(position).likeCount));
-
-                            }
-                        });
-                        btn_like_4.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                popupWindow.dismiss();
-                                contentsArrayList.get(position).iLikeThis = "1";
-                                btn_like.setImageResource(R.drawable.mypage_btn_bottom_like_s);
-                                registryEmotionRequest(contentsArrayList.get(position).contentId, 3);
-                                contentsArrayList.get(position).likeCount = contentsArrayList.get(position).likeCount + 1;
-                                numberOfLike.setText(Integer.toString(contentsArrayList.get(position).likeCount));
-
-                            }
-                        });
-                    } else {
-                        btn_cancel_like.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                popupWindow.dismiss();
-                                contentsArrayList.get(position).iLikeThis = "0";
-                                btn_like.setImageResource(R.drawable.mypage_btn_bottom_like_n);
-                                deleteEmotionRequest(contentsArrayList.get(position).contentId);
-                                contentsArrayList.get(position).likeCount = contentsArrayList.get(position).likeCount - 1;
-                                numberOfLike.setText(Integer.toString(contentsArrayList.get(position).likeCount));
-
-                            }
-                        });
-                    }
-
-
+                if (contentsArrayList.get(position).iLikeThis.equals("0")) {
+                    popupView = inflater.inflate(R.layout.like_btn_popup_window_layout, null);
                 } else {
-                    loginPopupRequest(v);
+                    popupView = inflater.inflate(R.layout.like_cancel_btn_popup_window, null);
+                }
+
+                popupWindow.setContentView(popupView);
+                popupWindow.setWindowLayoutMode(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                popupWindow.setTouchable(true);
+                popupWindow.setFocusable(true);
+                popupWindow.setOutsideTouchable(true);
+                popupWindow.setBackgroundDrawable(new BitmapDrawable());
+
+
+                int[] location = new int[2];
+                v.getLocationOnScreen(location);
+                //팝업 윈도우 위치 조정
+                popupWindow.showAtLocation(v, Gravity.NO_GRAVITY, location[0], location[1] - popupWindow.getHeight() - 200);
+
+                ImageButton btn_like_1 = (ImageButton) popupView.findViewById(R.id.btn_like_1);
+                ImageButton btn_like_2 = (ImageButton) popupView.findViewById(R.id.btn_like_2);
+                ImageButton btn_like_3 = (ImageButton) popupView.findViewById(R.id.btn_like_3);
+                ImageButton btn_like_4 = (ImageButton) popupView.findViewById(R.id.btn_like_4);
+
+                ImageButton btn_cancel_like = (ImageButton) popupView.findViewById(R.id.btn_like_cancel);
+
+
+                if (contentsArrayList.get(position).iLikeThis.equals("0")) {
+                    //좋아요 캐릭터를 클릭하면 좋아요 버튼이 빨간색으로 바뀐다.
+                    btn_like_1.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            popupWindow.dismiss();
+                            contentsArrayList.get(position).iLikeThis = "1";
+                            btn_like.setImageResource(R.drawable.mypage_btn_bottom_like_s);
+                            registryEmotionRequest(contentsArrayList.get(position).contentId, 0);
+                            contentsArrayList.get(position).likeCount = contentsArrayList.get(position).likeCount + 1;
+                            numberOfLike.setText(Integer.toString(contentsArrayList.get(position).likeCount));
+
+                        }
+                    });
+                    btn_like_2.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            popupWindow.dismiss();
+                            contentsArrayList.get(position).iLikeThis = "1";
+                            btn_like.setImageResource(R.drawable.mypage_btn_bottom_like_s);
+                            registryEmotionRequest(contentsArrayList.get(position).contentId, 1);
+                            contentsArrayList.get(position).likeCount = contentsArrayList.get(position).likeCount + 1;
+                            numberOfLike.setText(Integer.toString(contentsArrayList.get(position).likeCount));
+
+                        }
+                    });
+                    btn_like_3.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            popupWindow.dismiss();
+                            contentsArrayList.get(position).iLikeThis = "1";
+                            btn_like.setImageResource(R.drawable.mypage_btn_bottom_like_s);
+                            registryEmotionRequest(contentsArrayList.get(position).contentId, 2);
+                            contentsArrayList.get(position).likeCount = contentsArrayList.get(position).likeCount + 1;
+                            numberOfLike.setText(Integer.toString(contentsArrayList.get(position).likeCount));
+
+                        }
+                    });
+                    btn_like_4.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            popupWindow.dismiss();
+                            contentsArrayList.get(position).iLikeThis = "1";
+                            btn_like.setImageResource(R.drawable.mypage_btn_bottom_like_s);
+                            registryEmotionRequest(contentsArrayList.get(position).contentId, 3);
+                            contentsArrayList.get(position).likeCount = contentsArrayList.get(position).likeCount + 1;
+                            numberOfLike.setText(Integer.toString(contentsArrayList.get(position).likeCount));
+
+                        }
+                    });
+                } else {
+                    btn_cancel_like.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            popupWindow.dismiss();
+                            contentsArrayList.get(position).iLikeThis = "0";
+                            btn_like.setImageResource(R.drawable.mypage_btn_bottom_like_n);
+                            deleteEmotionRequest(contentsArrayList.get(position).contentId);
+                            contentsArrayList.get(position).likeCount = contentsArrayList.get(position).likeCount - 1;
+                            numberOfLike.setText(Integer.toString(contentsArrayList.get(position).likeCount));
+
+                        }
+                    });
                 }
 
             }

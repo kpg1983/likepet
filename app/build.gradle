@@ -11,6 +11,7 @@ buildscript {
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'android'
 
 
 repositories {
@@ -35,6 +36,19 @@ android {
         }
     }
     productFlavors {
+    }
+
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES.txt'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/dependencies.txt'
+        exclude 'META-INF/LGPL2.1'
     }
 }
 
@@ -61,6 +75,13 @@ dependencies {
     compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
         transitive = true;
     }
-
     compile files('libs/fingerpush_2.2.8.jar')
+    compile files('libs/commons-beanutils-1.8.3.jar')
+    //compile files('libs/commons-collections-3.2.1.jar')
+    compile files('libs/commons-lang-2.6.jar')
+    //compile files('libs/commons-logging.jar')
+    //compile files('libs/commons-logging-1.2.jar')
+    compile files('libs/ezmorph-1.0.6.jar')
+    compile files('libs/httpclient-4.4.1.jar')
+
 }

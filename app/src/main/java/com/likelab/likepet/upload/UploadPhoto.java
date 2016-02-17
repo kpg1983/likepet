@@ -12,7 +12,6 @@ import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.hardware.Camera;
 import android.media.ExifInterface;
-import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,6 +20,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -66,11 +66,12 @@ public class UploadPhoto extends Fragment implements View.OnClickListener {
     private Context myContext;
     private RelativeLayout cameraPreview;
     private boolean cameraFront = false, isRecording;
-    private MediaRecorder mMediaRecorder;
+    private boolean isTakingPicture = false;
 
     private ImageButton btn_camera;
     private ImageButton btnVideo;
     private ImageButton btnTimer;
+
 
     private TextView mTxtGallery;
     private TextView mTxtPhoto;
@@ -81,7 +82,6 @@ public class UploadPhoto extends Fragment implements View.OnClickListener {
     private RelativeLayout tabMovie;
 
     private ProgressBar progressBar;
-    int progress;
     int timer;
 
     boolean flashCheck = false;
@@ -92,15 +92,13 @@ public class UploadPhoto extends Fragment implements View.OnClickListener {
     public static int fragmentState= 1;
     private int rateFlag;   //촬영한 사진의 비율을 알려준다. 0은 1:1,  1은 4:3이다
     private int cameraFlag; //후면은 1, 전면카메라는 0;
-    public MediaRecorder mrec = new MediaRecorder();
     android.os.Handler mHandler = new android.os.Handler();
     private Bitmap bmp;
-    File videoFile;
-    int timerFlag = 0;
+
     Thread thread;
 
-    int countThreadState = 0;
-    int TimerThreadState = 0;
+
+    private boolean threadFlag = false;
 
     private RelativeLayout btnFlashContainer;
     private RelativeLayout btnChangeContainer;
@@ -129,6 +127,30 @@ public class UploadPhoto extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         layout = (RelativeLayout)inflater.inflate(R.layout.upload_photo, container, false);
+
+        layout.setFocusableInTouchMode(true);
+        layout.requestFocus();
+        layout.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+                if(keyCode == event.KEYCODE_BACK && event.getAction() == event.ACTION_DOWN) {
+                    if (threadFlag == true) {
+                        threadFlag = false;
+                        TimerThread.currentThread().interrupt();
+                        txtTimer.setText(Integer.toString(timer));
+                        isTakingPicture = false;
+                        txtTimer.setVisibility(View.GONE);
+
+                    } else {
+                        getActivity().finish();
+                    }
+
+                    return true;
+                }
+                return false;
+            }
+        });
 
         gifCount = 0;
         gifBitmapCount = 0;
@@ -166,15 +188,12 @@ public class UploadPhoto extends Fragment implements View.OnClickListener {
             @Override
             public void onClick(View v) {
                 int camerasNumber = Camera.getNumberOfCameras();
-                if (camerasNumber > 1) {
+                if (camerasNumber > 1 && isRecording == false && isTakingPicture == false) {
                     //release the old camera instance
                     //switch camera, from the front and the back and vice versa
 
                     releaseCamera();
                     chooseCamera();
-                } else {
-                    Toast toast = Toast.makeText(myContext, "Sorry, your phone has only one camera!", Toast.LENGTH_LONG);
-                    toast.show();
                 }
 
             }
@@ -308,7 +327,7 @@ public class UploadPhoto extends Fragment implements View.OnClickListener {
         mTxtGallery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isRecording == false) {
+                if (isRecording == false  && isTakingPicture == false) {
                     txt_title.setText(getResources().getString(R.string.upload_title_select_picture));
                     mTxtGallery.setTextColor(Color.parseColor("#f7c243"));
                     mTxtPhoto.setTextColor(Color.parseColor("#ffffff"));
@@ -332,7 +351,7 @@ public class UploadPhoto extends Fragment implements View.OnClickListener {
             @Override
             public void onClick(View v) {
 
-                if(isRecording == false) {
+                if(isRecording == false && isTakingPicture == false) {
                     fragmentState = 1;
                     pager.setCurrentItem(Upload.fragment_page_2);
                     mTxtGallery.setTextColor(Color.parseColor("#ffffff"));
@@ -355,7 +374,7 @@ public class UploadPhoto extends Fragment implements View.OnClickListener {
         mTxtVideo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(isRecording == false) {
+                if(isRecording == false && isTakingPicture == false) {
                     fragmentState = 2;
                     pager.setCurrentItem(Upload.fragment_page_2);
                     mTxtVideo.setTextColor(Color.parseColor("#f7c243"));
@@ -384,7 +403,7 @@ public class UploadPhoto extends Fragment implements View.OnClickListener {
             @Override
             public void onClick(View v) {
 
-                if(isRecording == false) {
+                if(isRecording == false && isTakingPicture == false) {
                     txt_title.setText(getResources().getString(R.string.upload_title_select_picture));
                     mTxtGallery.setTextColor(Color.parseColor("#f7c243"));
                     mTxtPhoto.setTextColor(Color.parseColor("#ffffff"));
@@ -404,7 +423,7 @@ public class UploadPhoto extends Fragment implements View.OnClickListener {
             @Override
             public void onClick(View v) {
 
-                if(isRecording == false) {
+                if(isRecording == false && isTakingPicture == false) {
                     fragmentState = 1;
                     pager.setCurrentItem(Upload.fragment_page_2);
                     mTxtGallery.setTextColor(Color.parseColor("#ffffff"));
@@ -427,7 +446,7 @@ public class UploadPhoto extends Fragment implements View.OnClickListener {
             @Override
             public void onClick(View v) {
 
-                if(isRecording == false) {
+                if(isRecording == false && isTakingPicture == false) {
                     fragmentState = 2;
                     pager.setCurrentItem(Upload.fragment_page_2);
                     mTxtVideo.setTextColor(Color.parseColor("#f7c243"));
@@ -453,15 +472,12 @@ public class UploadPhoto extends Fragment implements View.OnClickListener {
             public void onClick(View v) {
 
                 int camerasNumber = Camera.getNumberOfCameras();
-                if (camerasNumber > 1) {
+                if (camerasNumber > 1 && isTakingPicture == false && isRecording == false) {
                     //release the old camera instance
                     //switch camera, from the front and the back and vice versa
 
                     releaseCamera();
                     chooseCamera();
-                } else {
-                    Toast toast = Toast.makeText(myContext, "Sorry, your phone has only one camera!", Toast.LENGTH_LONG);
-                    toast.show();
                 }
 
             }
@@ -531,8 +547,10 @@ public class UploadPhoto extends Fragment implements View.OnClickListener {
                     txtTimer.setVisibility(View.VISIBLE);
 
                     TimerThread timerThread = new TimerThread();
+                    //timerThread.start();
                     timerThread.start();
                     timerThread = null;
+                    threadFlag = true;
 
                 }
                 else {
@@ -552,6 +570,7 @@ public class UploadPhoto extends Fragment implements View.OnClickListener {
                     TimerThread timerThread = new TimerThread();
                     timerThread.start();
                     timerThread = null;
+                    threadFlag = true;
 
                 }
                 else {
@@ -690,49 +709,52 @@ public class UploadPhoto extends Fragment implements View.OnClickListener {
 
     public void chooseCamera() {
         //if the camera preview is the front
-        if (cameraFront) {
-            int cameraId = findBackFacingCamera();
-            if (cameraId >= 0) {
-                //open the backFacingCamera
-                //set a picture callback
-                //refresh the preview
 
-                mCamera = Camera.open(cameraId);
-                mPicture = getPictureCallback();
-                Thread thread = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mPreview.refreshCamera(mCamera);
+        if(isTakingPicture ==false && isRecording == false) {
+            if (cameraFront) {
+                int cameraId = findBackFacingCamera();
+                if (cameraId >= 0) {
+                    //open the backFacingCamera
+                    //set a picture callback
+                    //refresh the preview
+
+                    mCamera = Camera.open(cameraId);
+                    mPicture = getPictureCallback();
+                    Thread thread = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mPreview.refreshCamera(mCamera);
+                        }
+                    });
+                    thread.start();
+                    int softKeyHeight = getSoftButtonsBarHeight();
+
+                    Log.d("softKey", Integer.toString(softKeyHeight));
+                    if (softKeyHeight > 0) {
+                        int width = cameraPreview.getWidth();
+                        int height = (width / 9) * 16;
+                        //cameraPreview.setLayoutParams(new RelativeLayout.LayoutParams(width, 2500));
                     }
-                });
-                thread.start();
-                int softKeyHeight = getSoftButtonsBarHeight();
 
-                Log.d("softKey", Integer.toString(softKeyHeight));
-                if(softKeyHeight >0) {
-                    int width = cameraPreview.getWidth();
-                    int height = (width / 9) * 16;
-                    //cameraPreview.setLayoutParams(new RelativeLayout.LayoutParams(width, 2500));
                 }
+            } else {
+                int cameraId = findFrontFacingCamera();
+                if (cameraId >= 0) {
+                    //open the backFacingCamera
+                    //set a picture callback
+                    //refresh the preview
 
-            }
-        } else {
-            int cameraId = findFrontFacingCamera();
-            if (cameraId >= 0) {
-                //open the backFacingCamera
-                //set a picture callback
-                //refresh the preview
+                    mCamera = Camera.open(cameraId);
+                    mPicture = getPictureCallback();
 
-                mCamera = Camera.open(cameraId);
-                mPicture = getPictureCallback();
-
-                Thread thread = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mPreview.refreshCamera(mCamera);
-                    }
-                });
-                thread.start();
+                    Thread thread = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mPreview.refreshCamera(mCamera);
+                        }
+                    });
+                    thread.start();
+                }
             }
         }
 
@@ -1084,33 +1106,33 @@ public class UploadPhoto extends Fragment implements View.OnClickListener {
                     float deltaX = downX - upX;
                     float deltaY = downY - upY;
 
-                    Log.d("fragmentState", Integer.toString(fragmentState));
-
                     if (fragmentState == 1) {
                         if (Math.abs(deltaX) > MIN_DISTANCE) {
-                            // left or right
-                            if (deltaX < 0) {
-                                this.onLeftToRightSwipe();
-                                txt_title.setText(getResources().getString(R.string.upload_title_select_picture));
-                                mTxtGallery.setTextColor(Color.parseColor("#f7c243"));
-                                mTxtPhoto.setTextColor(Color.parseColor("#ffffff"));
-                                mTxtVideo.setTextColor(Color.parseColor("#ffffff"));
 
-                                tabGallery.setVisibility(View.VISIBLE);
-                                tabPhoto.setVisibility(View.INVISIBLE);
-                                tabMovie.setVisibility(View.INVISIBLE);
-                                progressBar.setVisibility(View.INVISIBLE);
+                            if(isRecording == false && isTakingPicture == false) {
+                                // left or right
+                                if (deltaX < 0) {
+                                    this.onLeftToRightSwipe();
+                                    txt_title.setText(getResources().getString(R.string.upload_title_select_picture));
+                                    mTxtGallery.setTextColor(Color.parseColor("#f7c243"));
+                                    mTxtPhoto.setTextColor(Color.parseColor("#ffffff"));
+                                    mTxtVideo.setTextColor(Color.parseColor("#ffffff"));
 
-                                Upload.startFragment();
-                                return true;
-                            }
-                            else if (deltaX > 0) {
-                                this.onRightToLeftSwipe();
-                                fragmentState = 2;
-                                selectTabBar(fragmentState);
-                                progressBar.setVisibility(View.VISIBLE);
+                                    tabGallery.setVisibility(View.VISIBLE);
+                                    tabPhoto.setVisibility(View.INVISIBLE);
+                                    tabMovie.setVisibility(View.INVISIBLE);
+                                    progressBar.setVisibility(View.INVISIBLE);
 
-                                return true;
+                                    Upload.startFragment();
+                                    return true;
+                                } else if (deltaX > 0) {
+                                    this.onRightToLeftSwipe();
+                                    fragmentState = 2;
+                                    selectTabBar(fragmentState);
+                                    progressBar.setVisibility(View.VISIBLE);
+
+                                    return true;
+                                }
                             }
                         }
 
@@ -1119,15 +1141,17 @@ public class UploadPhoto extends Fragment implements View.OnClickListener {
                         if (Math.abs(deltaX) > MIN_DISTANCE) {
                             // left or right
 
-                            if (deltaX < 0) {
-                                this.onLeftToRightSwipe();
-                                fragmentState = 1;
-                                selectTabBar(fragmentState);
-                                progressBar.setVisibility(View.INVISIBLE);
-                                return true;
-                            } else if (deltaX > 0) {
-                                this.onRightToLeftSwipe();
-                                return true;
+                            if(isRecording == false && isTakingPicture == false) {
+                                if (deltaX < 0) {
+                                    this.onLeftToRightSwipe();
+                                    fragmentState = 1;
+                                    selectTabBar(fragmentState);
+                                    progressBar.setVisibility(View.INVISIBLE);
+                                    return true;
+                                } else if (deltaX > 0) {
+                                    this.onRightToLeftSwipe();
+                                    return true;
+                                }
                             }
                         }
                     }
@@ -1227,9 +1251,13 @@ public class UploadPhoto extends Fragment implements View.OnClickListener {
 
     public class TimerThread extends Thread {
 
+        int tempTime = timer;
+
         public void run() {
 
-            while (timer > 0) {
+            isTakingPicture = true;
+
+            while (timer > 0 && threadFlag == true) {
                 // 값을 하나씩 늘립니다.
                 --timer;
                 mHandler.post(new Runnable() {
@@ -1247,8 +1275,19 @@ public class UploadPhoto extends Fragment implements View.OnClickListener {
                     e.printStackTrace();
                 }
             }
+            if(mCamera != null && threadFlag == true)
+                mCamera.takePicture(null, null, mPicture);
 
-            mCamera.takePicture(null, null, mPicture);
+            isTakingPicture = false;
+            timer = tempTime;
+
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    txtTimer.setVisibility(View.INVISIBLE);
+                }
+            });
+
         }
     }
 
@@ -1262,81 +1301,89 @@ public class UploadPhoto extends Fragment implements View.OnClickListener {
         mTask = new TimerTask() {
             @Override
             public void run() {
-                mCamera.setOneShotPreviewCallback(new Camera.PreviewCallback() {
+                try {
+                    if(mCamera != null) {
+                        mCamera.setOneShotPreviewCallback(new Camera.PreviewCallback() {
 
-                    @Override
-                    public void onPreviewFrame(final byte[] data, final Camera camera) {
-                        if (gifBitmapCount >= 6 ){
-                            mTimer.cancel();
-                            gifBitmapCount = 0;
-                            isRecording = false;
-                            mCamera.stopPreview();
-                            Camera.Parameters mParam = mCamera.getParameters();
-                            mParam.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+                            @Override
+                            public void onPreviewFrame(final byte[] data, final Camera camera) {
 
-                            if(cameraFront == false)
-                                mCamera.setParameters(mParam);
+                                if(mCamera != null) {
+                                    if (gifBitmapCount >= 6) {
+                                        mTimer.cancel();
+                                        gifBitmapCount = 0;
+                                        isRecording = false;
+                                        mCamera.stopPreview();
+                                        Camera.Parameters mParam = mCamera.getParameters();
+                                        mParam.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
 
-                            Intent intent = new Intent(getActivity(), Filtering.class);
-                            int titleBarHeight = uploadTitleBarContainer.getHeight();
-                            String activityName = "UploadPhotoActivity";
+                                        if (cameraFront == false)
+                                            mCamera.setParameters(mParam);
 
-                            intent.putExtra("ACTIVITY_NAME", activityName);
-                            intent.putExtra("TITLE_HEIGHT", titleBarHeight);
-                            intent.putExtra("MEDIA_TYPE", "gif");
-                            intent.putExtra("RATE", rateFlag);
-                            intent.putExtra("CAMERA_FRONT", cameraFront);
+                                        Intent intent = new Intent(getActivity(), Filtering.class);
+                                        int titleBarHeight = uploadTitleBarContainer.getHeight();
+                                        String activityName = "UploadPhotoActivity";
 
-                            startActivity(intent);
-                        }
-                        Camera.Parameters parameters = camera.getParameters();
-                        Camera.Size size = parameters.getPreviewSize();
+                                        intent.putExtra("ACTIVITY_NAME", activityName);
+                                        intent.putExtra("TITLE_HEIGHT", titleBarHeight);
+                                        intent.putExtra("MEDIA_TYPE", "gif");
+                                        intent.putExtra("RATE", rateFlag);
+                                        intent.putExtra("CAMERA_FRONT", cameraFront);
 
-                        ByteArrayOutputStream out = new ByteArrayOutputStream();
+                                        startActivity(intent);
+                                    }
+                                    Camera.Parameters parameters = camera.getParameters();
+                                    Camera.Size size = parameters.getPreviewSize();
 
-                        YuvImage image = new YuvImage(data, parameters.getPreviewFormat(), size.width, size.height, null);
+                                    ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-                        image.compressToJpeg(new Rect(0, 0, image.getWidth(), image.getHeight()), 30, out);
-                        byte[] bytes = out.toByteArray();
+                                    YuvImage image = new YuvImage(data, parameters.getPreviewFormat(), size.width, size.height, null);
 
-                        BitmapFactory.Options options = new BitmapFactory.Options();
-                        options.inSampleSize = Math.min(size.width / 512, size.height / 512);
+                                    image.compressToJpeg(new Rect(0, 0, image.getWidth(), image.getHeight()), 30, out);
+                                    byte[] bytes = out.toByteArray();
 
-                        bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
+                                    BitmapFactory.Options options = new BitmapFactory.Options();
+                                    options.inSampleSize = Math.min(size.width / 512, size.height / 512);
 
-                        int titleBarHeight = uploadTitleBarContainer.getHeight();
-                        int transBoxHeight = transparentBox.getHeight();
+                                    bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
+
+                                    int titleBarHeight = uploadTitleBarContainer.getHeight();
+                                    int transBoxHeight = transparentBox.getHeight();
 
 
-                        if (cameraFront) {
-                            bmp = imgRotate(cameraFront);
-                        } else {
-                            bmp = imgRotate(cameraFront);
-                        }
+                                    if (cameraFront) {
+                                        bmp = imgRotate(cameraFront);
+                                    } else {
+                                        bmp = imgRotate(cameraFront);
+                                    }
 
-                        //흐음.... 이부분 차후에 다시 한 번 확인해 봐야 할듯
-                        //왜 /2를 해야 정확하게 나오는지 시간나면 한번 봐볼까!@!!
+                                    //흐음.... 이부분 차후에 다시 한 번 확인해 봐야 할듯
+                                    //왜 /2를 해야 정확하게 나오는지 시간나면 한번 봐볼까!@!!
 
-                        bmp = Bitmap.createBitmap(bmp, 0, titleBarHeight / 2, bmp.getWidth(), bmp.getWidth());
-                        if (rateFlag == 0) {
-                            //bmp = Bitmap.createBitmap(bmp, 0, titleBarHeight / 2, bmp.getWidth(), bmp.getWidth());
-                        } else {
-                            //bmp = Bitmap.createBitmap(bmp, 0,  (titleBarHeight + transBoxHeight) / 2, bmp.getWidth(), bmp.getWidth() - transBoxHeight);
-                        }
+                                    bmp = Bitmap.createBitmap(bmp, 0, titleBarHeight / 2, bmp.getWidth(), bmp.getWidth());
+                                    if (rateFlag == 0) {
+                                        //bmp = Bitmap.createBitmap(bmp, 0, titleBarHeight / 2, bmp.getWidth(), bmp.getWidth());
+                                    } else {
+                                        //bmp = Bitmap.createBitmap(bmp, 0,  (titleBarHeight + transBoxHeight) / 2, bmp.getWidth(), bmp.getWidth() - transBoxHeight);
+                                    }
 
 //                        bmp = Bitmap.createScaledBitmap(bmp, 512, 512, false);
 
-                        if (gifBitmapCount == 0) {
-                            GlobalUploadBitmapImage.bitmap = bmp;
-                        }
+                                    if (gifBitmapCount == 0) {
+                                        GlobalUploadBitmapImage.bitmap = bmp;
+                                    }
 
-                        GlobalUploadBitmapImage.bitmapList.add(bmp);
+                                    GlobalUploadBitmapImage.bitmapList.add(bmp);
 
-                        gifBitmapCount++;
+                                    gifBitmapCount++;
+                                }
 
-                        //generateGifFile ();
+                            }
+                        });
                     }
-                });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         };
 

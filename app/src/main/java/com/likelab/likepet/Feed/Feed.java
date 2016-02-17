@@ -45,7 +45,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
@@ -121,13 +120,9 @@ public class Feed extends Fragment implements CommentBtnClickListener {
 
 
                 //로그인 상태와 로그 아웃 상태에 따라 다른 페이지를 표시한다.
-                if (GlobalSharedPreference.getAppPreferences(getActivity(), "login").equals("login")) {
-                    feedRequest(currentPage);
-                } else {
-                    operatorFeedRequest(currentPage);
-                }
+                feedRequest(currentPage);
 
-                adapterFlag=0;   //setAdapter 위한 변수, 0일때 1번만 setAdapter 수행
+                adapterFlag = 0;   //setAdapter 위한 변수, 0일때 1번만 setAdapter 수행
 
             }
 
@@ -147,12 +142,11 @@ public class Feed extends Fragment implements CommentBtnClickListener {
 
                 int count = totalItemCount - visibleItemCount;
 
-                if(firstVisibleItem >= count && totalItemCount != 0 && lockListView == false && refreshLock == false)
-                {
+                if(firstVisibleItem >= count && totalItemCount != 0 && lockListView == false && refreshLock == false) {
                     lockListView = true;
                     currentPage = currentPage + 1;
 
-                    if(currentPage < maxPage) {
+                    if (currentPage < maxPage) {
 
                         if (adapterFlag == 1) {
                             listViewLoadIndicator.setVisibility(View.VISIBLE);
@@ -160,11 +154,8 @@ public class Feed extends Fragment implements CommentBtnClickListener {
                         }
 
                         //로그인, 로그아웃 상태에 따른 다른 리퀘스트 요청
-                        if(GlobalSharedPreference.getAppPreferences(getActivity(), "login").equals("login")) {
-                            feedRequest(currentPage);
-                        } else {
-                            operatorFeedRequest(currentPage);
-                        }
+                        feedRequest(currentPage);
+
 
                     }
                 }
@@ -286,220 +277,6 @@ public class Feed extends Fragment implements CommentBtnClickListener {
                 return params;
 
             }
-        };
-        queue.add(jsonObjectRequest);
-    }
-
-
-    //운영자 피드
-    //사용자가 로그인을 하지 않은 상태에서 노출된다.
-    public void operatorFeedRequest(int pageNo) {
-
-        lockListView = true;
-
-        String endPoint = "/community";
-
-        //사용자의 언어정보를 확인해서 해당되는 언어의 컨텐츠를 보여준다
-        Locale mLocale = getResources().getConfiguration().locale;
-        String deviceLanguage = mLocale.getLanguage();
-        String language = null;
-        if(deviceLanguage.contains("ko")) {
-            language = "ko";
-        } else if(deviceLanguage.contains("en")) {
-            language = "en";
-        } else if(deviceLanguage.contains("es")) {
-            language = "es";
-        } else if(deviceLanguage.contains("ja")) {
-            language = "ja";
-        } else {
-            language = "en";
-        }
-
-
-        String parameter = "?pageNo=" + pageNo + "&language=" + language;
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, GlobalUrl.BASE_URL + endPoint + parameter,
-                new Response.Listener<JSONObject>() {
-
-                    @Override
-                    public void onResponse(JSONObject response) {
-
-
-                        int responseCode = 0;
-
-                        try {
-                            responseCode = response.getInt("code");
-
-                            if (responseCode == 200) {
-
-                                JSONObject feeds = response.getJSONObject("community");
-
-                                JSONObject pages = feeds.getJSONObject("pages");
-                                maxPage = pages.getInt("max");
-                                JSONArray items = feeds.getJSONArray("items");
-
-                                for (int i = 0; i < items.length(); i++) {
-
-                                    String contentId = items.getJSONObject(i).getString("contentId");
-                                    String userId = items.getJSONObject(i).getString("userId");
-                                    String descriptions = items.getJSONObject(i).getString("descriptions");
-                                    String contentType = items.getJSONObject(i).getString("contentType");
-                                    String registryDate = items.getJSONObject(i).getString("registryDate");
-                                    String contentUrl = items.getJSONObject(i).getString("contentUrl");
-                                    int likeCount = items.getJSONObject(i).getInt("likeCount");
-                                    int commentCount = items.getJSONObject(i).getInt("commentCount");
-                                    int readCount = items.getJSONObject(i).getInt("readCount");
-                                    int reportCount = items.getJSONObject(i).getInt("reportCount");
-                                    String name = items.getJSONObject(i).getString("writerName");
-                                    String status = items.getJSONObject(i).getString("status");
-                                    String profileImageUrl = items.getJSONObject(i).getString("profileImageUrl");
-                                    String clan = items.getJSONObject(i).getString("clan");
-                                    String gender = items.getJSONObject(i).getString("sex");
-                                    String iLikeThis;
-                                    String videoScreenshotUrl = items.getJSONObject(i).getString("videoScreenshotUrl");
-
-                                    if(GlobalSharedPreference.getAppPreferences(getActivity(), "login").equals("login")) {
-                                        iLikeThis = items.getJSONObject(i).getString("ILikedThis");
-                                    } else {
-                                        iLikeThis = "0";
-                                    }
-
-                                    //미디어 사이즈를 확인하고 저장한다
-                                    String mediaSize = items.getJSONObject(i).getString("mediaSize");
-                                    String mediaSizeArr[] = mediaSize.split(",");
-
-                                    int mediaWidth;
-                                    int mediaHeight;
-
-                                    if(contentType.contains("video")) {
-                                        mediaWidth = 960;
-                                        mediaHeight = 720;
-
-                                    } else {
-
-                                        mediaWidth = Integer.parseInt(mediaSizeArr[0]);
-                                        mediaHeight = Integer.parseInt(mediaSizeArr[1]);
-                                    }
-
-                                    Date date = null;
-                                    registryDate = registryDate.replaceAll("\\.", "-");
-                                    java.text.SimpleDateFormat format = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-
-                                    //날짜를 조금전, 방금전, 4일전 식으로 변환한다
-                                    try {
-                                        String localTime = convertUtcToLocal(registryDate);
-                                        date = format.parse(localTime);
-
-                                    } catch (ParseException e) {
-                                        e.printStackTrace();
-                                    }
-
-                                    registryDate = formatTimeString(date);
-
-                                    //베스트 댓글이 없는 경우
-                                    if (!items.getJSONObject(i).has("bestCommentItems")) {
-
-                                        FeedContents contents = new FeedContents(contentId, userId, descriptions, contentType, registryDate, contentUrl, likeCount, name, status, profileImageUrl, clan, gender,
-                                                readCount, reportCount, commentCount, 0, null, null, null, null, null, null, null, null, null, iLikeThis, videoScreenshotUrl, mediaWidth, mediaHeight);
-                                        contentsArrayList.add(contents);
-
-
-                                    } else {
-
-                                        JSONArray commentJSONArray = items.getJSONObject(i).getJSONArray("bestCommentItems");
-                                        int numberOfBestComment = commentJSONArray.length();
-
-                                        String commentUrl[] = new String[3];
-                                        String commentDescription[] = new String[3];
-                                        String commentType[] = new String[3];
-
-                                        //베스트 댓글 갯수만큼 회전후 정보 저장
-                                        for(int j=0; j<numberOfBestComment; j++) {
-                                            commentUrl[j] = commentJSONArray.getJSONObject(j).getString("commentUrl");
-                                            commentType[j] = commentJSONArray.getJSONObject(j).getString("contentType");
-                                            commentDescription[j] = commentJSONArray.getJSONObject(j).getString("descriptions");
-                                        }
-
-
-                                        FeedContents contents = new FeedContents(contentId, userId, descriptions, contentType, registryDate, contentUrl, likeCount, name, status, profileImageUrl, clan, gender,
-                                                readCount, reportCount, commentCount, numberOfBestComment, commentUrl[0], commentUrl[1], commentUrl[2], commentType[0],
-                                                commentType[1], commentType[2], commentDescription[0], commentDescription[1], commentDescription[2], iLikeThis, videoScreenshotUrl, mediaWidth, mediaHeight);
-
-                                        contentsArrayList.add(contents);
-
-                                    }
-
-                                }
-
-                                //contentsList.setAdapter(adapter);
-
-                                //setAdapter은 1번만 실행하기 위함
-                                if(adapterFlag == 0) {
-                                    contentsList.setAdapter(adapter);
-                                    adapterFlag = 1;
-
-                                }
-
-
-                                if(getActivity() == null) {
-                                    return;
-                                }
-
-                                //리스트뷰를 새로 고침
-                                getActivity().runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-
-                                        Handler handler = new Handler();
-                                        handler.postDelayed(new Runnable() {
-                                            @Override
-                                            public void run() {
-
-                                            }
-                                        }, 2000);
-
-                                        adapter.notifyDataSetChanged();
-                                        lockListView = false;
-                                        listViewLoadIndicator.setVisibility(View.GONE);
-                                        refreshLock = false;
-                                    }
-                                });
-
-                                //새로고침 아이콘을 없애준다
-                                mSwipeRefresh.setRefreshing(false);
-
-
-                            } else if(responseCode == 401) {
-                                
-                                
-                                
-                            }
-                            
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        //Toast.makeText(JoinMemberBeginActivity.this, error.toString(), Toast.LENGTH_LONG).show();
-                    }
-                }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
-                if(GlobalSharedPreference.getAppPreferences(getActivity(), "login").equals("login"))
-                    params.put("sessionId", GlobalSharedPreference.getAppPreferences(getContext(), "sid"));
-
-                params.put("User-agent", "likepet/" + GlobalVariable.appVersion + "(" + GlobalVariable.deviceName + ";" +
-                        GlobalVariable.deviceOS + ";" + GlobalVariable.mnc + ";" + GlobalVariable.mcc +  ";" + GlobalVariable.countryCode + ")");
-
-                return params;
-
-            }
-
         };
         queue.add(jsonObjectRequest);
     }
@@ -650,7 +427,7 @@ public class Feed extends Fragment implements CommentBtnClickListener {
 
                             } else if(responseCode == 401) {
 
-                                /*
+
                                 if(GlobalSharedPreference.getAppPreferences(getActivity(), "loginType").equals("sns")) {
 
                                     String accountId = GlobalSharedPreference.getAppPreferences(getActivity(), "accountId");
@@ -665,7 +442,7 @@ public class Feed extends Fragment implements CommentBtnClickListener {
 
                                     emailLoginRequest(email, password);
                                 }
-                                */
+
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -855,8 +632,6 @@ public class Feed extends Fragment implements CommentBtnClickListener {
         };
         queue.add(jsonObjectRequest);
     }
-
-
     public void loadUserInformation(String email) {
 
         String endPoint = "/users/user/" + email;

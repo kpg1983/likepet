@@ -27,7 +27,6 @@ import com.likelab.likepet.global.GlobalUrl;
 import com.likelab.likepet.global.GlobalVariable;
 import com.likelab.likepet.global.RecycleUtils;
 import com.likelab.likepet.global.RoundedAvatarDrawable;
-import com.likelab.likepet.singIn.JoinMemberBeginActivity;
 import com.likelab.likepet.volleryCustom.AppController;
 import com.likelab.likepet.yourPage.YourPageActivity;
 import com.squareup.picasso.Picasso;
@@ -293,40 +292,35 @@ public class ViewContentsAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
 
-                if (GlobalSharedPreference.getAppPreferences(context, "login").equals("login")) {
+                //좋아요 버튼이 눌리고 취소될 때 마다 좋아요 숫자가 변경된다.
+                int likeCount;
+                likeCount = viewContentsArrayList.get(position).likeCount;
 
-                    //좋아요 버튼이 눌리고 취소될 때 마다 좋아요 숫자가 변경된다.
-                    int likeCount;
+                //좋아요
+                if (viewContentsArrayList.get(position).iLikeThis.equals("0")) {
+                    imgLike.setImageResource(R.drawable.view_btn_04_like_s);
+                    imgLike.setScaleType(ImageView.ScaleType.FIT_XY);
+                    viewContentsArrayList.get(position).iLikeThis = "1";
+
+                    iLikeThisRequest(viewContentsArrayList.get(position).contentId, viewContentsArrayList.get(position).commentId, position);
+
                     likeCount = viewContentsArrayList.get(position).likeCount;
+                    likeCount = likeCount + 1;
 
-                    //좋아요
-                    if (viewContentsArrayList.get(position).iLikeThis.equals("0")) {
-                        imgLike.setImageResource(R.drawable.view_btn_04_like_s);
-                        imgLike.setScaleType(ImageView.ScaleType.FIT_XY);
-                        viewContentsArrayList.get(position).iLikeThis = "1";
-
-                        iLikeThisRequest(viewContentsArrayList.get(position).contentId, viewContentsArrayList.get(position).commentId, position);
-
-                        likeCount = viewContentsArrayList.get(position).likeCount;
-                        likeCount = likeCount + 1;
-
-                    }
-                    //좋아여 취소
-                    else {
-                        imgLike.setImageResource(R.drawable.view_btn_04_like_n);
-                        imgLike.setScaleType(ImageView.ScaleType.FIT_XY);
-                        viewContentsArrayList.get(position).iLikeThis = "0";
-                        iLikeCancelRequest(viewContentsArrayList.get(position).contentId, viewContentsArrayList.get(position).commentId, position);
-
-                        likeCount = viewContentsArrayList.get(position).likeCount;
-                        likeCount = likeCount - 1;
-                    }
-
-                    viewContentsArrayList.get(position).likeCount = likeCount;
-                    txtNumberOfLike.setText(Integer.toString(likeCount));
-                } else {
-                    loginPopupRequest(v);
                 }
+                //좋아여 취소
+                else {
+                    imgLike.setImageResource(R.drawable.view_btn_04_like_n);
+                    imgLike.setScaleType(ImageView.ScaleType.FIT_XY);
+                    viewContentsArrayList.get(position).iLikeThis = "0";
+                    iLikeCancelRequest(viewContentsArrayList.get(position).contentId, viewContentsArrayList.get(position).commentId, position);
+
+                    likeCount = viewContentsArrayList.get(position).likeCount;
+                    likeCount = likeCount - 1;
+                }
+
+                viewContentsArrayList.get(position).likeCount = likeCount;
+                txtNumberOfLike.setText(Integer.toString(likeCount));
 
             }
         });
@@ -496,54 +490,6 @@ public class ViewContentsAdapter extends BaseAdapter {
             }
         });
 
-    }
-
-    //회원가입 팝업
-    private void loginPopupRequest(View v) {
-
-        final PopupWindow popupWindow = new PopupWindow(v);
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final RelativeLayout layout = (RelativeLayout) inflater.inflate(R.layout.view_activity, null);
-        final View popupView = inflater.inflate(R.layout.recommend_join_member_popup_windown, null);
-
-        popupWindow.setContentView(popupView);
-        popupWindow.setWindowLayoutMode(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        popupWindow.setTouchable(true);
-        popupWindow.setFocusable(true);
-        popupWindow.setOutsideTouchable(true);
-        popupWindow.setBackgroundDrawable(new BitmapDrawable());
-
-        //팝업 화면을 띄울때 반투명 검정색 배경을 화면에 표시한다.
-        viewActivity.overlay.setVisibility(View.VISIBLE);
-
-        popupWindow.showAtLocation(v, Gravity.CENTER, 0, 0);
-
-        RelativeLayout joinLater = (RelativeLayout) popupView.findViewById(R.id.recommend_join_member_later_container);
-        RelativeLayout joinNow = (RelativeLayout) popupView.findViewById(R.id.recommend_join_member_now_container);
-
-        joinLater.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                popupWindow.dismiss();
-            }
-        });
-
-        joinNow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                popupWindow.dismiss();
-                Intent intent = new Intent(context, JoinMemberBeginActivity.class);
-                context.startActivity(intent);
-
-            }
-        });
-
-        popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
-            @Override
-            public void onDismiss() {
-                viewActivity.overlay.setVisibility(View.INVISIBLE);
-            }
-        });
     }
 
 }

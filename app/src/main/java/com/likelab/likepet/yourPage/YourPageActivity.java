@@ -281,12 +281,9 @@ public class YourPageActivity extends Activity {
             @Override
             public void onClick(View v) {
 
-                if(GlobalSharedPreference.getAppPreferences(YourPageActivity.this, "login").equals("login")) {
-                    Intent intent = new Intent(YourPageActivity.this, BookmarkActivity.class);
-                    startActivity(intent);
-                } else {
+                Intent intent = new Intent(YourPageActivity.this, BookmarkActivity.class);
+                startActivity(intent);
 
-                }
             }
         });
 
@@ -294,13 +291,9 @@ public class YourPageActivity extends Activity {
             @Override
             public void onClick(View v) {
 
-                if (GlobalSharedPreference.getAppPreferences(YourPageActivity.this, "login").equals("login")) {
-                    Intent intent = new Intent(YourPageActivity.this, UserProfile.class);
-                    startActivity(intent);
-                } else {
+                Intent intent = new Intent(YourPageActivity.this, UserProfile.class);
+                startActivity(intent);
 
-
-                }
             }
         });
 

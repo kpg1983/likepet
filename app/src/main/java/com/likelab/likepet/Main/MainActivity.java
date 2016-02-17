@@ -44,8 +44,6 @@ import java.security.NoSuchAlgorithmException;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener
 {
 
-    private int numPages = 3;
-
     public final static int fragment_page_1 = 0;
     public final static int fragment_page_2 = 1;
     public final static int fragment_page_3 = 2;
@@ -82,9 +80,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public String uploadTempFilePath;      //업르드 완료 후 임시 파일 경로 저장
 
-
     public String upload = "finish";
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -162,17 +158,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 if(GlobalSharedPreference.getAppPreferences(MainActivity.this, "login").equals("login")) {
                     Intent intent = new Intent(MainActivity.this, Upload.class);
-
                     intent.setFlags(intent.FLAG_ACTIVITY_SINGLE_TOP | intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivityForResult(intent, REQ_UPLOAD_CONTENTS);
-                } else {
-
+                }
+                else {
                     loginPopupRequest(v);
                 }
+
             }
         });
 
-        btnAlarmContainer = (RelativeLayout)findViewById(R.id.btn_alarm_container);
+        btnAlarmContainer = (RelativeLayout) findViewById(R.id.btn_alarm_container);
         btnAlarmContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -213,7 +209,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         homeTabContainer.setOnClickListener(this);
         feedTabContainer.setOnClickListener(this);
         myPageTabContainer.setOnClickListener(this);
-
 
     }
 
@@ -324,13 +319,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                         txtTitle.setText("Feed");
 
-                        if(GlobalSharedPreference.getAppPreferences(MainActivity.this, "login").equals("login")) {
-
-                        } else  {
-                            Intent intent = new Intent(MainActivity.this, JoinMemberBeginActivity.class);
-                            startActivityForResult(intent, REQ_NO_LOGIN);
-                        }
-
 
                         break;
                     }
@@ -361,20 +349,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.btn_home : {
+            case R.id.btn_home: {
                 pager.setCurrentItem(fragment_page_1);
                 break;
             }
-            case R.id.btn_feed : {
+            case R.id.btn_feed: {
 
-                if(GlobalSharedPreference.getAppPreferences(MainActivity.this, "login").equals("login"))
-                    pager.setCurrentItem(fragment_page_2);
-                else {
-                    startActivity(new Intent(MainActivity.this, JoinMemberBeginActivity.class));
-                }
+                pager.setCurrentItem(fragment_page_2);
+
                 break;
             }
-            case R.id.btn_mypage : {
+            case R.id.btn_mypage: {
                 pager.setCurrentItem(fragment_page_3);
                 break;
             }
@@ -383,11 +368,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
             case R.id.main_feed_tab_container:
-                if(GlobalSharedPreference.getAppPreferences(MainActivity.this, "login").equals("login"))
-                    pager.setCurrentItem(fragment_page_2);
-                else {
-                    startActivity(new Intent(MainActivity.this, JoinMemberBeginActivity.class));
-                }
+                pager.setCurrentItem(fragment_page_2);
+
                 break;
 
             case R.id.main_mypage_tab_container:

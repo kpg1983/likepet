@@ -245,12 +245,19 @@ public class UploadGallery extends Fragment implements AdapterView.OnItemClickLi
                     threadPool.execute(new Runnable() {
                         public void run() {
 
-                            final Bitmap thumbnailBitmap = MediaStore.Video.Thumbnails.getThumbnail(
-                                    getActivity().getContentResolver(), mediaItem.getVideoId(),
-                                    MediaStore.Video.Thumbnails.MICRO_KIND, null);
-                            if (thumbnailBitmap != null) {
-                                mediaItem.setThumbnailBitmap(thumbnailBitmap);
+                            try {
+
+                                final Bitmap thumbnailBitmap = MediaStore.Video.Thumbnails.getThumbnail(
+                                        getActivity().getContentResolver(), mediaItem.getVideoId(),
+                                        MediaStore.Video.Thumbnails.MICRO_KIND, null);
+                                if (thumbnailBitmap != null) {
+                                    mediaItem.setThumbnailBitmap(thumbnailBitmap);
+                                }
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
+
                         }
                     });
                     mediaItemsArrayList.add(mediaItem);
@@ -274,10 +281,13 @@ public class UploadGallery extends Fragment implements AdapterView.OnItemClickLi
                     threadPool.execute(new Runnable() {
                         public void run() {
 
-                            final Bitmap thumbnailBitmap = MediaStore.Images.Thumbnails.getThumbnail(
-                                    getActivity().getContentResolver(), mediaItem.getImageId(),
-                                    MediaStore.Images.Thumbnails.MICRO_KIND, null);
+
                             try {
+
+                                final Bitmap thumbnailBitmap = MediaStore.Images.Thumbnails.getThumbnail(
+                                        getActivity().getContentResolver(), mediaItem.getImageId(),
+                                        MediaStore.Images.Thumbnails.MICRO_KIND, null);
+
                                 BitmapFactory.Options options = new BitmapFactory.Options();
 
 //                                Bitmap orgImage = BitmapFactory.decodeFile(thumbPath, options);

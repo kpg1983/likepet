@@ -64,7 +64,8 @@ public class GCMIntentService extends FingerPushIntentService {
 	 * data.custom2 : 커스텀 필드 키(홈페이지에서 입력한 키를 입력)
 	 * data.custom3 : 커스텀 필드 키(홈페이지에서 입력한 키를 입력)
 	 */
-	
+
+
 	@Override
 	protected void onMessage(Context context, Intent intent) {
 		// TODO Auto-generated method stub
