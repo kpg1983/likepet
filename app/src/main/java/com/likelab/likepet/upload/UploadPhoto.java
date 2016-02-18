@@ -656,7 +656,12 @@ public class UploadPhoto extends Fragment implements View.OnClickListener {
             //if the front facing camera does not exist
             if (findFrontFacingCamera() < 0) {
                 Toast.makeText(getActivity(), "No front facing camera found.", Toast.LENGTH_LONG).show();
-                switchCamera.setVisibility(View.GONE);
+                try {
+                    switchCamera.setVisibility(View.GONE);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
             }
             mCamera = Camera.open(findBackFacingCamera());
 
@@ -666,7 +671,13 @@ public class UploadPhoto extends Fragment implements View.OnClickListener {
         }
 
         //카메라 타이머 초기화
-        txtTimer.setVisibility(View.INVISIBLE);
+        try {
+            txtTimer.setVisibility(View.INVISIBLE);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         btnTimer.setImageResource(R.drawable.upload_btn_time_00);
         timer = 0;
 

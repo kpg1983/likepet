@@ -101,8 +101,6 @@ public class BookmarkActivity extends Activity {
 
                         bookmarkRequest(currentPage);
 
-                    } else {
-
                     }
                 }
             }

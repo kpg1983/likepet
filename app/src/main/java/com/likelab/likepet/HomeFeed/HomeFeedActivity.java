@@ -315,8 +315,9 @@ public class HomeFeedActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if(resultCode == RESULT_MODIFY_CONTENT_SUMMARY){
-            int position = data.getExtras().getInt("POSITION");
+
             try {
+                int position = data.getExtras().getInt("POSITION");
                 contentsInfoRequest(position, contentsArrayList.get(position).contentId);
             }catch (Exception e) {
                 e.printStackTrace();

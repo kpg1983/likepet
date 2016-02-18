@@ -173,6 +173,14 @@ public class UploadGallery extends Fragment implements AdapterView.OnItemClickLi
         if(videoView.isPlaying()) {
             videoView.pause();
         }
+
+        imageView.setImageDrawable(null);
+    }
+
+    @Override
+    public void onStart() {
+
+        imageView.setImageBitmap(GlobalUploadBitmapImage.bitmap);
     }
 
     @Override
@@ -250,8 +258,16 @@ public class UploadGallery extends Fragment implements AdapterView.OnItemClickLi
                                 final Bitmap thumbnailBitmap = MediaStore.Video.Thumbnails.getThumbnail(
                                         getActivity().getContentResolver(), mediaItem.getVideoId(),
                                         MediaStore.Video.Thumbnails.MICRO_KIND, null);
+
                                 if (thumbnailBitmap != null) {
-                                    mediaItem.setThumbnailBitmap(thumbnailBitmap);
+
+                                    getActivity().runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            mediaItem.setThumbnailBitmap(thumbnailBitmap);
+                                        }
+                                    });
+
                                 }
 
                             } catch (Exception e) {
@@ -389,6 +405,10 @@ public class UploadGallery extends Fragment implements AdapterView.OnItemClickLi
                     Bitmap rotatedBitmap = GetRotatedBitmap(bitmap, degree);
                     Bitmap resizedBitmap = resizeBitmapImageFn(rotatedBitmap, 960);
                     GlobalUploadBitmapImage.bitmap = cropBitmap(resizedBitmap, 960, 960, 0.5f, 0.4f);
+
+                    bitmap.recycle();
+                    resizedBitmap.recycle();
+                    rotatedBitmap.recycle();
 
 //                    mAttacher = new PhotoViewAttacher(imageView);
 //                    mAttacher.setScaleType(ImageView.ScaleType.CENTER_CROP);
@@ -576,6 +596,8 @@ public class UploadGallery extends Fragment implements AdapterView.OnItemClickLi
         }
 
         imageView.setImageDrawable(null);
+
+        GlobalUploadBitmapImage.bitmap = null;
 
         RecycleUtils.recursiveRecycle(imageView);
         RecycleUtils.recursiveRecycle(getActivity().getWindow().getDecorView());
