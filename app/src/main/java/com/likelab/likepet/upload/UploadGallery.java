@@ -51,16 +51,12 @@ public class UploadGallery extends Fragment implements AdapterView.OnItemClickLi
     private ImageView imageView;
     private VideoView videoView;
     RelativeLayout layout;
-    private ImageView btn_next;
     LoadImagesFromSDCard loadImagesFromSDCardAsyncTask;
     private Cursor mImageCursor, mVideoCursor;
     private ArrayList<UploadGalleryMediaItem> mediaItemsArrayList;
     private ThreadPoolExecutor threadPool;
     private MediaController mediaControls;
     private int lastSelectedPosition = 0;
-    private Boolean firstLaunching = true;
-
-    private static int REQ_UPLOAD_CONTENTS = 0;
 
     private Tracker mTracker = AppController.getInstance().getDefaultTracker();
 
@@ -73,11 +69,6 @@ public class UploadGallery extends Fragment implements AdapterView.OnItemClickLi
 
         imageView = (ImageView)layout.findViewById(R.id.upload_gallery_imageView);
         videoViewContainer = (FrameLayout) layout.findViewById(R.id.upload_gallery_videoView_container);
-
-        //mAttacher.setScaleType(ImageView.ScaleType.FIT_XY);
-
-        btn_next = (ImageView)getActivity().findViewById(R.id.btn_upload_next);
-
 
         RelativeLayout btn_next_container = (RelativeLayout)getActivity().findViewById(R.id.btn_upload_next_container);
 
@@ -180,6 +171,7 @@ public class UploadGallery extends Fragment implements AdapterView.OnItemClickLi
     @Override
     public void onStart() {
 
+        super.onStart();
         imageView.setImageBitmap(GlobalUploadBitmapImage.bitmap);
     }
 

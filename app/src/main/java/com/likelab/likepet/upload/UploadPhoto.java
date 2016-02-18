@@ -1237,8 +1237,6 @@ public class UploadPhoto extends Fragment implements View.OnClickListener {
     }
 
 
-
-
     public void Camera_ON() {
         Camera.Parameters param = mCamera.getParameters();
         param.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
